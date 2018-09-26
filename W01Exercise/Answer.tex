@@ -3,10 +3,11 @@
 
 \documentclass[english, nochinese]{pnote}
 \usepackage[paper, safebm]{pdef}
+\usepackage{esvect}
 
 \title{Answers to Exercises (Week 01)}
-\author{Zhihan Li}
-\date{September 19, 2018}
+\author{Zhihan Li, 1600010653}
+\date{September 26, 2018}
 
 \begin{document}
 
@@ -74,8 +75,8 @@ T_{ i, j } &= - \Delta x^2 \rbr{ \frac{1}{24} a_{ x x x } u_x + \frac{1}{8} a_{ 
 \begin{equation}
 \begin{split}
 T_P &= \frac{ u_P - u_W }{h_x} \cos \alpha + \frac{ u_P - u_S }{h_y} \sin \alpha - \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} \\
-&= \nabla u \rbr{P} \cdot \bm{\nu}_{P^{\ast}} - \frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} + o \rbr{ h_x + h_y } \\
-&= -\frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \overline{ P P^{\ast} } \pdl[2]{ \bm{\nu}_{P^{\ast}} \bm{\nu}_{P^{\ast}} } u \rbr{P} + o \rbr{ h_x + h_y } \\
+&= \nabla u \rbr{P} \cdot \bm{\nu}_{P^{\ast}} - \frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \nabla u \rbr{P^{\ast}} \cdot \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
+&= -\frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \vv{ P P^{\ast} }^{\text{T}} \nabla^2 u \rbr{P} \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
 &= O \rbr{ h_x + h_y } = O \rbr{h}
 \end{split}
 \end{equation}
@@ -83,33 +84,33 @@ T_P &= \frac{ u_P - u_W }{h_x} \cos \alpha + \frac{ u_P - u_S }{h_y} \sin \alpha
 
 \textbf{Problem 4. (Page 30 Exercise 10)} \textit{Proof.} Apply maximal principle to $ U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
 \begin{equation}
-L_h \rbr{ U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_j \ge 0
+L_h \rbr{ U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
 \end{equation}
 for $ \mathbf{j} \in J_{\Omega} $ and
 \begin{equation}
-U_j - V_j \le \abs{U_j} - V_j \le 0
+U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
 \end{equation}
 for $ \mathbf{j} \in J_D $,
 therefore for $ \mathbf{j} \in J_{\Omega} $
 \begin{equation}
-U_j - V_j \le 0.
+U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
 \end{equation}
 Then apply maximal principle to $ -U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
 \begin{equation}
-L_h \rbr{ -U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_j \ge 0
+L_h \rbr{ -U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
 \end{equation}
 for $ \mathbf{j} \in J_{\Omega} $ and
 \begin{equation}
--U_j - V_j \le \abs{U_j} - V_j \le 0
+-U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
 \end{equation}
 for $ \mathbf{j} \in J_D $,
 therefore for $ \mathbf{j} \in J_{\Omega} $
 \begin{equation}
--U_j - V_j \le 0.
+-U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
 \end{equation}
 Combining these two arguments, we have
 \begin{equation}
-\abs{U_j} \le V_j
+\abs{U_{\mathbf{j}}} \le V_{\mathbf{j}}
 \end{equation}
 for $ \mathbf{j} \in J_{\Omega} $.
 \hfill$\Box$
