@@ -1,12 +1,11 @@
 .PHONY: all
-all: Answer.pdf exts.so setup.cfg
+all: Answer.pdf
 
 Answer.pdf: Answer.tex | Answer.aux
 	lualatex Answer.tex
 
 Answer.aux: Answer.tex
 	lualatex Answer.tex
-
 
 .PHONY: recursive
 recursive: template
@@ -25,7 +24,7 @@ setup.cfg:
 	echo "include_dirs=${CONDA_PREFIX}/include" >> setup.cfg
 	echo "library_dirs=${CONDA_PREFIX}/lib" >> setup.cfg
 
-exts.so: setup.py exts/algos.c exts/wrappers.c exts/exts.h
+exts.so: setup.py setup.cfg exts/algos.c exts/wrappers.c exts/exts.h
 	python setup.py build_ext --inplace
 	FILENAMES=`ls | grep 'exts.*\.so' | grep -v 'exts.so'`;\
 	for FILE in $${FILENAMES};\
