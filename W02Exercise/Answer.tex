@@ -1,0 +1,64 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage{siunitx}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{esint}
+\usepackage{esvect}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Week 02)}
+\author{Zhihan Li, 1600010653}
+\date{October 10, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 30 Exercise 7)} \textit{Proof.} Because we are to approximate $ g \rbr{P^{\ast}} = \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} $, therefore the local truncation error is
+\begin{equation}
+\begin{split}
+T_P &= \frac{ u_P - u_W }{h_x} \cos \alpha + \frac{ u_P - u_S }{h_y} \sin \alpha - \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} \\
+&= \nabla u \rbr{P} \cdot \bm{\nu}_{P^{\ast}} - \frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \nabla u \rbr{P^{\ast}} \cdot \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
+&= -\frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \vv{ P P^{\ast} }^{\text{T}} \nabla^2 u \rbr{P} \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
+&= O \rbr{ h_x + h_y } = O \rbr{h}
+\end{split}
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 30 Exercise 10)} \textit{Proof.} Apply maximal principle to $ U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
+\begin{equation}
+L_h \rbr{ U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
+\end{equation}
+for $ \mathbf{j} \in J_{\Omega} $ and
+\begin{equation}
+U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
+\end{equation}
+for $ \mathbf{j} \in J_D $,
+therefore for $ \mathbf{j} \in J_{\Omega} $
+\begin{equation}
+U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
+\end{equation}
+Then apply maximal principle to $ -U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
+\begin{equation}
+L_h \rbr{ -U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
+\end{equation}
+for $ \mathbf{j} \in J_{\Omega} $ and
+\begin{equation}
+-U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
+\end{equation}
+for $ \mathbf{j} \in J_D $,
+therefore for $ \mathbf{j} \in J_{\Omega} $
+\begin{equation}
+-U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
+\end{equation}
+Combining these two arguments, we have
+\begin{equation}
+\abs{U_{\mathbf{j}}} \le V_{\mathbf{j}}
+\end{equation}
+for $ \mathbf{j} \in J_{\Omega} $.
+\hfill$\Box$
+
+\end{document}

@@ -71,48 +71,4 @@ T_{ i, j } &= - \Delta x^2 \rbr{ \frac{1}{24} a_{ x x x } u_x + \frac{1}{8} a_{ 
 \end{split}
 \end{equation}
 
-\textbf{Problem 3. (Page 30 Exercise 7)} \textit{Proof.} Because we are to approximate $ g \rbr{P^{\ast}} = \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} $, therefore the local truncation error is
-\begin{equation}
-\begin{split}
-T_P &= \frac{ u_P - u_W }{h_x} \cos \alpha + \frac{ u_P - u_S }{h_y} \sin \alpha - \pdl{\bm{\nu}_{P^{\ast}}} u \rbr{P^{\ast}} \\
-&= \nabla u \rbr{P} \cdot \bm{\nu}_{P^{\ast}} - \frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \nabla u \rbr{P^{\ast}} \cdot \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
-&= -\frac{1}{2} h_x u_{ x x } \rbr{P} - \frac{1}{2} h_y u_{ y y } \rbr{P} - \vv{ P P^{\ast} }^{\text{T}} \nabla^2 u \rbr{P} \bm{\nu}_{P^{\ast}} + o \rbr{ h_x + h_y } \\
-&= O \rbr{ h_x + h_y } = O \rbr{h}
-\end{split}
-\end{equation}
-\hfill$\Box$
-
-\textbf{Problem 4. (Page 30 Exercise 10)} \textit{Proof.} Apply maximal principle to $ U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
-\begin{equation}
-L_h \rbr{ U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
-\end{equation}
-for $ \mathbf{j} \in J_{\Omega} $ and
-\begin{equation}
-U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
-\end{equation}
-for $ \mathbf{j} \in J_D $,
-therefore for $ \mathbf{j} \in J_{\Omega} $
-\begin{equation}
-U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
-\end{equation}
-Then apply maximal principle to $ -U_{\mathbf{j}} - V_{\mathbf{j}} $. Because
-\begin{equation}
-L_h \rbr{ -U_{\mathbf{j}} - V_{\mathbf{j}} } \ge -\abs{ L_h U_{\mathbf{j}} } - L_h V_{\mathbf{j}} \ge 0
-\end{equation}
-for $ \mathbf{j} \in J_{\Omega} $ and
-\begin{equation}
--U_{\mathbf{j}} - V_{\mathbf{j}} \le \abs{U_{\mathbf{j}}} - V_{\mathbf{j}} \le 0
-\end{equation}
-for $ \mathbf{j} \in J_D $,
-therefore for $ \mathbf{j} \in J_{\Omega} $
-\begin{equation}
--U_{\mathbf{j}} - V_{\mathbf{j}} \le 0.
-\end{equation}
-Combining these two arguments, we have
-\begin{equation}
-\abs{U_{\mathbf{j}}} \le V_{\mathbf{j}}
-\end{equation}
-for $ \mathbf{j} \in J_{\Omega} $.
-\hfill$\Box$
-
 \end{document}

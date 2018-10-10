@@ -1,4 +1,6 @@
 # Temporary files
+.ipynb_checkpoints/
+build/
 
 # Generated files
 *.aux
@@ -10,3 +12,11 @@
 
 # Binary files
 *.pdf
+*.so
+*.ipynb
+
+# External files
+
+# Personal files
+.vscode/
+setup.cfg

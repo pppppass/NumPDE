@@ -1,0 +1,85 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Week 03)}
+\author{Zhihan Li, 1600010653}
+\date{October 4, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 30 Exercise 11)} \textit{Proof.} Choose non-negative $\varPhi$ such that 
+\begin{equation}
+L_h \varPhi_{\mathbf{j}} \ge 1
+\end{equation}
+for all $ \mathbf{j} \in J_{\Omega} $. Denote
+\begin{equation}
+d_\mathbf{j} = U_{\mathbf{j}} - u_{\mathbf{j}} - h^2 \psi_{\mathbf{j}}.
+\end{equation}
+We have $ \abs{ L_h d_{\mathbf{j}} } \le C h^4 $ with a uniform constant $C$ for all $ \mathbf{j} \in J_{\Omega} $ and $ d_{\mathbf{j}} = 0 $ for $ \mathbf{j} \in J_D $. The comparison theorem yields
+\begin{equation}
+\max_{ \mathbf{j} \in J_{\Omega} } \abs{d_\mathbf{j}} \le \max_{ \mathbf{j} \in J_D } \abs{d_\mathbf{j}} + \rbr{ \max_{ \mathbf{j} \in J_D } \abs{\varPhi_{\mathbf{j}}} } \rbr{ \max_{ \mathbf{j} \in J_{\Omega} } \abs{ L_h d_{\mathbf{j}} } } \le C h^4 \rbr{ \max_{ \mathbf{j} \in J_D } \abs{\varPhi_{\mathbf{j}}} }
+\end{equation}
+and therefore $ d_{\mathbf{j}} = O \rbr{h^4} $ for $ \mathbf{j} \in J_{\Omega} $.
+Combing estimation of $d_{\mathbf{j}}$ on both $J_{\Omega}$ and $J_D$, we have
+\begin{equation}
+U_{\mathbf{j}} = u_{\mathbf{j}} + h^2 \psi_{\mathbf{j}} + d_{\mathbf{j}} = u_{\mathbf{j}} + h^2 \psi_{\mathbf{j}} + O \rbr{h^4}
+\end{equation}
+for $ \mathbf{j} \in J_h $ as desired.
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 30 Exercise 12)} \textit{Proof.} Since $ J_{ h / 2 } \subseteq J_h $, we have for $ \mathbf{j} \in J_h $,
+\begin{gather}
+\label{Eq:EstH}
+U_{ h, \mathbf{j} } = u_{\mathbf{j}} + h^2 \psi_{\mathbf{j}} + O \rbr{h^4}, \\
+\label{Eq:EstH2}
+U_{ h / 2, \mathbf{j} } = u_{\mathbf{j}} + \rbr{ h / 2 }^2 \psi_{\mathbf{j}} + O \rbr{h^4}.
+\end{gather}
+Subtract \eqref{Eq:EstH} from four times \eqref{Eq:EstH2} to cancel out $\psi_{\mathbf{j}}$, we deduce
+\begin{equation}
+4 U_{ h / 2, \mathbf{j} } - U_{ h, \mathbf{j} } = 3 u_{\mathbf{j}} + O \rbr{h^4}
+\end{equation}
+and
+\begin{equation}
+U_{ h, \mathbf{j} } - u_{\mathbf{j}} = \frac{4}{3} \rbr{ U_{ h, \mathbf{j} } - U_{ h / 2, \mathbf{j} } } + O \rbr{h^4}
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 83 Exercise 1)} \textit{Answer.} The heat equation in a one dimensional homogenous media with no heat source and sink can be described as
+\begin{equation}
+\begin{cases}
+u_t = \kappa^{-1} a u_{ x x }, & x \in \rbr{ 0, L }, t > 0; \\
+u \rbr{ x, 0 } = u^0 \rbr{x}, & x \in \sbr{ 0, L }; \\
+u \rbr{ 0, t } = u \rbr{ L, t } = 0, & t \ge 0,
+\end{cases}
+\end{equation}
+as shown in (2.1.4) (2.1.5) and (2.1.6). Choose any $T$, which is of dimension $\mathsf{\Theta}$, to be the characteristic absolute temperature. We can than perform the nondimensionalization
+\begin{gather}
+\tilde{u} = \frac{u}{T}, \\
+\tilde{x} = \frac{x}{L}, \\
+\tilde{t} = \frac{ a t }{ L^2 \kappa }.
+\end{gather}
+Since the dimension of $a$ is $ \mathsf{L} \mathsf{M} \mathsf{T}^{-3} \mathsf{\Theta}^{-1} $ and that of $\kappa$ is $ \mathsf{L}^{-1} \mathsf{M} \mathsf{T}^{-2} \mathsf{\Theta}^{-1} $, we deduce that $\tilde{u}$, $\tilde{x}$ and $\tilde{t}$ are of null dimension. Since
+\begin{gather}
+\tilde{u}_{\tilde{t}} = \frac{ L^2 \kappa }{ a T } u_t, \\
+\tilde{u}_{ \tilde{x} \tilde{x} } = \frac{ L^2 }{T} u_{ x x },
+\end{gather}
+the corresponding equation is
+\begin{equation}
+\begin{cases}
+\tilde{u}_{\tilde{t}} = \tilde{u}_{ \tilde{x} \tilde{x} }, & \tilde{x} \in \rbr{ 0, 1 }, \tilde{t} > 0; \\
+\tilde{u} \rbr{ \tilde{x}, 0 } = \tilde{u}^0 \rbr{\tilde{x}}, & \tilde{x} \in \sbr{ 0, 1 }; \\
+\tilde{u} \rbr{ 0, \tilde{t} } = \tilde{u} \rbr{ 1, \tilde{t} } = 0, & \tilde{t} \ge 0
+\end{cases}
+\end{equation}
+as desired, with
+\begin{equation}
+\tilde{u}^0 \rbr{\tilde{x}} = u^0 \rbr{x}.
+\end{equation}
+
+\end{document}

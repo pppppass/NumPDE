@@ -1,0 +1,449 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Report of Project 1}
+\author{Zhihan Li, 1600010653}
+\date{October 10, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem. (Page 31 Coding Exercise)} \textit{Answer.} We solve the Poisson equation with three sets of source terms and boundary conditions using finite difference scheme. The detailed procedure is explained in the following sections.
+
+\section{The first set of condition}
+
+\subsection{Discretized scheme}
+
+We proceed to solve a ``standard'' example first. Consider the equation
+\begin{equation}
+\begin{cases}
+\rbr{ u_{ x x } + u_{ y y } } \rbr{ x, y } = -2 \spi^2 \sin \spi x \cos \spi y, & \rbr{ x, y } \in \Omega = \rbr{ 0, 1 } \times \rbr{ 0, 1 }; \\
+u \rbr{ x, y } = 0, & \rbr{ x, y } \in \pdl{\text{W}} \Omega = \cbr{0} \times \sbr{ 0, 1 }; \\
+u \rbr{ x, y } = \sin \spi x, & \rbr{ x, y } \in \pdl{\text{S}} \Omega = \sbr{ 0, 1 } \times \cbr{0}; \\
+u_x \rbr{ x, y } = \spi \cos \spi y, & \rbr{ x, y } \in \pdl{\text{E}} \Omega = \cbr{1} \times \sbr{ 0, 1 }; \\
+\rbr{ u + u_y } \rbr{x} = -\sin \spi x, & \rbr{ x, y } \in \pdl{\text{N}} \Omega = \sbr{ 0, 1 } \times \cbr{1}.
+\end{cases}
+\end{equation}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, y } = \sin \spi x \cos \spi y.
+\end{equation}
+
+We adopt a uniform mesh to solve this equation. Denote the $ U_{ i, j } $ to be the value at $ \rbr{ x_i, y_j } $ with $ x_i = h i $ and $ y_j = h j $, where
+\begin{equation}
+h = \frac{1}{N}
+\end{equation}
+is the mesh size.
+
+We discretize the equation as follows. On $\Omega$, we set the equation
+\begin{equation}
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+\end{equation}
+for $ 1 \le i, j \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
+\end{equation}
+Herer $\xi$ and $\eta$ correspond to the Lagrange form of remainder on Taylor's theorem.
+On $ \pdl{\text{W}} \Omega $ and $ \pdl{\text{S}} \Omega $, we set the equation
+\begin{equation}
+U_{ 0, j } = u_{ 0, j }
+\end{equation}
+for $ 0 \le j \le N $ and
+\begin{equation}
+U_{ i, 0 } = u_{ i, 0 }
+\end{equation}
+for $ 0 \le i \le N $. There is no local truncation error. On $ \pdl{\text{E}}$, we set the equation
+\begin{equation}
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } - 2 \rbr{u_x}_{ N, j }
+\end{equation}
+for $ 1 \le j \le N - 1 $.
+The local truncation error is
+\begin{equation}
+T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \eta, j }.
+\end{equation}
+On $ \pdl{\text{N}} \Omega $, we set
+\begin{equation}
+\begin{split}
+L_h U_{ i, N } &= \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, N } - 2 \rbr{ u + u_y }_{ i, N }
+\end{split}
+\end{equation}
+for $ 1 \le i \le N - 1 $.
+The local truncation error is
+\begin{equation}
+T_{ i, N } = \frac{1}{12} h^3 \rbr{u_{ x x x x }}_{ i + \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, N - \eta }.
+\end{equation}
+On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we set
+\begin{equation}
+\begin{split}
+L_h U_{ N, N } &= \frac{ 2 U_{ N, N - 1 } + 2 U_{ N - 1, N } - 4 U_{ N, N } }{h} - 2 U_{ N, N } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ N, N } - 2 \rbr{ u + u_x + u_y }_{ N, N }.
+\end{split}
+\end{equation}
+The local truncation error is
+\begin{equation}
+T_{ N, N } = - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ N, N - \eta }.
+\end{equation}
+
+\subsection{\textit{A priori} error estimation}
+
+We adopt $\ell^{\infty}$ norm by default $\norm{\cdot}$ here. We have
+\begin{equation}
+\norm{ L_h e_h } \le \norm{ L_h U_h - L_h u_h } \le \norm{ L_h U_h - \rbr{ L u }_h } + \norm{ L_h u_h - \rbr{ L u }_h } \le \norm{r_h} + \norm{ L_h T_h },
+\end{equation}
+where $e_h$ is the error $ U_h - u_h $ and $r_h$ is the remainder of linear system solver.
+
+The constructed $-L_h$ is clearly diagonally dominant with respect to $ U_{ i, j } $ for $ 1 \le i, j \le N $. Choose
+\begin{equation}
+\varPhi \rbr{ x, y } = \frac{1}{4} \rbr{ \rbr{ x - 2 }^2 + 6 \rbr{ y - 2 }^2 } \ge 0
+\end{equation}
+to be the comparison function. On $\Omega$, we have
+\begin{equation}
+L_h \varPhi_{ i, j } = \frac{7}{2} \ge 1
+\end{equation}
+for $ 1 \le i, j \le N - 1 $.
+On $ \pdl{\text{E}} \Omega $, we have
+\begin{equation}
+L_h \varPhi_{ N, j } = \frac{7}{2} h + 1 \ge 1
+\end{equation}
+for $ 0 \le j \le N - 1 $.
+On $ \pdl{\text{N}} \Omega $, we have
+\begin{equation}
+L_h \varPhi_{ i, N } = \frac{7}{2} h + 3 - \frac{1}{2} \rbr{ x_i - 2 }^2 \ge 1.
+\end{equation}
+On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we have
+\begin{equation}
+L_h \varPhi_{ i, N } = \frac{7}{2} h + \frac{7}{2} \ge 1.
+\end{equation}
+Combing the connectivity of $L_h$, $L_h$ satisfies the condition of comparison theorem and therefore
+\begin{equation}
+\norm{e_h} \le \norm{e_h}_{J_D} + \norm{ L_h e_h } \norm{\varPhi}_{J_D},
+\end{equation}
+where $J_D$ corresponds to points lying on $ \pdl{\text{W}} \Omega \cap \pdl{\text{S}} \Omega $. Note that we have
+\begin{equation}
+\norm{e_h}_{J_D} = 0
+\end{equation}
+and
+\begin{equation}
+\norm{\varPhi}_{J_D} = 7.
+\end{equation}
+We further deduce from
+\begin{gather}
+\norm{u_{ x x x }}, \norm{u_{ y y y }} \le \spi^3, \\
+\norm{u_{ x x x x }}, \norm{u_{ y y y y }} \le \spi^4
+\end{gather}
+and $ h \le 1 $ that
+\begin{equation}
+\norm{T_h} \le \frac{2}{3} h^2 \spi^3.
+\end{equation}
+Combing these all, we have
+\begin{equation}
+\norm{e_h} \le 7 \rbr{ \norm{r_h} + \frac{2}{3} h^2 \spi^3 }.
+\end{equation}
+We may require
+\begin{equation}
+\norm{r_h} \le 5 \times 10^{-7}
+\end{equation}
+and
+\begin{gather}
+h \le \frac{1}{2000}, \\
+N \ge 2000
+\end{gather}
+to achieve
+\begin{equation}
+\norm{e_h} \le 10^{-5}.
+\end{equation}
+
+\section{The second set of condition}
+
+\subsection{Discretized scheme}
+
+We continue to use notations introduced in previous sections. We then tackle a harmonic equation. Consider the equation
+\begin{equation}
+\begin{cases}
+\rbr{ u_{ x x } + u_{ y y } } \rbr{ x, y } = 0, & \rbr{ x, y } \in \Omega; \\
+u_x \rbr{ x, y } = \rbr{ 1 - y } / \rbr{ 1 + y^2 }, & \rbr{ x, y } \in \pdl{\text{W}} \Omega; \\
+u \rbr{ x, y } = \ln \rbr{ x + 1 }, & \rbr{ x, y } \in \pdl{\text{S}} \Omega; \\
+u_x \rbr{ x, y } = \rbr{ 2 - y } / \rbr{ 4 + y^2 }, & \rbr{ x, y } \in \pdl{\text{E}} \Omega; \\
+u \rbr{ x, y } = \ln \sqrt{ x^2 + 2 x + 2 } + \spi / 2 - \arctan \rbr{ x + 1 }, & \rbr{ x, y } \in \pdl{\text{N}} \Omega.
+\end{cases}
+\end{equation}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, y } = \ln \sqrt{ \rbr{ x + 1 }^2 + y^2 } + \arctan \frac{y}{ x + 1 }.
+\end{equation}
+
+On $\Omega$, we set the equation
+\begin{equation}
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+\end{equation}
+for $ 1 \le i, j \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
+\end{equation}
+On $ \pdl{\text{W}} \Omega $, we set the equation
+\begin{equation}
+L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{u_x}_{ 0, j }
+\end{equation}
+for $ 1 \le j \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ 0, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ 0, j + \xi } + \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \eta, j }.
+\end{equation}
+On $ \pdl{\text{E}} \Omega $, we set the equation
+\begin{equation}
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } - 2 \rbr{u_x}_{ N, j }
+\end{equation}
+for $ 1 \le j \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \eta, j }.
+\end{equation}
+On $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $, we set
+\begin{equation}
+U_{ i, j } = u_{ i, j }
+\end{equation}
+for $ 0 \le i \le N $ and $ j = 0, N $. There is no local truncation error.
+
+\subsection{\textit{A priori} error estimation}
+
+The discretized $-L_h$ is also diagonally dominant with respect to $ U_{ i, j } $ for $ 0 \le i \le N $ and $ 1 \le j \le N - 1 $. Choose
+\begin{equation}
+\varPhi \rbr{ x, y } = \rbr{ y - \frac{1}{2} }^2 - \frac{1}{2} \rbr{ x - \frac{1}{2} }^2 + \frac{1}{8}.
+\end{equation}
+We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. On $\Omega$, we have
+\begin{equation}
+L_h \varPhi_{ i, j } = 1
+\end{equation}
+for $ 1 \le i, j \le N - 1 $. On $ \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $, we have
+\begin{equation}
+L_h \varPhi_{ i, j } = h + 1 \ge 1
+\end{equation}
+for $ i = 0, N $ and $ 0 \le j \le N $. Hence, we can again apply comparison theorem on $L_h$. Note that we have
+\begin{equation}
+\norm{e_h}_{J_D} = 0
+\end{equation}
+and
+\begin{equation}
+\norm{\varPhi}_{J_D} = \frac{3}{8}.
+\end{equation}
+Denote $ z = x + y \si $ and $ w \rbr{z} = \ln \rbr{ 1 + z } $. Since
+\begin{equation}
+u \rbr{ x, y } = \Re w \rbr{z} + \Im w \rbr{z},
+\end{equation}
+we have
+\begin{equation}
+\abs{ u_{ x x x } \rbr{ x, y } } = \abs{ \Re w^{\rbr{3}} \rbr{z} + \Im w^{\rbr{3}} \rbr{z} } \le 2 \sqrt{2}
+\end{equation}
+where the last inequality follows form
+\begin{equation}
+\abs{ w^{\rbr{3}} \rbr{z} } = 2 \abs{\frac{1}{\rbr{ 1 + z }^3}} \le 2
+\end{equation}
+for $ \rbr{ x, y } \in \overline{\Omega} $. Similarly we have
+\begin{equation}
+\abs{ u_{ x x x x } \rbr{ x, y } } \equiv \abs{ u_{ y y y y } \rbr{ x, y } } \le 6 \sqrt{2}
+\end{equation}
+for $ \rbr{ x, y } \in \overline{\Omega} $. These imply
+\begin{gather}
+\norm{u_{ x x x }} \le 2 \sqrt{2}, \\
+\norm{u_{ x x x x }} = \norm{u_{ y y y y }} \le 6 \sqrt{2}.
+\end{gather}
+As a result,
+\begin{equation}
+\norm{T_h} \le \max \cbr{ \sqrt{2} h^2, \frac{\sqrt{2}}{2} h^3 + \frac{2}{3} \sqrt{2} h^2 }
+\end{equation}
+and
+\begin{equation}
+\norm{T_h} \le \sqrt{2} h^2
+\end{equation}
+as long as $ h \le 2 / 3 $. Combining these all, we have
+\begin{equation}
+\norm{e_h} \le \frac{3}{8} \rbr{ \norm{r_h} + \sqrt{2} h^2 }.
+\end{equation}
+We may require
+\begin{equation}
+\norm{r_h} \le 10^{-5}
+\end{equation}
+and
+\begin{gather}
+h \le \frac{1}{400}, \\
+N \ge 400
+\end{gather}
+to achieve
+\begin{equation}
+\norm{e_h} \le 10^{-5}.
+\end{equation}
+
+\section{The third set of condition}
+
+\subsection{Discretized Scheme}
+
+We finally consider a equation without Dirichlet boundary condition. Consider the equation
+\begin{equation}
+\begin{cases}
+\rbr{ u_{ x x } + u_{ y y } } \rbr{ x, y } = \rbr{ x^2 + y^2 - 2 } \exp \rbr{ -\rbr{ x^2 + y^2 } / 2 } / 2 \spi, & \rbr{ x, y } \in \Omega; \\
+\rbr{u_x} \rbr{ x, y } = 0, & \rbr{ x, y } \in \pdl{\text{W}} \Omega; \\
+\rbr{ u - u_y } \rbr{ x, y }  = \exp \rbr{ -x^2 / 2 } / 2 \spi, & \rbr{ x, y } \in \pdl{\text{S}} \Omega; \\
+\rbr{u_x} \rbr{ x, y } = -\exp \rbr{ -\rbr{ y^2 + 1 } / 2 } / 2 \spi, & \rbr{ x, y } \in \pdl{\text{E}} \Omega; \\
+\rbr{ u + u_y } \rbr{ x, y } = 0, & \rbr{ x, y } \in \pdl{\text{N}} \Omega.
+\end{cases}
+\end{equation}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, y } = \frac{1}{ 2 \spi } \se^{-\frac{ x^2 + y^2 }{2}}.
+\end{equation}
+
+On $\Omega$, we set the equation
+\begin{equation}
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+\end{equation}
+for $ 1 \le i, j \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
+\end{equation}
+On $ \pdl{\text{W}} \Omega $, we set the equation
+\begin{equation}
+L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{u_x}_{ 0, j }
+\end{equation}
+for $ 1 \le j \le N - 1 $.
+The local truncation error is
+\begin{equation}
+T_{ 0, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ 0, j + \xi } + \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \eta, j }.
+\end{equation}
+On $ \pdl{\text{S}} \Omega $, we set the equation
+\begin{equation}
+\begin{split}
+L_h U_{ i, 0 } &= \frac{ 2 U_{ i, 1 } + U_{ i - 1, 0 } + U_{ i + 1, 0 } - 4 U_{ i, 0 } }{h} - 2 U_{ i, 0 } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, 0 } - 2 \rbr{ u - u_y }_{ i, 0 }
+\end{split}
+\end{equation}
+for $ 1 \le i \le N - 1 $.
+The local truncation error is
+\begin{equation}
+T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ i + \xi, 0 } + \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, \eta }.
+\end{equation}
+On $ \pdl{\text{E}} \Omega $, we set the equation
+\begin{equation}
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } + 2 \rbr{u_x}_{ N, j }
+\end{equation}
+for $ 1 \le j \le N - 1 $.
+The local truncation error is
+\begin{equation}
+T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \eta, j }.
+\end{equation}
+On $ \pdl{\text{N}} \Omega $, we set the equation
+\begin{equation}
+\begin{split}
+L_h U_{ i, N } &= \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, N } - 2 \rbr{ u + u_y }_{ i, N }
+\end{split}
+\end{equation}
+for $ 1 \le i \le N - 1 $. The local truncation error is
+\begin{equation}
+T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ i + \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, N - \eta }.
+\end{equation}
+On $ \pdl{\text{W}} \Omega \cap \rbr{ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega } $, we set
+\begin{equation}
+\begin{split}
+L_h U_{ 0, j } &= \frac{ 2 U_{ 0, j \pm 1 } + 2 U_{ 1, j } - 4 U_{ 0, j } }{h} - 2 U_{ 0, j } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{ -u + u_x \pm u_y }_{ 0, j }
+\end{split}
+\end{equation}
+for $ j = 0, N $ and the signs are $ +, - $ respectively for $\pm$.
+The local truncation error is
+\begin{equation}
+T_{ 0, j } = \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \xi, j } \pm \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ 0, j + \eta }.
+\end{equation}
+On $ \pdl{\text{E}} \Omega \cap \rbr{ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega } $, we set
+\begin{equation}
+\begin{split}
+L_h U_{ N, j } &= \frac{ 2 U_{ N, j \pm 1 } + 2 U_{ N - 1, j } - 4 U_{ N, j } }{h} - 2 U_{ N, j } \\
+&= h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } + 2 \rbr{ -u - u_x \pm u_y }_{ N, j }
+\end{split}
+\end{equation}
+for $ j = 0, N $ and the signs are $ +, - $ respectively for $\pm$.
+The local truncation error is
+\begin{equation}
+T_{ N, j } = -\frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \xi, j } \pm \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ N, j + \eta }.
+\end{equation}
+
+\subsection{\textit{A priori} error estimation}
+
+Since there is no nodes of Dirichlet boundary, we must conduct some slightly different analysis to prove the stability of $L_h$. We still define
+\begin{equation}
+\varPhi \rbr{ x, y } = \rbr{ y - \frac{1}{2} }^2 - \frac{1}{2} \rbr{ x - \frac{1}{2} }^2 + \frac{1}{8}.
+\end{equation}
+We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. According to previous argument, we have
+\begin{equation}
+L_h \varPhi_{ i, j } \ge 1
+\end{equation}
+for $ 0 \le i \le N $, $ 1 \le j \le N - 1 $, i.e., nodes in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. Assume $ \norm{T_h} = E $ and denote
+\begin{equation}
+e^+_{ i, j } = e_{ i, j } + \rbr{ E + \epsilon } \varPhi_{ i, j }
+\end{equation}
+for some $ \epsilon > 0 $. Since for $ 0 \le i \le N $, $ 1 \le j \le N - 1 $ we have
+\begin{equation}
+L_h e^+_{ i, j } \ge T_{ i, j } + E + \epsilon > 0
+\end{equation}
+and $-L_h$ is diagonally dominant, we knows that $e^+$ will not attain its maximal value in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. We tackle maximal values of $e^+$ on $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $. Without loss of generality, we only consider the points $ \rbr{ 0, 0 } $ and $ \rbr{ i, 0 } $ for $ 1 \le i \le N $. If $ \rbr{ 0, 0 } $ is a maximal point of $e^+$, from the definition of $L_h$
+\begin{equation}
+- 2 e^+_{ 0, 0 } \ge \frac{ 2 e^+_{ 0, 1 } + 2 e^+_{ 1, 0 } - 4 e^+_{ 0, 0 } }{h} - 2 e^+_{ 0, 0 } = T_{ 0, 0 } + E h - \frac{3}{2} E
+\end{equation}
+and therefore
+\begin{equation}
+e^+_{ 0, 0 } \le E - E h + \frac{3}{2} E \le \frac{5}{2} E.
+\end{equation}
+If $ \rbr{ i, 0 } $ is a maximal point of $e^+$, we know
+\begin{equation}
+-2 e^+_{ i, 0 } \ge  \frac{ 2 e^+_{ i, 1 } + e^+_{ i - 1, 0 } + e^+_{ i + 1, 0 } - 4 e^+_{ i, 0 } } - 2 e^+_{ i, 0 } = T_{ i, 0 } + E h + E \rbr{ -\frac{11}{4} + \rbr{ x_i - \frac{1}{2} }^2 }
+\end{equation}
+and therefore
+\begin{equation}
+e^+_{ i, 0 } \le E - E h + \frac{11}{4} E \le \frac{15}{4} E.
+\end{equation}
+The cases on $ \pdl{\text{N}} \Omega $ can be analyzed similarly. Combining these all, we conclude
+\begin{equation}
+e^+_h \le \frac{15}{4} E
+\end{equation}
+and
+\begin{equation}
+e_h \le \frac{15}{4} E
+\end{equation}
+since $ \varPhi_h \ge 0 $. Similarly we can also prove
+\begin{equation}
+e_h \ge -\frac{15}{4} E
+\end{equation}
+and therefore
+\begin{equation}
+\norm{e_h} \le \frac{15}{4} \norm{T_h}.
+\end{equation}
+Because
+\begin{gather}
+\norm{u_{ x x x }}, \norm{u_{ y y y }} \le \frac{1}{\spi}, \\
+\norm{u_{ x x x x }}, \norm{u_{ y y y y }} \le \frac{3}{ 2 \spi },
+\end{gather}
+we estimate
+\begin{equation}
+\norm{T_h} \le \frac{2}{ 3 \spi } h^2
+\end{equation}
+as long as $ h \le 1 $. Combing these all, we have
+\begin{equation}
+\norm{e_h} \le \frac{15}{4} \rbr{ \norm{r_h} + \frac{2}{ 3 \spi } h^2 }.
+\end{equation}
+We may require
+\begin{equation}
+\norm{r_h} \le 10^{-6}
+\end{equation}
+and
+\begin{gather}
+h \le \frac{1}{500}, \\
+N \ge 500
+\end{gather}
+to achieve
+\begin{equation}
+\norm{e_h} \le 10^{-5}.
+\end{equation}
+
+\end{document}
