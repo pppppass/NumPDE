@@ -1,3 +1,5 @@
+RUNOBJS = ProblemPart1.run ProblemPart2.run ProblemPart3.run
+
 .PHONY: all
 all: Answer.pdf
 
@@ -6,13 +8,6 @@ Answer.pdf: Answer.tex | Answer.aux
 
 Answer.aux: Answer.tex
 	lualatex Answer.tex
-
-.PHONY: recursive
-recursive: template
-	for DIR in $(DIRS);\
-	do\
-		$(MAKE) -C $${DIR};\
-	done
 
 setup.cfg:
 	if ![[ -v CONDA_PREFIX ]];\
@@ -32,5 +27,16 @@ exts.so: setup.py setup.cfg exts/algos.c exts/wrappers.c exts/exts.h
 		mv $${FILE} exts.so;\
 	done
 
+.PRECIOUS: %.py
+%.py: %.ipynb
+	jupyter nbconvert --to script $*
+
+%.run: %.py
+	python $<
+	touch $@
+
 .PHONY: report
 report: Answer.pdf
+
+.PHONY: run
+run: $(RUNOBJS)

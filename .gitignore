@@ -17,6 +17,6 @@ build/
 
 # External files
 
-# Personal files
+# Private files
 .vscode/
 setup.cfg
