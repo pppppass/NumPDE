@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[12]:
+# In[2]:
 
 
 import time
@@ -11,7 +11,7 @@ import scipy.sparse
 import exts
 
 
-# In[2]:
+# In[3]:
 
 
 def get_ana_sol(size):
@@ -23,7 +23,7 @@ def get_ana_sol(size):
     return ana
 
 
-# In[3]:
+# In[4]:
 
 
 def solve_sol(size, tol, max_=50000):
@@ -72,7 +72,7 @@ def solve_sol(size, tol, max_=50000):
     return sol, end - start, ctr
 
 
-# In[4]:
+# In[5]:
 
 
 res = [[], [], [], []]
@@ -141,14 +141,14 @@ for n in n_list:
     del(ana)
 
 
-# In[8]:
+# In[6]:
 
 
 n_list = [4, 8, 16, 32, 64, 128, 256, 512]
 tol_list = [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8, 1.0e-9, 1.0e-10]
 
 
-# In[9]:
+# In[7]:
 
 
 for n in n_list:
@@ -163,7 +163,7 @@ for n in n_list:
     del(ana)
 
 
-# In[13]:
+# In[10]:
 
 
 with shelve.open("Result") as db:

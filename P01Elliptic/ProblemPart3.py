@@ -11,7 +11,7 @@ import scipy.sparse
 import exts
 
 
-# In[2]:
+# In[12]:
 
 
 def get_ana_sol(size):
@@ -23,7 +23,7 @@ def get_ana_sol(size):
     return ana
 
 
-# In[3]:
+# In[13]:
 
 
 def solve_sol(size, tol, max_=100000):
@@ -64,7 +64,7 @@ def solve_sol(size, tol, max_=100000):
     vec[1:-1, 1:-1] -= h**2 * int_[1:-1, 1:-1]
     vec[1:-1, [0, -1]] -= h**2 / 2.0 * int_[1:-1, [0, -1]]
     vec[[0, -1], 1:-1] -= h**2 / 2.0 * int_[[0, -1], 1:-1]
-    vec[[[0], [-1]], [[0, -1]]] -= h**2 / 4.0 * int_[[0, -1], [0, -1]]
+    vec[[[0], [-1]], [[0, -1]]] -= h**2 / 4.0 * int_[[[0], [-1]], [[0, -1]]]
     vec[0, 1:-1] -= h * bdry1[1:-1]
     vec[0, [0, -1]] -= h / 2.0 * bdry1[[0, -1]]
     vec[1:-1, 0] += h * bdry2[1:-1]
@@ -75,13 +75,13 @@ def solve_sol(size, tol, max_=100000):
     vec[[0, -1], -1] += h / 2.0 * bdry4[[0, -1]]
     
     start = time.time()
-    ctr = exts.solve_cg_infty_wrapper((n+1)*(n+1), mat.data, mat.indices, mat.indptr, vec, sol, 1.0e-13, 20000)
+    ctr = exts.solve_cg_infty_wrapper((n+1)*(n+1), mat.data, mat.indices, mat.indptr, vec, sol, tol, max_)
     end = time.time()
     
     return sol, end - start, ctr
 
 
-# In[16]:
+# In[8]:
 
 
 res = [[], [], [], []]
@@ -150,14 +150,14 @@ for n in n_list:
     del(ana)
 
 
-# In[10]:
+# In[14]:
 
 
 n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512]
 tol_list = [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8, 1.0e-9, 1.0e-10]
 
 
-# In[11]:
+# In[15]:
 
 
 for n in n_list:
@@ -172,7 +172,7 @@ for n in n_list:
     del(ana)
 
 
-# In[12]:
+# In[16]:
 
 
 with shelve.open("Result") as db:

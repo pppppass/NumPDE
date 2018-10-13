@@ -1,13 +1,33 @@
+PGFOBJS = Figure01.pgf Figure02.pgf Figure03.pgf Figure04.pgf Figure05.pgf\
+	Figure06.pgf Figure07.pgf Figure08.pgf Figure09.pgf Figure10.pgf\
+	Figure11.pgf Figure12.pgf Figure13.pgf Figure14.pgf Figure15.pgf\
+	Figure16.pgf Figure17.pgf Figure18.pgf 
+TBLOBJS = Table1.tbl Table2.tbl Table3.tbl
+TXTOBJS = Text01.txt Text02.txt Text03.txt Text04.txt Text05.txt Text06.txt\
+	Text07.txt Text08.txt Text09.txt Text10.txt Text11.txt Text12.txt
 RUNOBJS = ProblemPart1.run ProblemPart2.run ProblemPart3.run
 
 .PHONY: all
 all: Answer.pdf
 
-Answer.pdf: Answer.tex | Answer.aux
+Answer.pdf: Answer.tex $(PGFOBJS) $(TBLOBJS) $(TXTOBJS) | Answer.aux
 	lualatex Answer.tex
 
 Answer.aux: Answer.tex
 	lualatex Answer.tex
+
+.SECONDEXPANSION:
+$(PGFOBJS) $(TBLOBJS) $(TXTOBJS): $(wildcard $(RUNOBJS)) Plot.py
+	python Plot.py
+	sed -i 's/<LABEL1~*>/Error $$ \\normi{e_h} $$/' Figure03.pgf
+	sed -i 's/<LABEL2~*>/Estimated error $$ 4 \\normi{ U_h - U_{ h \/ 2 } } \/ 3 $$/' Figure04.pgf
+	sed -i 's/<LABEL3~*>/Error $$ \\normi{ U_h^1 - u_h } $$/' Figure05.pgf
+	sed -i 's/<LABEL4~*>/Error $$ \\normi{e_h} $$/' Figure09.pgf
+	sed -i 's/<LABEL5~*>/Estimated error $$ 4 \\normi{ U_h - U_{ h \/ 2 } } \/ 3 $$/' Figure10.pgf
+	sed -i 's/<LABEL6~*>/Error $$ \\normi{ U_h^1 - u_h } $$/' Figure12.pgf
+	sed -i 's/<LABEL7~*>/Error $$ \\normi{e_h} $$/' Figure15.pgf
+	sed -i 's/<LABEL8~*>/Estimated error $$ 4 \\normi{ U_h - U_{ h \/ 2 } } \/ 3 $$/' Figure16.pgf
+	sed -i 's/<LABEL9~*>/Error $$ \\normi{ U_h^1 - u_h } $$/' Figure17.pgf
 
 setup.cfg:
 	if ![[ -v CONDA_PREFIX ]];\
