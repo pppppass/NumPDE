@@ -31,7 +31,7 @@ exts.so: setup.py setup.cfg exts/algos.c exts/wrappers.c exts/exts.h
 %.py: %.ipynb
 	jupyter nbconvert --to script $*
 
-%.run: %.py
+%.run: %.py exts.so
 	python $<
 	touch $@
 
