@@ -1,0 +1,1 @@
+\log \normi{e_i} = \text{-0.35554} + \text{-1.99168} \log h^{-1}

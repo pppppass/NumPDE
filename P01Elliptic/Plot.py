@@ -13,14 +13,14 @@ from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 
 
-# In[48]:
+# In[2]:
 
 
 ana = numpy.load("Result1.npy")
 sol = numpy.load("Result2.npy")
 
 
-# In[49]:
+# In[3]:
 
 
 n = 512
@@ -28,7 +28,7 @@ x, y = numpy.linspace(0.0, 1.0, n+1), numpy.linspace(0.0, 1.0, n+1)
 y, x = numpy.meshgrid(x, y)
 
 
-# In[50]:
+# In[4]:
 
 
 pyplot.figure(figsize=(4.0, 4.0))
@@ -113,7 +113,7 @@ with shelve.open("Result") as db:
     data = {n: db[str((1, "order", n))] for n in n_list}
 
 
-# In[11]:
+# In[10]:
 
 
 err_list = [3.0 / 4.0 * data[n][0] for n in n_list]
@@ -137,7 +137,7 @@ with open("Text03.txt", "w") as f:
     f.write("{:.5e}".format(numpy.exp(a)))
 
 
-# In[13]:
+# In[11]:
 
 
 n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
@@ -145,7 +145,7 @@ with shelve.open("Result") as db:
     data = {n: db[str((1, "extrapolate", n))] for n in n_list}
 
 
-# In[25]:
+# In[12]:
 
 
 err_list = [data[n][0] for n in n_list]
@@ -163,19 +163,19 @@ pyplot.ylabel("Error")
 pyplot.savefig("Figure05.pgf")
 pyplot.show()
 with open("Text04.txt", "w") as f:
-    f.write("\\log \\normi{{U_h^1}} = \\text{{{:.5f}}} + \\text{{{:.5f}}} \\log h^{{-1}}".format(a, b))
+    f.write("\\log \\normi{{ U_h^1 - u_h}} = \\text{{{:.5f}}} + \\text{{{:.5f}}} \\log h^{{-1}}".format(a, b))
 
 
-# In[35]:
+# In[13]:
 
 
-n_list = [2, 4, 8, 16, 32, 64, 128]#, 256, 512]
+n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512]
 tol_list = [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8, 1.0e-9, 1.0e-10]
 with shelve.open("Result") as db:
     data = {n: [db[str((1, "tolerance", n, tol))][0] for tol in tol_list] for n in n_list}
 
 
-# In[39]:
+# In[14]:
 
 
 pyplot.figure(figsize=(6.0, 4.0))
@@ -190,14 +190,14 @@ pyplot.savefig("Figure06.pgf")
 pyplot.show()
 
 
-# In[52]:
+# In[15]:
 
 
 ana = numpy.load("Result3.npy")
 sol = numpy.load("Result4.npy")
 
 
-# In[53]:
+# In[16]:
 
 
 n = 512
@@ -205,7 +205,7 @@ x, y = numpy.linspace(0.0, 1.0, n+1), numpy.linspace(0.0, 1.0, n+1)
 y, x = numpy.meshgrid(x, y)
 
 
-# In[54]:
+# In[17]:
 
 
 pyplot.figure(figsize=(4.0, 4.0))
@@ -219,7 +219,7 @@ pyplot.savefig("Figure07.pgf", dpi=200.0)
 pyplot.show()
 
 
-# In[55]:
+# In[18]:
 
 
 pyplot.figure(figsize=(8.0, 3.0))
@@ -238,7 +238,7 @@ pyplot.savefig("Figure08.pgf")
 pyplot.show()
 
 
-# In[58]:
+# In[19]:
 
 
 n_list = sorted(
@@ -249,7 +249,7 @@ with shelve.open("Result") as db:
     data = {n: db[str((2, "error", n))] for n in n_list}
 
 
-# In[65]:
+# In[20]:
 
 
 err_list = [data[n][0] for n in n_list]
@@ -272,7 +272,7 @@ with open("Text05.txt", "w") as f:
     f.write("\\log \\normi{{e_i}} = \\text{{{:.5f}}} + \\text{{{:.5f}}} \\log h^{{-1}}".format(a, b))
 
 
-# In[66]:
+# In[21]:
 
 
 n_list = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
@@ -282,7 +282,7 @@ with open("Table2.tbl", "w") as f:
         f.write("\\hline\n")
 
 
-# In[69]:
+# In[22]:
 
 
 n_list = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
@@ -290,7 +290,7 @@ with shelve.open("Result") as db:
     data = {n: db[str((2, "order", n))] for n in n_list}
 
 
-# In[72]:
+# In[23]:
 
 
 err_list = [3.0 / 4.0 * data[n][0] for n in n_list]
@@ -314,7 +314,7 @@ with open("Text07.txt", "w") as f:
     f.write("{:.5e}".format(numpy.exp(a)))
 
 
-# In[73]:
+# In[24]:
 
 
 n_list = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
@@ -322,7 +322,7 @@ with shelve.open("Result") as db:
     data = {n: db[str((2, "extrapolate", n))] for n in n_list}
 
 
-# In[75]:
+# In[25]:
 
 
 err_list = [data[n][0] for n in n_list]
@@ -340,19 +340,19 @@ pyplot.ylabel("Error")
 pyplot.savefig("Figure11.pgf")
 pyplot.show()
 with open("Text08.txt", "w") as f:
-    f.write("\\log \\normi{{U_h^1}} = {:.5f} + {:.5f} \\log h^{{-1}}".format(a, b))
+    f.write("\\log \\normi{{ U_h^1 - u_h}} = {:.5f} + {:.5f} \\log h^{{-1}}".format(a, b))
 
 
-# In[78]:
+# In[26]:
 
 
-n_list = [4, 8, 16, 32, 64, 128]#, 256, 512]
+n_list = [4, 8, 16, 32, 64, 128, 256, 512]
 tol_list = [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8, 1.0e-9, 1.0e-10]
 with shelve.open("Result") as db:
     data = {n: [db[str((2, "tolerance", n, tol))][0] for tol in tol_list] for n in n_list}
 
 
-# In[79]:
+# In[27]:
 
 
 pyplot.figure(figsize=(6.0, 4.0))
@@ -367,14 +367,14 @@ pyplot.savefig("Figure12.pgf")
 pyplot.show()
 
 
-# In[80]:
+# In[28]:
 
 
 ana = numpy.load("Result5.npy")
 sol = numpy.load("Result6.npy")
 
 
-# In[81]:
+# In[29]:
 
 
 n = 512
@@ -382,7 +382,7 @@ x, y = numpy.linspace(0.0, 1.0, n+1), numpy.linspace(0.0, 1.0, n+1)
 y, x = numpy.meshgrid(x, y)
 
 
-# In[86]:
+# In[30]:
 
 
 pyplot.figure(figsize=(4.0, 4.0))
@@ -396,7 +396,7 @@ pyplot.savefig("Figure13.pgf", dpi=200.0)
 pyplot.show()
 
 
-# In[87]:
+# In[31]:
 
 
 pyplot.figure(figsize=(8.0, 3.0))
@@ -415,7 +415,7 @@ pyplot.savefig("Figure14.pgf")
 pyplot.show()
 
 
-# In[114]:
+# In[32]:
 
 
 n_list = sorted(
@@ -426,12 +426,12 @@ with shelve.open("Result") as db:
     data = {n: db[str((3, "error", n))] for n in n_list}
 
 
-# In[115]:
+# In[33]:
 
 
 err_list = [data[n][0] for n in n_list]
 n_unif = numpy.logspace(numpy.log10(2.0), numpy.log10(4096.0), 50)
-b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list[4:-3]), numpy.log(err_list[4:-3]))
+b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list[1:-5]), numpy.log(err_list[1:-5]))
 pyplot.figure(figsize=(6.0, 4.0))
 pyplot.plot(n_list, err_list, label="<LABEL7>")
 pyplot.scatter(n_list, err_list, s=5.0)
@@ -449,7 +449,7 @@ with open("Text09.txt", "w") as f:
     f.write("\\log \\normi{{e_i}} = \\text{{{:.5f}}} + \\text{{{:.5f}}} \\log h^{{-1}}".format(a, b))
 
 
-# In[99]:
+# In[34]:
 
 
 n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
@@ -459,20 +459,20 @@ with open("Table3.tbl", "w") as f:
         f.write("\\hline\n")
 
 
-# In[102]:
+# In[35]:
 
 
-n_list = [3, 6, 12, 24, 48, 96, 192, 384, 768, 1536]#[2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
 with shelve.open("Result") as db:
     data = {n: db[str((3, "order", n))] for n in n_list}
 
 
-# In[104]:
+# In[36]:
 
 
 err_list = [3.0 / 4.0 * data[n][0] for n in n_list]
 n_unif = numpy.logspace(numpy.log10(2.0), numpy.log10(2048.0), 50)
-b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list[2:-1]), numpy.log(err_list[2:-1]))
+b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list[1:-2]), numpy.log(err_list[1:-2]))
 pyplot.figure(figsize=(6.0, 4.0))
 pyplot.plot(n_list, err_list, label="<LABEL8~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>")
 pyplot.scatter(n_list, err_list, s=5.0)
@@ -491,20 +491,20 @@ with open("Text11.txt", "w") as f:
     f.write("{:.5e}".format(numpy.exp(a)))
 
 
-# In[106]:
+# In[37]:
 
 
-n_list = [3, 6, 12, 24, 48, 96, 192, 384, 768, 1536]#[2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
 with shelve.open("Result") as db:
     data = {n: db[str((3, "extrapolate", n))] for n in n_list}
 
 
-# In[108]:
+# In[38]:
 
 
 err_list = [data[n][0] for n in n_list]
 n_unif = numpy.logspace(numpy.log10(2.0), numpy.log10(2048.0), 50)
-b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list), numpy.log(err_list))
+b, a, _, _, _ = scipy.stats.linregress(numpy.log(n_list[:5]), numpy.log(err_list[:5]))
 pyplot.figure(figsize=(6.0, 4.0))
 pyplot.plot(n_list, err_list, label="<LABEL9~~~~~~~~>")
 pyplot.scatter(n_list, err_list, s=5.0)
@@ -517,19 +517,19 @@ pyplot.ylabel("Error")
 pyplot.savefig("Figure17.pgf")
 pyplot.show()
 with open("Text12.txt", "w") as f:
-    f.write("\\log \\normi{{U_h^1}} = {:.5f} + {:.5f} \\log h^{{-1}}".format(a, b))
+    f.write("\\log \\normi{{ U_h^1 - u_h}} = {:.5f} + {:.5f} \\log h^{{-1}}".format(a, b))
 
 
-# In[111]:
+# In[39]:
 
 
-n_list = [2, 4, 8, 16, 32, 64, 128]#, 256, 512]
+n_list = [2, 4, 8, 16, 32, 64, 128, 256, 512]
 tol_list = [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8, 1.0e-9, 1.0e-10]
 with shelve.open("Result") as db:
     data = {n: [db[str((3, "tolerance", n, tol))][0] for tol in tol_list] for n in n_list}
 
 
-# In[112]:
+# In[40]:
 
 
 pyplot.figure(figsize=(6.0, 4.0))

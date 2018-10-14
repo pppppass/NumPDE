@@ -2,17 +2,21 @@
 %! TeX program = LuaLaTeX
 
 \documentclass[english, nochinese]{pnote}
+\usepackage{siunitx}
 \usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+
+\newcommand\normi[1]{\norm{#1}_{\infty}}
 
 \title{Report of Project 1}
 \author{Zhihan Li, 1600010653}
-\date{October 10, 2018}
+\date{October 14, 2018}
 
 \begin{document}
 
 \maketitle
 
-\textbf{Problem. (Page 31 Coding Exercise)} \textit{Answer.} We solve the Poisson equation with three sets of source terms and boundary conditions using finite difference scheme. The detailed procedure is explained in the following sections.
+\textbf{Problem. (Page 31 Coding Exercise)} \textit{Answer.} We solve the Poisson equation with three sets of source terms and boundary conditions using finite difference scheme. Details are explained in the following sections.
 
 \section{The first set of condition}
 
@@ -24,7 +28,7 @@ We proceed to solve a ``standard'' example first. Consider the equation
 \rbr{ u_{ x x } + u_{ y y } } \rbr{ x, y } = -2 \spi^2 \sin \spi x \cos \spi y, & \rbr{ x, y } \in \Omega = \rbr{ 0, 1 } \times \rbr{ 0, 1 }; \\
 u \rbr{ x, y } = 0, & \rbr{ x, y } \in \pdl{\text{W}} \Omega = \cbr{0} \times \sbr{ 0, 1 }; \\
 u \rbr{ x, y } = \sin \spi x, & \rbr{ x, y } \in \pdl{\text{S}} \Omega = \sbr{ 0, 1 } \times \cbr{0}; \\
-u_x \rbr{ x, y } = \spi \cos \spi y, & \rbr{ x, y } \in \pdl{\text{E}} \Omega = \cbr{1} \times \sbr{ 0, 1 }; \\
+u_x \rbr{ x, y } = -\spi \cos \spi y, & \rbr{ x, y } \in \pdl{\text{E}} \Omega = \cbr{1} \times \sbr{ 0, 1 }; \\
 \rbr{ u + u_y } \rbr{x} = -\sin \spi x, & \rbr{ x, y } \in \pdl{\text{N}} \Omega = \sbr{ 0, 1 } \times \cbr{1}.
 \end{cases}
 \end{equation}
@@ -32,6 +36,23 @@ The analytical solution is
 \begin{equation}
 u \rbr{ x, y } = \sin \spi x \cos \spi y.
 \end{equation}
+The 3-dimensional plot of the analytical solution is given in Figure \ref{Fig:Prob13D}.
+\begin{figure}[htbp]
+\centering
+\input{Figure01.pgf}
+\caption{Analytical solution towards first problem}
+\label{Fig:Prob13D}
+\end{figure}
+Denote the source term and boundary conditions at nodes given as
+\begin{gather}
+\begin{cases}
+a_{ i, j } = \rbr{ u_{ x x } + u_{ y y } }_{ i, j } = -2 \spi^2 \sin \spi x_i \cos \spi y_i, \\
+b^1_{ 0, j } = u_{ 0, j } = 0, \\
+b^2_{ i, 0 } = u_{ i, 0 } = \sin \spi x_i, \\
+b^3_{ N, j } = \rbr{u_x}_{ N, j } = -\spi \cos \spi y_j, \\
+b^4_{ i, N } = \rbr{ u + u_y }_{ i, N } = -\sin \spi x_i.
+\end{cases}
+\end{gather}
 
 We adopt a uniform mesh to solve this equation. Denote the $ U_{ i, j } $ to be the value at $ \rbr{ x_i, y_j } $ with $ x_i = h i $ and $ y_j = h j $, where
 \begin{equation}
@@ -41,24 +62,24 @@ is the mesh size.
 
 We discretize the equation as follows. On $\Omega$, we set the equation
 \begin{equation}
-L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = a_{ i, j }
 \end{equation}
 for $ 1 \le i, j \le N - 1 $. The local truncation error is
 \begin{equation}
 T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
 \end{equation}
-Herer $\xi$ and $\eta$ correspond to the Lagrange form of remainder on Taylor's theorem.
+Here $\xi$ and $\eta$ correspond to the Lagrange form of remainder on Taylor's theorem.
 On $ \pdl{\text{W}} \Omega $ and $ \pdl{\text{S}} \Omega $, we set the equation
 \begin{equation}
-U_{ 0, j } = u_{ 0, j }
+U_{ 0, j } = b^1_{ 0, j }
 \end{equation}
 for $ 0 \le j \le N $ and
 \begin{equation}
-U_{ i, 0 } = u_{ i, 0 }
+U_{ i, 0 } = b^2_{ i, 0 }
 \end{equation}
-for $ 0 \le i \le N $. There is no local truncation error. On $ \pdl{\text{E}}$, we set the equation
+for $ 0 \le i \le N $. There is no local truncation error. On $ \pdl{\text{E}} \Omega $, we set the equation
 \begin{equation}
-L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } - 2 \rbr{u_x}_{ N, j }
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h a_{ N, j } - 2 b^3_{ N, j }
 \end{equation}
 for $ 1 \le j \le N - 1 $.
 The local truncation error is
@@ -67,10 +88,7 @@ T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h
 \end{equation}
 On $ \pdl{\text{N}} \Omega $, we set
 \begin{equation}
-\begin{split}
-L_h U_{ i, N } &= \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, N } - 2 \rbr{ u + u_y }_{ i, N }
-\end{split}
+L_h U_{ i, N } = \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } = h a_{ i, N } - 2 b^4_{ i, N }
 \end{equation}
 for $ 1 \le i \le N - 1 $.
 The local truncation error is
@@ -79,84 +97,214 @@ T_{ i, N } = \frac{1}{12} h^3 \rbr{u_{ x x x x }}_{ i + \xi, N } - \frac{1}{3} h
 \end{equation}
 On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we set
 \begin{equation}
-\begin{split}
-L_h U_{ N, N } &= \frac{ 2 U_{ N, N - 1 } + 2 U_{ N - 1, N } - 4 U_{ N, N } }{h} - 2 U_{ N, N } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ N, N } - 2 \rbr{ u + u_x + u_y }_{ N, N }.
-\end{split}
+L_h U_{ N, N } = \frac{ 2 U_{ N, N - 1 } + 2 U_{ N - 1, N } - 4 U_{ N, N } }{h} - 2 U_{ N, N } = h a_{ N, N } - 2 b^3_{ N, N } - 2 b^4_{ N, N }.
 \end{equation}
 The local truncation error is
 \begin{equation}
 T_{ N, N } = - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ N, N - \eta }.
 \end{equation}
 
+\subsection{Linear system}
+
+According to $L_h$ described above, we can set up a linear system of
+\begin{equation}
+U_h = \msbr{ U_{ 1 1 } & U_{ 1 2 } & \cdots & U_{ 1 N } & U_{ 2 1 } & U_{ 2 2 } & \cdots & U_{ 2 N } & \cdots & U_{ N 1 } & U_{ N 2 } & \cdots & U_{ N N } }^{\text{T}}.
+\end{equation}
+A direct choice is $ L_h U_h = \rbr{ L u }_h $, where $ \rbr{ L u }_h $ stands for the terms given in the right hand side. However, for the convenience of solvers, we need further to make the matrix positive definite and therefore appropriate scaling of $L_h$ in rows is required. The scaled equation is
+\begin{equation}
+A_h U_h = B_h,
+\end{equation}
+where $A_h$ can be split into $ N \times N $ blocks
+\begin{equation}
+A_h = \msbr{ A_h^1 & -I_h^1 & & & & \\ -I_h^1 & A_h^1 & -I_h^1 & & & \\ & -I_h^1 & A_h^1 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & A_h^1 & -I_h^1 \\ & & & & -I_h^1 & \frac{1}{2} A_h^1 },
+\end{equation}
+with $ N \times N $ matrices
+\begin{gather}
+A_h^1 = \msbr{ 4 & -1 & & & & \\ -1 & 4 & -1 & & & \\ & -1 & 4 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & 4 & -1 \\ & & & & -1 & 2 + h }, \\
+I_h^1 = \msbr{ 1 & & & & & \\ & 1 & & & & \\ & & 1 & & & \\ & & & \ddots & & \\ & & & & 1 & \\ & & & & & \frac{1}{2} } \\
+\end{gather}
+and
+\begin{equation}
+B_h = \msbr{ B_{ 1 1 } & B_{ 1 2 } & \cdots & B_{ 1 N } & B_{ 2 1 } & B_{ 2 2 } & \cdots & B_{ 2 N } & \cdots & B_{ N 1 } & B_{ N 2 } & \cdots & B_{ N N } }^{\text{T}}
+\end{equation}
+with
+\begin{equation}
+B_{ i j } =
+\begin{cases}
+-h^2 a_{ i, j } + b^1_{ 0, j } + b^2_{ i, 0 }, & i, j = 1; \\
+-h^2 a_{ i, j } + b^1_{ 0, j }, & i = 1, 2 \le j \le N - 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + \frac{1}{2} b^1_{ 0, j } + h b^4_{ i, N }, & i = 1, j = N; \\
+-h^2 a_{ i, j } + b^2_{ i, 0 }, & 2 \le i \le N - 1, j = 1; \\
+-h^2 a_{ i, j }, & 2 \le i, j \le N - 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^4_{ i, N }, & 2 \le i \le N - 1, j = N; \\
+-\frac{1}{2} h^2 a_{ i, j } + \frac{1}{2} b^2_{ i, 0 } + h b^3_{ N, j }, & i = N, j = 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^3_{ N, j }, & i = N, 2 \le j \le N - 1; \\
+-\frac{1}{4} h^2 a_{ i, j } + \frac{1}{2} h b^3_{ N, j } + \frac{1}{2} h b^4_{ i, N }, & i, j = N. \\
+\end{cases}
+\end{equation}
+Note that $A_h$ is positive definite since $A_h$ is irreducible diagonally dominant and its diagonal is positive.
+
+Denote the remainder $ R_h = B_h - A_h U_h $ and $ r_h = \rbr{ L u }_h - L_h U_h $. From the process of scaling $L_h$ into $A_h$, we deduce
+\begin{equation}
+\normi{r_h} \le \frac{1}{h^2} \normi{R_h}
+\end{equation}
+as long as $ h \le 1 / 4 $ since the scaling factor in rows are $ 1 / h^2 $, $ 1 / h $, $ 2 / h $ and $ 4 / h $.
+
+We apply conjugate gradient method to solve this equation. The tolerance $\normi{R_h}$ is to be determined. The initial value of $U_h$ is set to be zero.
+
 \subsection{\textit{A priori} error estimation}
 
-We adopt $\ell^{\infty}$ norm by default $\norm{\cdot}$ here. We have
+We have
 \begin{equation}
-\norm{ L_h e_h } \le \norm{ L_h U_h - L_h u_h } \le \norm{ L_h U_h - \rbr{ L u }_h } + \norm{ L_h u_h - \rbr{ L u }_h } \le \norm{r_h} + \norm{ L_h T_h },
+\begin{split}
+\normi{ L_h e_h } &= \normi{ L_h U_h - L_h u_h } \\
+&\le \normi{ \rbr{ L u }_h - L_h U_h } + \normi{ L_h u_h - \rbr{ L u }_h } \\
+&\le \normi{r_h} + \normi{ L_h T_h },
+\end{split}
 \end{equation}
-where $e_h$ is the error $ U_h - u_h $ and $r_h$ is the remainder of linear system solver.
+where $e_h$ is the error $ U_h - u_h $.
 
 The constructed $-L_h$ is clearly diagonally dominant with respect to $ U_{ i, j } $ for $ 1 \le i, j \le N $. Choose
 \begin{equation}
-\varPhi \rbr{ x, y } = \frac{1}{4} \rbr{ \rbr{ x - 2 }^2 + 6 \rbr{ y - 2 }^2 } \ge 0
+\varPhi \rbr{ x, y } = \frac{1}{4} \rbr{ \rbr{ x - 2 }^2 + \rbr{ y - 2 }^2 } - \frac{1}{2},
 \end{equation}
-to be the comparison function. On $\Omega$, we have
+which is non-negative over $\overline{\Omega}$, to be the comparison function. On $\Omega$, we have $ L_h \varPhi_{ i, j } = 1 $ for $ 1 \le i, j \le N - 1 $. On $ \pdl{\text{E}} \Omega $, we have $ L_h \varPhi_{ N, j } = h + 1 \ge 1 $ for $ 1 \le j \le N - 1 $. On $ \pdl{\text{N}} \Omega $, we have $ L_h \varPhi_{ i, N } = h + 1 + \rbr{ \rbr{ x_i - 2 }^2 - 1 } / 2 \ge 1 $ for $ 1 \le i \le N - 1 $.
+On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we have $ L_h \varPhi_{ N, N } = h + 2 \ge 1 $. Combing the connectivity of $L_h$, comparison theorem applies and
 \begin{equation}
-L_h \varPhi_{ i, j } = \frac{7}{2} \ge 1
+\normi{e_h} \le \norm{e_h}_{ \infty, J_D } + \normi{ L_h e_h } \norm{\varPhi}_{ \infty, J_D },
 \end{equation}
-for $ 1 \le i, j \le N - 1 $.
-On $ \pdl{\text{E}} \Omega $, we have
+where $J_D$ corresponds to nodes lying on $ \pdl{\text{W}} \Omega \cap \pdl{\text{S}} \Omega $. We have $ \norm{e_h}_{ \infty, J_D } = 0 $ and
 \begin{equation}
-L_h \varPhi_{ N, j } = \frac{7}{2} h + 1 \ge 1
+\norm{\varPhi}_{ \infty, J_D } = 3 / 2.
 \end{equation}
-for $ 0 \le j \le N - 1 $.
-On $ \pdl{\text{N}} \Omega $, we have
-\begin{equation}
-L_h \varPhi_{ i, N } = \frac{7}{2} h + 3 - \frac{1}{2} \rbr{ x_i - 2 }^2 \ge 1.
-\end{equation}
-On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we have
-\begin{equation}
-L_h \varPhi_{ i, N } = \frac{7}{2} h + \frac{7}{2} \ge 1.
-\end{equation}
-Combing the connectivity of $L_h$, $L_h$ satisfies the condition of comparison theorem and therefore
-\begin{equation}
-\norm{e_h} \le \norm{e_h}_{J_D} + \norm{ L_h e_h } \norm{\varPhi}_{J_D},
-\end{equation}
-where $J_D$ corresponds to points lying on $ \pdl{\text{W}} \Omega \cap \pdl{\text{S}} \Omega $. Note that we have
-\begin{equation}
-\norm{e_h}_{J_D} = 0
-\end{equation}
-and
-\begin{equation}
-\norm{\varPhi}_{J_D} = 7.
-\end{equation}
-We further deduce from
+We further deduce by calculation that
 \begin{gather}
-\norm{u_{ x x x }}, \norm{u_{ y y y }} \le \spi^3, \\
-\norm{u_{ x x x x }}, \norm{u_{ y y y y }} \le \spi^4
+\normi{u_{ x x x }} = \normi{ -\spi^3 \cos \spi x_i \cos \spi y_i }, \normi{u_{ y y y }} = \normi{ \spi^3 \sin \spi x_i \sin \spi y_i } \le \spi^3, \\
+\normi{u_{ x x x x }} = \normi{ -\spi^4 \sin \spi x_i \cos \spi y_i }, \normi{u_{ y y y y }} = \normi{ -\spi^4 \sin \spi x_i \cos \spi y_j } \le \spi^4
 \end{gather}
-and $ h \le 1 $ that
+and therefore
 \begin{equation}
-\norm{T_h} \le \frac{2}{3} h^2 \spi^3.
+\normi{T_h} \le \frac{2}{3} h^2 \spi^3
 \end{equation}
+as long as $ h \le 1 $.
 Combing these all, we have
-\begin{equation}
-\norm{e_h} \le 7 \rbr{ \norm{r_h} + \frac{2}{3} h^2 \spi^3 }.
+\begin{equation} \label{Eq:Prob1Err}
+\normi{e_h} \le \frac{3}{2} \rbr{ \frac{1}{h^2} \normi{R_h} + \frac{2}{3} h^2 \spi^3 }.
 \end{equation}
-We may require
+To achieve $ \normi{e_h} \le 10^{-5} $, we may require $ N = 2048 $, $ h \approx 4.88 \times 10^{-4} $ and $ \normi{R_h} \le 3 \times 10^{-13} $.
+
+We vary $N$ and the numerical result is shown in Table \ref{Tbl:Prob1Err}. The tolerance is set uniformly to $ 3 \times 10^{-13} $. We plot the error curve in Figure \ref{Fig:Prob1Err}. The estimated errors correspond to the value calculated by \eqref{Eq:Prob1Err}. The fit line is
 \begin{equation}
-\norm{r_h} \le 5 \times 10^{-7}
+\input{Text01.txt}.
 \end{equation}
-and
-\begin{gather}
-h \le \frac{1}{2000}, \\
-N \ge 2000
-\end{gather}
-to achieve
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & Error $\normi{e_h}$ & Times (\Si{s}) & \#Iterations \\
+\hline
+\input{Table1.tbl}
+\end{tabular}
+\caption{Numerical results for different $N$ towards the first problem}
+\label{Tbl:Prob1Err}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure03.pgf}
+\caption{Error $ \normi{e_h} $ for different $N$ towards the first problem}
+\label{Fig:Prob1Err}
+\end{figure}
+
+From these results, we verify the validity of our \textit{a prior} error estimation, together with the $ O \rbr{h^2} $ convergence, with the analytical solution.
+
+The solution from solver when $ N = 512 $ is plotted in Figure \ref{Fig:Prob1Sol}, together with the error.
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure02.pgf}}
+\caption{Solution and error towards first problem}
+\label{Fig:Prob1Sol}
+\end{figure}
+
+\subsection{\textit{A posteriori} error estimation}
+
+Let $T_{\text{lead}}$ be the leading term of truncation error, e.g.
 \begin{equation}
-\norm{e_h} \le 10^{-5}.
+T_{\text{lead}} \rbr{ x, y } = \frac{1}{12} h^2 \rbr{ u_{ x x x x } + u_{ y y y y } }
 \end{equation}
+for $ \rbr{ x, y } \in \Omega $ and
+\begin{equation}
+T_{\text{lead}} \rbr{ 1, y } = -\frac{1}{3} h^2 u_{ x x x }
+\end{equation}
+for $ \rbr{ x, y } \in \pdl{\text{E}} \Omega $, we have
+\begin{equation}
+T = T_{\text{lead}} + O \rbr{h^3}.
+\end{equation}
+Let $\psi$ the solution of
+\begin{equation}
+L \psi = \frac{1}{h^2} T_{\text{lead}}.
+\end{equation}
+Since $ T_{\text{lead}} \sim O \rbr{h^2} $ and
+\begin{equation}
+L_h \rbr{ U_h - u_h + h^2 \psi_h } = \rbr{ \rbr{ L u }_h - L_h u_h } + T_{ \text{lead}, h } + O \rbr{h^4} = -T_h + T_{ \text{lead}, h } = O \rbr{h^3},
+\end{equation}
+we deduce
+\begin{equation}
+U_h = u_h - h^2 \psi_h + O \rbr{h^3}
+\end{equation}
+and further
+\begin{equation}
+U_h - u_h = \frac{4}{3} \rbr{ U_h - U_{ h / 2 } } + O \rbr{h^3}.
+\end{equation}
+We may estimate $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $. Furthermore, we can estimate the coefficient of error leading term $\normi{\psi_h}$ by
+\begin{equation}
+\log \frac{4}{3} \normi{ U_h - U_{ h / 2 } } = \log \normi{\psi_h} - 2 \log h^{-1}.
+\end{equation}
+We plot the curve of $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ in Figure \ref{Fig:Prob1Post} with the fitting line. The line fit is
+\begin{equation}
+\input{Text02.txt}.
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure04.pgf}
+\caption{Estimated error $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ for different $N$ towards the first problem}
+\label{Fig:Prob1Post}
+\end{figure}
+
+From this figure, since the points closely lie on the fit line, we conclude that the estimation $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $ holds and further that $ N = 256 $ suffices for $ \normi{e_h} \le 10^{-5} $. Note that this \textit{a posteriori} error estimation is much better than the \textit{a prior} one. We have also verified the $ O \rbr{h^2} $ convergence without the analytical solution. The leading coefficient of $h^2$ in $\normi{e_h}$ is $ \normi{\psi_h} = \text{\input{Text03.txt}} $.
+
+\subsection{Additional result}
+
+The above argument also provides us a technique to achieve higher order convergence by extrapolation
+\begin{equation} \label{Eq:Extra}
+U_h^1 = \frac{ 4 U_{ h / 2 } - U_h }{3} = u_h + O \rbr{h^3}.
+\end{equation}
+We plot the error $ \normi{ U_h^1 - u_h } $ in Figure \ref{Fig:Prob1Extra}. The fit line is
+\begin{equation}
+\input{Text04.txt}.
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure05.pgf}
+\caption{Error $ \normi{ U_h^1 - u_h } $ for different $N$ towards the first problem}
+\label{Fig:Prob1Extra}
+\end{figure}
+
+From this figure, an $ O \rbr{h^3} $ convergence can be seen immediately. Using this technique, we may use even small grids to achieve higher accuracy. Different from the textbook, we can only get $ O \rbr{h^3} $ because there are indeed $ O \rbr{h^3} $ terms (which is not the leading term) in the truncation error of boundary conditions. Such terms are not leading terms and thus cannot be directly canceled out.
+
+We further investigate the tolerance of conjugate gradient solver. We vary the tolerance (upper bound for $\norm{R_h}$) for different $N$, and plot the corresponding curve in Figure \ref{Fig:Prob1Tol}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure06.pgf}
+\caption{Error $ \norm{ U_h - u_h } $ for different tolerance towards the first problem}
+\label{Fig:Prob1Tol}
+\end{figure}
+
+From this figure, we can see that simply decreasing the tolerance does not help convergence: the error introduced by numerical discretization dominates for small tolerance. This verifies the decomposition of final error as in \eqref{Eq:Prob1Err}.
 
 \section{The second set of condition}
 
@@ -169,17 +317,33 @@ We continue to use notations introduced in previous sections. We then tackle a h
 u_x \rbr{ x, y } = \rbr{ 1 - y } / \rbr{ 1 + y^2 }, & \rbr{ x, y } \in \pdl{\text{W}} \Omega; \\
 u \rbr{ x, y } = \ln \rbr{ x + 1 }, & \rbr{ x, y } \in \pdl{\text{S}} \Omega; \\
 u_x \rbr{ x, y } = \rbr{ 2 - y } / \rbr{ 4 + y^2 }, & \rbr{ x, y } \in \pdl{\text{E}} \Omega; \\
-u \rbr{ x, y } = \ln \sqrt{ x^2 + 2 x + 2 } + \spi / 2 - \arctan \rbr{ x + 1 }, & \rbr{ x, y } \in \pdl{\text{N}} \Omega.
+u \rbr{ x, y } = \ln \sqrt{ \rbr{ x + 1 }^2 + 1 } + \spi / 2 - \arctan \rbr{ x + 1 }, & \rbr{ x, y } \in \pdl{\text{N}} \Omega.
 \end{cases}
 \end{equation}
 The analytical solution is
 \begin{equation}
 u \rbr{ x, y } = \ln \sqrt{ \rbr{ x + 1 }^2 + y^2 } + \arctan \frac{y}{ x + 1 }.
 \end{equation}
+The 3-dimensional plot of the analytical solution is given in Figure \ref{Fig:Prob23D}.
+\begin{figure}[htbp]
+\centering
+\input{Figure07.pgf}
+\caption{Analytical solution towards second problem}
+\label{Fig:Prob23D}
+\end{figure}
+The discretized source term and boundary conditions are
+\begin{gather}
+\begin{cases}
+b^1_{ 0, j } = \rbr{u_x}_{ 0, j } = \rbr{ 1 - y_j } / \rbr{ 1 + y_j^2 }, \\
+b^2_{ i, 0 } = u_{ i, 0 } = \ln \rbr{ x_i + 1 }, \\
+b^3_{ N, j } = \rbr{u_x}_{ N, j } = \rbr{ 2 - y_j } / \rbr{ 4 + y_j^2 }, \\
+b^4_{ i, N } = u_{ i, N } = \ln \sqrt{ \rbr{ x_i + 1 }^2 + 1 } + \spi / 2 - \arctan \rbr{ x_i + 1 }.
+\end{cases}
+\end{gather}
 
 On $\Omega$, we set the equation
 \begin{equation}
-L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = a_{ i, j }
 \end{equation}
 for $ 1 \le i, j \le N - 1 $. The local truncation error is
 \begin{equation}
@@ -187,25 +351,62 @@ T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_
 \end{equation}
 On $ \pdl{\text{W}} \Omega $, we set the equation
 \begin{equation}
-L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{u_x}_{ 0, j }
+L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h a_{ 0, j } + 2 b^1_{ 0, j }
 \end{equation}
 for $ 1 \le j \le N - 1 $. The local truncation error is
 \begin{equation}
 T_{ 0, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ 0, j + \xi } + \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \eta, j }.
 \end{equation}
-On $ \pdl{\text{E}} \Omega $, we set the equation
+On $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $, we set
 \begin{equation}
-L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } - 2 \rbr{u_x}_{ N, j }
+U_{ i, j } = b^{ 2 \mathrel{\text{or}} 4 }_{ i, j }
+\end{equation}
+for $ 0 \le i \le N $ and $ j = 0, N $. There is no local truncation error. On $ \pdl{\text{E}} \Omega $, we set the equation
+\begin{equation}
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h a_{ N, j } - 2 b^3_{ N, j }
 \end{equation}
 for $ 1 \le j \le N - 1 $. The local truncation error is
 \begin{equation}
 T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \eta, j }.
 \end{equation}
-On $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $, we set
+
+\subsection{Linear system}
+
+We arrange $U_h$ as
 \begin{equation}
-U_{ i, j } = u_{ i, j }
+U_h = \msbr{ U_{ 0 1 } & U_{ 0 2 } & \cdots & U_{ 0, N - 1 } & U_{ 1 1 } & U_{ 1 2 } & \cdots & U_{ 1, N - 1 } & \cdots & U_{ N 1 } & U_{ N 2 } & \cdots & U_{ N, N - 1 } }^{\text{T}}
 \end{equation}
-for $ 0 \le i \le N $ and $ j = 0, N $. There is no local truncation error.
+and so as $B_h$.
+
+The scaled equation is $ A_h U_h = B_h $ where $A_h$ can be split into $ \rbr{ N + 1 } \times \rbr{ N + 1 } $ blocks
+\begin{equation}
+A_h = \msbr{ \frac{1}{2} A_h^1 & -I & & & & \\ -I & A_h^1 & -I & & & \\ & -I & A_h^1 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & A_h^1 & -I \\ & & & & -I & \frac{1}{2} A_h^1 }
+\end{equation}
+where $A_h^1$ is a $ \rbr{ N - 1 } \times \rbr{ N - 1 } $ matrix
+\begin{equation}
+A_h^1 = \msbr{ 4 & -1 & & & & \\ -1 & 4 & -1 & & & \\ & -1 & 4 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & 4 & -1 \\ & & & & -1 & 4 }
+\end{equation}
+and
+\begin{equation}
+B_{ i j } =
+\begin{cases}
+-h b^1_{ 0, j } + 
+\frac{1}{2} b^2_{ i, 0 }, & i, j = 1; \\
+-h b^1_{ 0, j }, & i = 1, 2 \le j \le N - 1; \\
+-h b^1_{ 0, j } + \frac{1}{2} b^4_{ i, N }, & i = 1, j = N; \\
+b^2_{ i, 0 }, & 2 \le i \le N - 1, j = 1; \\
+0, & 2 \le i, j \le N - 1; \\
+b^4_{ i, N }, & 2 \le i \le N - 1, j = N; \\
+h b^3_{ 0, j } + 
+\frac{1}{2} b^2_{ i, 0 }, & i = N, j = 1; \\
+h b^3_{ 0, j }; \\
+h b^3_{ 0, j } + \frac{1}{2} b^4_{ i, N }. & i, j = N. \\
+\end{cases}
+\end{equation}
+That $A_h$ is positive definiteness applies similarly. Moreover, we similarly have
+\begin{equation}
+\normi{r_h} \le \frac{1}{h^2} \normi{R_h}.
+\end{equation}
 
 \subsection{\textit{A priori} error estimation}
 
@@ -213,21 +414,10 @@ The discretized $-L_h$ is also diagonally dominant with respect to $ U_{ i, j } 
 \begin{equation}
 \varPhi \rbr{ x, y } = \rbr{ y - \frac{1}{2} }^2 - \frac{1}{2} \rbr{ x - \frac{1}{2} }^2 + \frac{1}{8}.
 \end{equation}
-We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. On $\Omega$, we have
-\begin{equation}
-L_h \varPhi_{ i, j } = 1
-\end{equation}
-for $ 1 \le i, j \le N - 1 $. On $ \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $, we have
-\begin{equation}
-L_h \varPhi_{ i, j } = h + 1 \ge 1
-\end{equation}
-for $ i = 0, N $ and $ 0 \le j \le N $. Hence, we can again apply comparison theorem on $L_h$. Note that we have
-\begin{equation}
-\norm{e_h}_{J_D} = 0
-\end{equation}
+We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. On $\Omega$, we have $ L_h \varPhi_{ i, j } = 1 $ for $ 1 \le i, j \le N - 1 $. On $ \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $, we have $ L_h \varPhi_{ i, j } = h + 1 \ge 1 $ for $ i = 0, N $ and $ 0 \le j \le N $. Hence, we can again apply comparison theorem on $L_h$. Note that we have $ \norm{e_h}_{ \infty, J_D } = 0 $
 and
 \begin{equation}
-\norm{\varPhi}_{J_D} = \frac{3}{8}.
+\norm{\varPhi}_{ \infty, J_D } = \frac{3}{8}.
 \end{equation}
 Denote $ z = x + y \si $ and $ w \rbr{z} = \ln \rbr{ 1 + z } $. Since
 \begin{equation}
@@ -247,34 +437,99 @@ for $ \rbr{ x, y } \in \overline{\Omega} $. Similarly we have
 \end{equation}
 for $ \rbr{ x, y } \in \overline{\Omega} $. These imply
 \begin{gather}
-\norm{u_{ x x x }} \le 2 \sqrt{2}, \\
-\norm{u_{ x x x x }} = \norm{u_{ y y y y }} \le 6 \sqrt{2}.
+\normi{u_{ x x x }} \le 2 \sqrt{2}, \\
+\normi{u_{ x x x x }} = \normi{u_{ y y y y }} \le 6 \sqrt{2}.
 \end{gather}
 As a result,
 \begin{equation}
-\norm{T_h} \le \max \cbr{ \sqrt{2} h^2, \frac{\sqrt{2}}{2} h^3 + \frac{2}{3} \sqrt{2} h^2 }
+\normi{T_h} \le \max \cbr{ \sqrt{2} h^2, \frac{\sqrt{2}}{2} h^3 + \frac{2}{3} \sqrt{2} h^2 }
 \end{equation}
 and
 \begin{equation}
-\norm{T_h} \le \sqrt{2} h^2
+\normi{T_h} \le \sqrt{2} h^2
 \end{equation}
 as long as $ h \le 2 / 3 $. Combining these all, we have
-\begin{equation}
-\norm{e_h} \le \frac{3}{8} \rbr{ \norm{r_h} + \sqrt{2} h^2 }.
+\begin{equation} \label{Eq:Prob2Err}
+\normi{e_h} \le \frac{3}{8} \rbr{ \frac{1}{h^2} \normi{R_h} + \sqrt{2} h^2 }.
 \end{equation}
-We may require
+We may require $ N = 256 $, $ h \approx 3.91 \times 10^{-3} $ and $ \normi{R_h} \le 10^{-11} $ to achieve $ \norm{e_h} \le 10^{-5} $
+
+We vary $N$ and the numerical result is shown in Table \ref{Tbl:Prob2Err}. The tolerance is set uniformly to $ 10^{-11} $. We plot the error curve in Figure \ref{Fig:Prob2Err}. The estimated errors correspond to the value calculated by \eqref{Eq:Prob2Err}. The fit line is
 \begin{equation}
-\norm{r_h} \le 10^{-5}
+\input{Text05.txt}.
 \end{equation}
-and
-\begin{gather}
-h \le \frac{1}{400}, \\
-N \ge 400
-\end{gather}
-to achieve
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & Error $\normi{e_h}$ & Times (\Si{s}) & \#Iterations \\
+\hline
+\input{Table2.tbl}
+\end{tabular}
+\caption{Numerical results for different $N$ towards the second problem}
+\label{Tbl:Prob2Err}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure09.pgf}
+\caption{Error $ \normi{e_h} $ for different $N$ towards the second problem}
+\label{Fig:Prob2Err}
+\end{figure}
+
+As a result, we can tell that \textit{a prior} error estimation works, together with the $ O \rbr{h^2} $ convergence of the numerical method, with the analytical solution as the standard. The tolerance not being small enough accounts for bending up error curve when $N$ increases.
+
+The solution from solver when $ N = 512 $ is plotted in Figure \ref{Fig:Prob2Sol}, together with the error.
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure08.pgf}}
+\caption{Solution and error towards second problem}
+\label{Fig:Prob2Sol}
+\end{figure}
+
+\subsection{\textit{A posteriori} error estimation}
+
+Similar to previous argument, we may estimate $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $ and find coefficient of the error leading term. We plot the curve of $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ in Figure \ref{Fig:Prob2Post} with the fitting line. The fit line is
 \begin{equation}
-\norm{e_h} \le 10^{-5}.
+\input{Text06.txt}.
 \end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure10.pgf}
+\caption{Estimated error $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ for different $N$ towards the second problem}
+\label{Fig:Prob2Post}
+\end{figure}
+
+From this figure, from the fitting we conclude that the estimation $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $ holds and further that $ N = 64 $ suffices for $ \normi{e_h} \le 10^{-5} $. The \textit{a posteriori} error estimation is again much better than the \textit{a prior} error estimation. We have also verified the $ O \rbr{h^2} $ convergence without the analytical solution. The leading coefficient of $h^2$ in $\normi{e_h}$ is $ \normi{\psi_h} = \text{\input{Text07.txt}} $.
+
+\subsection{Additional result}
+
+We define similar $U_h^1$ by \eqref{Eq:Extra} to extrapolate the answer. We plot the error $ \normi{ U_h^1 - u_h } $ in Figure \ref{Fig:Prob2Extra}. The fit line is
+\begin{equation}
+\input{Text08.txt}.
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure11.pgf}
+\caption{Error $ \normi{ U_h^1 - u_h } $ for different $N$ towards the second problem}
+\label{Fig:Prob2Extra}
+\end{figure}
+
+We conclude $ O \rbr{h^3} $ convergence from this figure. This method yields high-precision solutions.
+
+We further investigate the tolerance of conjugate gradient solver. We vary the tolerance for different $N$, and plot the corresponding curve in Figure \ref{Fig:Prob2Tol}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure12.pgf}
+\caption{Error $ \norm{ U_h - u_h } $ for different tolerance towards the second problem}
+\label{Fig:Prob2Tol}
+\end{figure}
+
+Similar numerical phenomenon is observed as in the first problem: the error introduced by numerical discretization dominates for small tolerance. This means we needs not-so-accuracy solver for coarse grids and vice versa.
 
 \section{The third set of condition}
 
@@ -294,18 +549,35 @@ The analytical solution is
 \begin{equation}
 u \rbr{ x, y } = \frac{1}{ 2 \spi } \se^{-\frac{ x^2 + y^2 }{2}}.
 \end{equation}
+The 3-dimensional plot of the analytical solution is given in Figure \ref{Fig:Prob33D}.
+\begin{figure}[htbp]
+\centering
+\input{Figure13.pgf}
+\caption{Analytical solution towards third problem}
+\label{Fig:Prob33D}
+\end{figure}
+Denote the source term and boundary conditions on the nodes as
+\begin{equation}
+\begin{cases}
+a_{ i, j } = \rbr{ u_{ x x } + u_{ y y } }_{ i, j } = \rbr{ x_i^2 + y_j^2 - 2 } \exp \rbr{ -\rbr{ x_i^2 + y_j^2 } / 2 } / 2 \spi, \\
+b^1_{ 0, j } = 0, \\
+b^2_{ i, 0 } = \exp \rbr{ -x_i^2 / 2 } / 2 \spi, \\
+b^3_{ N, j } = -\exp \rbr{ -\rbr{ y_j^2 + 1 } / 2 } / 2 \spi, \\
+b^4_{ i, N } = 0.
+\end{cases}
+\end{equation}
 
 On $\Omega$, we set the equation
 \begin{equation}
-L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = \rbr{ u_{ x x } + u_{ y y } }_{ i, j }
+L_h U_{ i, j } = \frac{ U_{ i, j + 1 } + U_{ i, j - 1 } + U_{ i + 1, j } + U_{ i - 1, j } - 4 U_{ i, j } }{h^2} = a_{ i, j }
 \end{equation}
 for $ 1 \le i, j \le N - 1 $. The local truncation error is
 \begin{equation}
-T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j } + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
+T_{ i, j } = \frac{1}{12} h^2 \rbr{ \rbr{u_{ x x x x }}_{ i + \xi, j }  + \rbr{u_{ y y y y }}_{ i, j + \eta } }.
 \end{equation}
 On $ \pdl{\text{W}} \Omega $, we set the equation
 \begin{equation}
-L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{u_x}_{ 0, j }
+L_h U_{ 0, j } = \frac{ 2 U_{ 1, j } + U_{ 0, j - 1 } + U_{ 0, j + 1 } - 4 U_{ 0, j } }{h} = h a_{ 0, j } + 2 b^1_{ 0, j }
 \end{equation}
 for $ 1 \le j \le N - 1 $.
 The local truncation error is
@@ -314,19 +586,16 @@ T_{ 0, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ 0, j + \xi } + \frac{1}{3} h
 \end{equation}
 On $ \pdl{\text{S}} \Omega $, we set the equation
 \begin{equation}
-\begin{split}
-L_h U_{ i, 0 } &= \frac{ 2 U_{ i, 1 } + U_{ i - 1, 0 } + U_{ i + 1, 0 } - 4 U_{ i, 0 } }{h} - 2 U_{ i, 0 } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, 0 } - 2 \rbr{ u - u_y }_{ i, 0 }
-\end{split}
+L_h U_{ i, 0 } = \frac{ 2 U_{ i, 1 } + U_{ i - 1, 0 } + U_{ i + 1, 0 } - 4 U_{ i, 0 } }{h} - 2 U_{ i, 0 } = h a_{ i, 0 } - 2 b^2_{ i, 0 }
 \end{equation}
 for $ 1 \le i \le N - 1 $.
 The local truncation error is
 \begin{equation}
-T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ i + \xi, 0 } + \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, \eta }.
+T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ x x x x }}_{ i + \xi, 0 } + \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, \eta }.
 \end{equation}
 On $ \pdl{\text{E}} \Omega $, we set the equation
 \begin{equation}
-L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } + 2 \rbr{u_x}_{ N, j }
+L_h U_{ N, j } = \frac{ 2 U_{ N - 1, j } + U_{ N, j - 1 } + U_{ N, j + 1 } - 4 U_{ N, j } }{h} = h a_{ N, j } - 2 b^3_{ N, j }
 \end{equation}
 for $ 1 \le j \le N - 1 $.
 The local truncation error is
@@ -335,115 +604,208 @@ T_{ N, j } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ N, j + \xi } - \frac{1}{3} h
 \end{equation}
 On $ \pdl{\text{N}} \Omega $, we set the equation
 \begin{equation}
-\begin{split}
-L_h U_{ i, N } &= \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ i, N } - 2 \rbr{ u + u_y }_{ i, N }
-\end{split}
+L_h U_{ i, N } = \frac{ 2 U_{ i, N - 1 } + U_{ i - 1, N } + U_{ i + 1, N } - 4 U_{ i, N } }{h} - 2 U_{ i, N } = h a_{ i, N } - 2 b^4_{ i, N }
 \end{equation}
 for $ 1 \le i \le N - 1 $. The local truncation error is
 \begin{equation}
-T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ y y y y }}_{ i + \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, N - \eta }.
+T_{ i, 0 } = \frac{1}{12} h^3 \rbr{u_{ x x x x }}_{ i + \xi, N } - \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ i, N - \eta }.
 \end{equation}
-On $ \pdl{\text{W}} \Omega \cap \rbr{ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega } $, we set
+On $ \rbr{ \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega } \cap \rbr{ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega } $, we set
 \begin{equation}
-\begin{split}
-L_h U_{ 0, j } &= \frac{ 2 U_{ 0, j \pm 1 } + 2 U_{ 1, j } - 4 U_{ 0, j } }{h} - 2 U_{ 0, j } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ 0, j } + 2 \rbr{ -u + u_x \pm u_y }_{ 0, j }
-\end{split}
+L_h U_{ i, j } = \frac{ 2 U_{ i, j \pm_j 1 } + 2 U_{ i \pm_i 1, j } - 4 U_{ i, j } }{h} - 2 U_{ i, j } = h a_{ i, j } \pm_i 2 b^{ 1 \mathrel{\text{or}} 3 }_{ i, j } - 2 b^{ 2 \mathrel{\text{or}} 4 }_{ i, j }
 \end{equation}
-for $ j = 0, N $ and the signs are $ +, - $ respectively for $\pm$.
-The local truncation error is
+for $ i = 0, N $ ($ \pm_i = +, - $ respectively) and $ j = 0, N $ ($ \pm_j = +, - $ respectively). The local truncation error is
 \begin{equation}
-T_{ 0, j } = \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \xi, j } \pm \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ 0, j + \eta }.
+T_{ i, j } = \pm_i \frac{1}{3} h^2 \rbr{u_{ x x x }}_{ \xi, j } \pm_j \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ 0, j + \eta }.
 \end{equation}
-On $ \pdl{\text{E}} \Omega \cap \rbr{ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega } $, we set
+
+\subsection{Linear system}
+
+We arrange $U_h$ as
 \begin{equation}
-\begin{split}
-L_h U_{ N, j } &= \frac{ 2 U_{ N, j \pm 1 } + 2 U_{ N - 1, j } - 4 U_{ N, j } }{h} - 2 U_{ N, j } \\
-&= h \rbr{ u_{ x x } + u_{ y y } }_{ N, j } + 2 \rbr{ -u - u_x \pm u_y }_{ N, j }
-\end{split}
+U_h = \msbr{ U_{ 0 0 } & U_{ 0 1 } & \cdots & U_{ 0 N } & U_{ 1 0 } & U_{ 1 1 } & \cdots & U_{ 1 N } & \cdots & U_{ N 0 } & U_{ N 1 } & \cdots & U_{ N N } }^{\text{T}}
 \end{equation}
-for $ j = 0, N $ and the signs are $ +, - $ respectively for $\pm$.
-The local truncation error is
+and so as $B_h$.
+
+The scaled equation is $ A_h U_h = B_h $ where $A_h$ can be split into $ \rbr{ N + 1 } \times \rbr{ N + 1 } $ blocks
 \begin{equation}
-T_{ N, j } = -\frac{1}{3} h^2 \rbr{u_{ x x x }}_{ N - \xi, j } \pm \frac{1}{3} h^2 \rbr{u_{ y y y }}_{ N, j + \eta }.
+A_h = \msbr{ \frac{1}{2} A_h^1 & -I_h^1 & & & \\ -I_h^1 & A_h^1 & -I_h^1 & & & \\ & -I_h^1 & A_h^1 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & A_h^1 & -I_h^1 \\ & & & & -I_h^1 & \frac{1}{2} A_h^1 },
 \end{equation}
+where $A_h^1$ is the $ \rbr{ N + 1 } \times \rbr{ N + 1 } $ matrix
+\begin{equation}
+A_h^1 = \msbr{ 2 + h & -1 & & & \\ -1 & 4 & -1 & & & \\ & -1 & 4 & \ddots & & \\ & & \ddots & \ddots & \ddots & \\ & & & \ddots & 4 & -1 \\ & & & & -1 & 2 + h },
+\end{equation}
+$I_h^1$ is the $ \rbr{ N + 1 } \times \rbr{ N + 1 } $ matrix
+\begin{equation}
+I_h^1 = \msbr{ \frac{1}{2} & & & & & \\ & 1 & & & & \\ & & 1 & & & \\ & & & \ddots & & \\ & & & & 1 & \\ & & & & & \frac{1}{2} }
+\end{equation}
+and
+\begin{equation}
+B_{ i j } =
+\begin{cases}
+-\frac{1}{4} h^2 a_{ i, j } - \frac{1}{2} h b^1_{ 0, j } + \frac{1}{2} h b^2_{ i, 0 }, & i, j = 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^1_{ 0, j }, & i = 1, 2 \le j \le N - 1; \\
+-\frac{1}{4} h^2 a_{ i, j } - \frac{1}{2} h b^1_{ 0, j } + \frac{1}{2} h b^4_{ i, N }, & i = 1, j = N; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^2_{ i, 0 }, & 2 \le i \le N - 1, j = 1; \\
+-h^2 a_{ i, j }, & 2 \le i, j \le N - 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^4_{ i, N }, & 2 \le i \le N - 1, j = N; \\
+-\frac{1}{4} h^2 a_{ i, j } + \frac{1}{2} h b^2_{ i, 0 } + \frac{1}{2} h b^3_{ N, j }, & i = N, j = 1; \\
+-\frac{1}{2} h^2 a_{ i, j } + h b^3_{ N, j }, & i = N, 2 \le j \le N - 1; \\
+-\frac{1}{4} h^2 a_{ i, j } + \frac{1}{2} h b^3_{ N, j } + \frac{1}{2} h b^4_{ i, N }, & i, j = N. \\
+\end{cases}
+\end{equation}
+Here $A_h$ is positive definite and
+\begin{equation}
+\normi{r_h} \le \frac{1}{h^2} \normi{R_h}
+\end{equation}
+similarly.
 
 \subsection{\textit{A priori} error estimation}
 
-Since there is no nodes of Dirichlet boundary, we must conduct some slightly different analysis to prove the stability of $L_h$. We still define
+Since there is no nodes of Dirichlet boundary, we must perform some slightly different analysis to prove the stability of $L_h$. We still define
 \begin{equation}
 \varPhi \rbr{ x, y } = \rbr{ y - \frac{1}{2} }^2 - \frac{1}{2} \rbr{ x - \frac{1}{2} }^2 + \frac{1}{8}.
 \end{equation}
-We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. According to previous argument, we have
-\begin{equation}
-L_h \varPhi_{ i, j } \ge 1
-\end{equation}
-for $ 0 \le i \le N $, $ 1 \le j \le N - 1 $, i.e., nodes in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. Assume $ \norm{T_h} = E $ and denote
+We have $ \varPhi \rbr{ x, y } \ge 0 $ for $ \rbr{ x, y } \in \overline{\Omega} $. According to previous argument, we have $ L_h \varPhi_{ i, j } \ge 1 $ for $ 0 \le i \le N $, $ 1 \le j \le N - 1 $, i.e., nodes in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. Assume $ \normi{T_h} = E $ and denote
 \begin{equation}
 e^+_{ i, j } = e_{ i, j } + \rbr{ E + \epsilon } \varPhi_{ i, j }
 \end{equation}
 for some $ \epsilon > 0 $. Since for $ 0 \le i \le N $, $ 1 \le j \le N - 1 $ we have
 \begin{equation}
-L_h e^+_{ i, j } \ge T_{ i, j } + E + \epsilon > 0
+L_h e^+_{ i, j } \ge T_{ i, j } + E + \epsilon > 0,
 \end{equation}
-and $-L_h$ is diagonally dominant, we knows that $e^+$ will not attain its maximal value in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. We tackle maximal values of $e^+$ on $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $. Without loss of generality, we only consider the points $ \rbr{ 0, 0 } $ and $ \rbr{ i, 0 } $ for $ 1 \le i \le N $. If $ \rbr{ 0, 0 } $ is a maximal point of $e^+$, from the definition of $L_h$
+it follows from $-L_h$ being diagonally dominant that $e^+$ will not attain its maximal value in $ \Omega \cup \pdl{\text{W}} \Omega \cup \pdl{\text{E}} \Omega $. We tackle maximal values of $e^+$ on $ \pdl{\text{S}} \Omega \cup \pdl{\text{N}} \Omega $. Without loss of generality, we only consider the points $ \rbr{ 0, 0 } $ and $ \rbr{ i, 0 } $ for $ 1 \le i \le N $. If $ \rbr{ 0, 0 } $ is a maximal point of $e^+$, from the definition of $L_h$
 \begin{equation}
-- 2 e^+_{ 0, 0 } \ge \frac{ 2 e^+_{ 0, 1 } + 2 e^+_{ 1, 0 } - 4 e^+_{ 0, 0 } }{h} - 2 e^+_{ 0, 0 } = T_{ 0, 0 } + E h - \frac{3}{2} E
+- 2 e^+_{ 0, 0 } \ge \frac{ 2 e^+_{ 0, 1 } + 2 e^+_{ 1, 0 } - 4 e^+_{ 0, 0 } }{h} - 2 e^+_{ 0, 0 } = T_{ 0, 0 } + \rbr{ h - \frac{3}{2} } \rbr{ E + \epsilon }
 \end{equation}
 and therefore
 \begin{equation}
-e^+_{ 0, 0 } \le E - E h + \frac{3}{2} E \le \frac{5}{2} E.
+e^+_{ 0, 0 } \le \frac{1}{2} \rbr{ E + \rbr{ -h + \frac{3}{2} } \rbr{ E + \epsilon } } \le \frac{4}{5} \rbr{ E + \epsilon }.
+\end{equation}
+Letting $ \epsilon \rightarrow 0 $, we deduce
+\begin{equation}
+e^+_{ 0, 0 } \le \frac{4}{5} E.
 \end{equation}
 If $ \rbr{ i, 0 } $ is a maximal point of $e^+$, we know
 \begin{equation}
--2 e^+_{ i, 0 } \ge  \frac{ 2 e^+_{ i, 1 } + e^+_{ i - 1, 0 } + e^+_{ i + 1, 0 } - 4 e^+_{ i, 0 } } - 2 e^+_{ i, 0 } = T_{ i, 0 } + E h + E \rbr{ -\frac{11}{4} + \rbr{ x_i - \frac{1}{2} }^2 }
+\begin{split}
+-2 e^+_{ i, 0 } &\ge  \frac{ 2 e^+_{ i, 1 } + e^+_{ i - 1, 0 } + e^+_{ i + 1, 0 } - 4 e^+_{ i, 0 } }{h} - 2 e^+_{ i, 0 } \\
+&= T_{ i, 0 } + \rbr{ h - \frac{11}{4} + \rbr{ x_i - \frac{1}{2} }^2 } \rbr{ E + \epsilon }
+\end{split}
 \end{equation}
 and therefore
 \begin{equation}
-e^+_{ i, 0 } \le E - E h + \frac{11}{4} E \le \frac{15}{4} E.
+e^+_{ i, 0 } \le \frac{1}{2} \rbr{ E + \rbr{ -h + \frac{11}{4} - \rbr{ x_i - \frac{1}{2} }^2 } \rbr{ E + \epsilon } } \le \frac{15}{8} \rbr{ E + \epsilon },
 \end{equation}
-The cases on $ \pdl{\text{N}} \Omega $ can be analyzed similarly. Combining these all, we conclude
+in which letting $ \epsilon \rightarrow 0 $ yields
 \begin{equation}
-e^+_h \le \frac{15}{4} E
+e^+_{ i, 0 } \le \frac{15}{8} E.
 \end{equation}
-and
+The cases on $ \pdl{\text{N}} \Omega $ can be handled similarly. Taking all cases into consideration, we conclude
 \begin{equation}
-e_h \le \frac{15}{4} E
+e_h \le e^+_h \le \frac{15}{4} E
 \end{equation}
-since $ \varPhi_h \ge 0 $. Similarly we can also prove
+from $ \varPhi_h \ge 0 $. Similarly we can also prove
 \begin{equation}
 e_h \ge -\frac{15}{4} E
 \end{equation}
 and therefore
 \begin{equation}
-\norm{e_h} \le \frac{15}{4} \norm{T_h}.
+\normi{e_h} \le \frac{15}{8} \normi{T_h}.
 \end{equation}
-Because
+Utilizing some calculus we derive
 \begin{gather}
-\norm{u_{ x x x }}, \norm{u_{ y y y }} \le \frac{1}{\spi}, \\
-\norm{u_{ x x x x }}, \norm{u_{ y y y y }} \le \frac{3}{ 2 \spi },
+\normi{u_{ x x x }}, \normi{u_{ y y y }} \le \frac{1}{ 2 \spi } \max_{ x \in \sbr{ 0, 1 } } \abs{ -x^3 - 3 x } = \frac{1}{\spi}, \\
+\normi{u_{ x x x x }}, \normi{u_{ y y y y }} \le \frac{1}{ 2 \spi } \max_{ x \in \sbr{ 0, 1 } } \abs{ x^4 - 6 x^2 + 3 } = \frac{3}{ 2 \spi },
 \end{gather}
 we estimate
 \begin{equation}
-\norm{T_h} \le \frac{2}{ 3 \spi } h^2
+\normi{T_h} \le \frac{2}{ 3 \spi } h^2
 \end{equation}
 as long as $ h \le 1 $. Combing these all, we have
-\begin{equation}
-\norm{e_h} \le \frac{15}{4} \rbr{ \norm{r_h} + \frac{2}{ 3 \spi } h^2 }.
+\begin{equation} \label{Eq:Prob3Err}
+\normi{e_h} \le \frac{15}{8} \rbr{ \frac{1}{h^2} \normi{R_h} + \frac{2}{ 3 \spi } h^2 }.
 \end{equation}
-We may require
+We may require $ N = 256 $, $ h \approx 3.91 \times 10^{-3} $ and $ \normi{R_h} \le 10^{-11} $ to achieve
 \begin{equation}
-\norm{r_h} \le 10^{-6}
+\normi{e_h} \le 10^{-5}.
 \end{equation}
-and
-\begin{gather}
-h \le \frac{1}{500}, \\
-N \ge 500
-\end{gather}
-to achieve
+
+We vary $N$ and the numerical result is shown in Table \ref{Tbl:Prob3Err}. The tolerance is set uniformly to $ 10^{-11} $. We plot the error curve in Figure \ref{Fig:Prob3Err}. The estimated errors correspond to the value calculated by \eqref{Eq:Prob3Err}. The fit line is
 \begin{equation}
-\norm{e_h} \le 10^{-5}.
+\input{Text09.txt}.
 \end{equation}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & Error $\normi{e_h}$ & Times (\Si{s}) & \#Iterations \\
+\hline
+\input{Table3.tbl}
+\end{tabular}
+\caption{Numerical results for different $N$ towards the third problem}
+\label{Tbl:Prob3Err}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure15.pgf}
+\caption{Error $ \normi{e_h} $ for different $N$ towards the third problem}
+\label{Fig:Prob3Err}
+\end{figure}
+
+As a result, we can tell that \textit{a prior} error estimation here holds, together with the $ O \rbr{h^2} $ convergence of the numerical method, with the analytical solution in hand.
+
+The solution from solver when $ N = 512 $ is plotted in Figure \ref{Fig:Prob3Sol}, together with the error.
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure14.pgf}}
+\caption{Solution and error towards third problem}
+\label{Fig:Prob3Sol}
+\end{figure}
+
+\subsection{\textit{A posteriori} error estimation}
+
+Similar to previous argument, we may estimate $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $ and find coefficient of the error leading term. We plot the curve of $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ in Figure \ref{Fig:Prob3Post} with the fitting line. The fit line is
+\begin{equation}
+\input{Text10.txt}.
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure16.pgf}
+\caption{Estimated error $ 4 \normi{ U_h - U_{ h / 2 } } / 3 $ for different $N$ towards the third problem}
+\label{Fig:Prob3Post}
+\end{figure}
+
+From this figure, from the fitting we conclude that the estimation $ \normi{e_h} \approx 4 \normi{ U_h - U_{ h / 2 } } / 3 $ holds and further that $ N = 64 $ suffices for $ \normi{e_h} \le 10^{-5} $. The \textit{a posteriori} error estimation is again much better than the \textit{a prior} error estimation. We have also verified the $ O \rbr{h^2} $ convergence without the analytical solution. The leading coefficient of $h^2$ in $\normi{e_h}$ is $ \normi{\psi_h} = \text{\input{Text11.txt}} $.
+
+\subsection{Additional result}
+
+We define similar $U_h^1$ by \eqref{Eq:Extra} to extrapolate the answer. We plot the error $ \normi{ U_h^1 - u_h } $ in Figure \ref{Fig:Prob3Extra}. The fit line is
+\begin{equation}
+\input{Text12.txt}.
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure17.pgf}
+\caption{Error $ \normi{ U_h^1 - u_h } $ for different $N$ towards the third problem}
+\label{Fig:Prob3Extra}
+\end{figure}
+
+Surprisingly we obtain $ O \rbr{h^4} $ convergence from this figure. Previous argument still applies since $ O \rbr{h^34} $ implies $ O \rbr{h^3} $ convergence. Extrapolation for high $N$ fails because of the error of linear system solver: this matrix $A_h$ has a great condition number and therefore we need smaller tolerance (than $10^{-11}$ as we set) to let the error term vanish.
+
+We further investigate the tolerance of conjugate gradient solver. We vary the tolerance for different $N$, and plot the corresponding curve in Figure \ref{Fig:Prob3Tol}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure18.pgf}
+\caption{Error $ \norm{ U_h - u_h } $ for different tolerance towards the third problem}
+\label{Fig:Prob3Tol}
+\end{figure}
+
+This numerical phenomenon is explained in previous sections. We may further conclude that the tolerance $10^{-11}$ is not sufficient for solutions accurate enough for extrapolation.
 
 \end{document}

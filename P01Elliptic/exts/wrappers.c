@@ -21,8 +21,8 @@ static PyObject* solve_cg_2_wrapper(PyObject* self, PyObject* args)
     PyArrayObject* data_arr = (PyArrayObject*)PyArray_FROM_OTF(data_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
     PyArrayObject* ind_arr = (PyArrayObject*)PyArray_FROM_OTF(ind_obj, NPY_INT, NPY_ARRAY_IN_ARRAY);
     PyArrayObject* ptr_arr = (PyArrayObject*)PyArray_FROM_OTF(ptr_obj, NPY_INT, NPY_ARRAY_IN_ARRAY);
-    PyArrayObject* vec_arr = (PyArrayObject*)PyArray_FROM_OTF(vec_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
-    PyArrayObject* init_arr = (PyArrayObject*)PyArray_FROM_OTF(init_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+    PyArrayObject* vec_arr = (PyArrayObject*)PyArray_FROM_OTF(vec_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    PyArrayObject* init_arr = (PyArrayObject*)PyArray_FROM_OTF(init_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY2);
     
     if (!data_arr || !ind_arr || !ptr_arr || !vec_arr || !init_arr)
         return NULL;
@@ -73,8 +73,8 @@ static PyObject* solve_cg_infty_wrapper(PyObject* self, PyObject* args)
     PyArrayObject* data_arr = (PyArrayObject*)PyArray_FROM_OTF(data_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
     PyArrayObject* ind_arr = (PyArrayObject*)PyArray_FROM_OTF(ind_obj, NPY_INT, NPY_ARRAY_IN_ARRAY);
     PyArrayObject* ptr_arr = (PyArrayObject*)PyArray_FROM_OTF(ptr_obj, NPY_INT, NPY_ARRAY_IN_ARRAY);
-    PyArrayObject* vec_arr = (PyArrayObject*)PyArray_FROM_OTF(vec_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
-    PyArrayObject* init_arr = (PyArrayObject*)PyArray_FROM_OTF(init_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+    PyArrayObject* vec_arr = (PyArrayObject*)PyArray_FROM_OTF(vec_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    PyArrayObject* init_arr = (PyArrayObject*)PyArray_FROM_OTF(init_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY2);
     
     if (!data_arr || !ind_arr || !ptr_arr || !vec_arr || !init_arr)
         return NULL;

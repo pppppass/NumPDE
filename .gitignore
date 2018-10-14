@@ -1,6 +1,8 @@
 # Temporary files
 .ipynb_checkpoints/
 build/
+*.bak
+*.run
 
 # Generated files
 *.aux
@@ -14,6 +16,9 @@ build/
 *.pdf
 *.so
 *.ipynb
+*.npy
+*.dat
+*.dir
 
 # External files
 

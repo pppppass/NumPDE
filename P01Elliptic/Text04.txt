@@ -1,0 +1,1 @@
+\log \normi{ U_h^1 - u_h} = \text{-2.05151} + \text{-2.99154} \log h^{-1}

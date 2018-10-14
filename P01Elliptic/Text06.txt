@@ -1,0 +1,1 @@
+\log \frac{4}{3} \normi{ U_h - U_{ h / 2 } } = \text{-4.11705} + \text{-1.98405} \log h^{-1}
