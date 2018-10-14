@@ -1,5 +1,6 @@
 # Temporary files
 .ipynb_checkpoints/
+.*~/
 build/
 *.bak
 *.run
