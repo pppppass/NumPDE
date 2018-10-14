@@ -17,7 +17,7 @@ Answer.aux: Answer.tex
 	lualatex Answer.tex
 
 .SECONDEXPANSION:
-$(PGFOBJS) $(TBLOBJS) $(TXTOBJS): $(wildcard $(RUNOBJS)) Plot.py
+$(PGFOBJS) $(TBLOBJS) $(TXTOBJS): $(wildcard $(RUNOBJS)) $(if $(wildcard Result.dir), Plot.py)
 	python Plot.py
 	sed -i 's/<LABEL1~*>/Error $$ \\normi{e_h} $$/' Figure03.pgf
 	sed -i 's/<LABEL2~*>/Estimated error $$ 4 \\normi{ U_h - U_{ h \/ 2 } } \/ 3 $$/' Figure04.pgf
