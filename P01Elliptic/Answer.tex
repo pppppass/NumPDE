@@ -795,7 +795,7 @@ We define similar $U_h^1$ by \eqref{Eq:Extra} to extrapolate the answer. We plot
 \label{Fig:Prob3Extra}
 \end{figure}
 
-Surprisingly we obtain $ O \rbr{h^4} $ convergence from this figure. Previous argument still applies since $ O \rbr{h^34} $ implies $ O \rbr{h^3} $ convergence. Extrapolation for high $N$ fails because of the error of linear system solver: this matrix $A_h$ has a great condition number and therefore we need smaller tolerance (than $10^{-11}$ as we set) to let the error term vanish.
+Surprisingly we obtain $ O \rbr{h^4} $ convergence from this figure. Previous argument still applies since $ O \rbr{h^3} $ implies $ O \rbr{h^3} $ convergence. Extrapolation for high $N$ fails because of the error of linear system solver: this matrix $A_h$ has a great condition number and therefore we need smaller tolerance (than $10^{-11}$ as we set) to let the error term vanish.
 
 We further investigate the tolerance of conjugate gradient solver. We vary the tolerance for different $N$, and plot the corresponding curve in Figure \ref{Fig:Prob3Tol}.
 
