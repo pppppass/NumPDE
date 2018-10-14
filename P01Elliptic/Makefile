@@ -8,13 +8,13 @@ TXTOBJS = Text01.txt Text02.txt Text03.txt Text04.txt Text05.txt Text06.txt\
 RUNOBJS = ProblemPart1.run ProblemPart2.run ProblemPart3.run
 
 .PHONY: all
-all: Answer.pdf
+all: Report.pdf
 
-Answer.pdf: Answer.tex $(PGFOBJS) $(TBLOBJS) $(TXTOBJS) | Answer.aux
-	lualatex Answer.tex
+Report.pdf: Report.tex $(PGFOBJS) $(TBLOBJS) $(TXTOBJS) | Report.aux
+	lualatex Report.tex
 
-Answer.aux: Answer.tex
-	lualatex Answer.tex
+Report.aux: Report.tex
+	lualatex Report.tex
 
 .SECONDEXPANSION:
 $(PGFOBJS) $(TBLOBJS) $(TXTOBJS): $(wildcard $(RUNOBJS)) $(if $(wildcard Result.dir), Plot.py)
@@ -56,7 +56,7 @@ exts.so: setup.py setup.cfg exts/algos.c exts/wrappers.c exts/exts.h
 	touch $@
 
 .PHONY: report
-report: Answer.pdf
+report: Report.pdf
 
 .PHONY: run
 run: $(RUNOBJS)

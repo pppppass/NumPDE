@@ -505,7 +505,7 @@
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=3.831984in,y=1.824543in,,]{\color{textcolor}\sffamily\fontsize{10.000000}{12.000000}\selectfont \(\displaystyle z\)}%
+\pgftext[x=3.831984in,y=1.824543in,,]{\color{textcolor}\sffamily\fontsize{10.000000}{12.000000}\selectfont \(\displaystyle u\)}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetbuttcap%

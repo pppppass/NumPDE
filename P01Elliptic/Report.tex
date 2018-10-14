@@ -175,7 +175,7 @@ On $ \pdl{\text{E}} \Omega \cap \pdl{\text{N}} \Omega $, we have $ L_h \varPhi_{
 \end{equation}
 where $J_D$ corresponds to nodes lying on $ \pdl{\text{W}} \Omega \cap \pdl{\text{S}} \Omega $. We have $ \norm{e_h}_{ \infty, J_D } = 0 $ and
 \begin{equation}
-\norm{\varPhi}_{ \infty, J_D } = 3 / 2.
+\norm{\varPhi}_{ \infty, J_D } = \frac{3}{2}.
 \end{equation}
 We further deduce by calculation that
 \begin{gather}
@@ -247,7 +247,10 @@ L \psi = \frac{1}{h^2} T_{\text{lead}}.
 \end{equation}
 Since $ T_{\text{lead}} \sim O \rbr{h^2} $ and
 \begin{equation}
-L_h \rbr{ U_h - u_h + h^2 \psi_h } = \rbr{ \rbr{ L u }_h - L_h u_h } + T_{ \text{lead}, h } + O \rbr{h^4} = -T_h + T_{ \text{lead}, h } = O \rbr{h^3},
+\begin{split}
+&\ptrel{=} L_h \rbr{ U_h - u_h + h^2 \psi_h } = \rbr{ \rbr{ L u }_h - L_h u_h } + T_{ \text{lead}, h } + O \rbr{h^4} \\
+&= -T_h + T_{ \text{lead}, h } + O \rbr{h^4} = O \rbr{h^3},
+\end{split}
 \end{equation}
 we deduce
 \begin{equation}
