@@ -1,0 +1,107 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Week 04)}
+\author{Zhihan Li, 1600010653}
+\date{October 15, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 83 Exercise 5)} \textit{Proof.} Since
+\begin{gather}
+\frac{\Delta_{ + t }}{ \Delta t } t = 1, \\
+\frac{\delta_x^2}{\rbr{ \Delta x }^2} \rbr{ \frac{1}{2} x \rbr{ 1 - x } } = 1,
+\end{gather}
+we deduce
+\begin{gather}
+L_{\rbr{ h, \tau }} \rbr{ e - \varPhi }_j^m = L_{\rbr{ h, \tau }} U_j^m - L_{\rbr{ h, \tau }} u_j^m - L_{\rbr{ h, \tau }} \varPhi_j^m = - T_j^m + \norm{T}_{\infty} \ge 0, \\
+L_{\rbr{ h, \tau }} \rbr{ e - \varPsi }_j^m = L_{\rbr{ h, \tau }} U_j^m - L_{\rbr{ h, \tau }} u_j^m - L_{\rbr{ h, \tau }} \varPsi_j^m = - T_j^m + \norm{T}_{\infty} \ge 0.
+\end{gather}
+For a fixed $m$, we define $J_D$ to be $ \rbr{ i, 0 } $ for $ 0 \le i \le N $ and $ \rbr{ 0, l }, \rbr{ N, l } $ for $ 1 \le l \le m - 1 $. Similarly $J$ is defined to be $ \rbr{ i, l } $ for $ 1 \le i \le N - 1 $ and $ 1 \le l \le m - 1 $. When $ \mu \le 1 / 2 $, the difference operator yields equation
+\begin{equation}
+U_j^{ m + 1 } = \rbr{ 1 - 2 \mu } U_j^m + \mu U_{ j - 1 }^m + \mu U_{ j + 1 }^m,
+\end{equation}
+which satisfies the condition of maximal principle, i.e., this operator is $J_D$ connected, diagonally dominant with all diagonal entries negative and all off-diagonal entries non-negative (since $ 1 - 2 \mu \ge 0 $). Hence, maximal principle applies and $ e - \varPhi $ can never attain positive strict maximum in the interior of $\Omega$. This means
+\begin{equation}
+\rbr{ e - \varPhi }_j^m \le \norm{\rbr{ e - \varPhi }_+}_{ \infty, J_D } \le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} }
+\end{equation}
+and therefore
+\begin{equation}
+e_j^m \le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} } + \varPhi_j^m.
+\end{equation}
+Substitute $e_j^m$ by $-e_j^m$ we deduce
+\begin{equation}
+\abs{e_j^m} \le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} } + \varPhi_j^m.
+\end{equation}
+Similar argument applies for $\varPsi$ and we reach
+\begin{equation}
+\begin{split}
+\abs{e_j^m} &\le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} } + \min \cbr{ \varPhi_j^m, \varPsi_j^m } \\
+&\le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} } + \min \cbr{ t_m, \frac{1}{2} x_j \rbr{ 1 - x_j } } \norm{T}_{ \infty, \Omega_{t_{\text{max}}} }
+\end{split}
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} For a fixed $m$ we define $J_D$ and $J_{\Omega}$ as in Problem 1. The equation is
+\begin{equation}
+U_j^{ m + 1 } = \frac{1}{ 1 + 2 \mu } \rbr{ U_j^m + \mu U_{ j - 1 }^{ m + 1 } + \mu U_{ j + 1 }^{ m + 1 } }.
+\end{equation}
+Since $ 1 + 2 \mu > 0 $, the operator is $J_D$ connected, diagonally dominant with all diagonal entries negative and all off-diagonal entries non-negative.
+
+Denote $ e_j^{ m + 1 } - \norm{e^m}_{\infty} - \tau T^{ m + 1 } = \tilde{e}_j^{ m + 1 } $. Since
+\begin{equation}
+\begin{split}
+&\ptrel{=} \rbr{ 1 + 2 \mu } \tilde{e}_j^{ m + 1 } - \mu \tilde{e}_{ j - 1 }^{ m + 1 } - \mu \tilde{e}_{ j + 1 }^{ m + 1 } \\
+&= e_j^m - \norm{e^m}_{\infty} - \tau T_j^{ m + 1 } - \tau T^{ m + 1 } \le 0,
+\end{split}
+\end{equation}
+we deduce
+\begin{equation}
+\tilde{e}_j^{ m + 1 } \le \max \cbr{ \rbr{ \tilde{e}_0^{ m + 1 } }_+, \rbr{ \tilde{e}_N^{ m + 1 } }_+ } \le \max \cbr{ \abs{e_0^{ m + 1 }} - \norm{e^m}_{\infty}, \abs{e_N^{ m + 1 }} - \norm{e^m}_{\infty}, 0 }
+\end{equation}
+and further 
+\begin{equation}
+e_j^{ m + 1 } \le \max \cbr{ \abs{e_0^{ m + 1 }}, \abs{e_N^{ m + 1 }}, \norm{e^m}_{\infty} } + \tau T^{ m + 1 }.
+\end{equation}
+Alternating the sign of $ e_j^{ m + 1 } $ we obtain
+\begin{equation}
+\norm{e^{ m + 1 }}_{\infty} \le \max \cbr{ \abs{e_0^{ m + 1 }}, \abs{e_N^{ m + 1 }}, \norm{e^m}_{\infty} } + \tau T^{ m + 1 }.
+\end{equation}
+By recursive expanding, it follows
+\begin{equation}
+\norm{e^{ m + 1 }}_{\infty} \le \max \cbr{ \norm{e^0}_{\infty}, \max_{ 1 \le l \le m + 1 } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} } } + \tau \sum_{ l = 1 }^{ m + 1 } T^l
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 84 Exercise 12)} \textit{Answer.} The conclusions are respectively:
+\begin{partlist}
+\item When $ \mu \le 1 $, the scheme is $L^{\infty}$ stable and
+\begin{equation}
+\norm{U^{ m + 1 }}_{\infty} \le \max \cbr{ \norm{U^0}_{\infty}, \max_{ 1 \le l \le m + 1 } \max \cbr{ \abs{U_0^l}, \abs{U_N^l} } }
+\end{equation}
+and
+\begin{equation}
+\norm{e}_{ \infty, \Omega_{t_{\text{max}}} } \le \norm{e^0}_{\infty} + \max_{ 0 < m \tau \le t_{\text{max}}} \cbr{ \abs{e_0^m}, \abs{e_N^m} } + t_{\text{max}} \norm{T}_{\infty};
+\end{equation}
+\item Suppose $u$ is sufficiently smooth, and then if $ \mu \le 1 $,
+\begin{equation}
+\norm{e}_{ \infty, \Omega_{t_{\text{max}}} } \le \frac{1}{12} \tau \mu M_{ x x x x } + \frac{1}{12} \tau^2 M_{ x x x x x x }
+\end{equation}
+and approximation error of the scheme is $ O \rbr{\tau} $;
+\item If $ M_{ x x x x x x } $ is bounded on $ \rbr{ 0, 1 } \times \rbr{ 0, t_{\text{max}} } $, then for the refinement path $ \rbr{ h_i, \tau_i } $ with $ \mu_i = \tau_i / h_i^2 \le 1 / 2 $, solution $U^{\rbr{i}}$ converges to $u$ in order $ O \rbr{h_i^2} $;
+\item When $ \mu < +\infty $, the scheme is $L^2$ stable;
+\item If $ \int_0^{t_{\text{max}}} \norm{ u_{ x x x x x x } \rbr{ \cdot, t } }_2 \sd t $ is bounded on $ \rbr{ 0, 1 } \times \rbr{ 0, t_{\text{max}} } $, then for the refinement path $ \rbr{ h_i, \tau_i } $ with $ \mu_i = \tau_i / h_i^2 < +\infty $, solution $U^{\rbr{i}}$ converges to $u$ with order $ O \rbr{ h_i^2 + \tau_i^2 } $;
+\item If $ u^0 = \sum_{ k = -\infty }^{\infty} a_k \se^{ \si k \spi x } $ satisfies $ \sum_{ k = -\infty }^{\infty} \abs{a_k} < \infty $, then for $ \mu < +\infty $ we have
+\begin{equation}
+\lim_{ \tau \rightarrow 0 } \norm{e}_{ \infty, \Omega_{t_{\text{max}}} } = 0.
+\end{equation}
+\end{partlist}
+
+\end{document}
