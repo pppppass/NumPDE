@@ -1,0 +1,156 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Week 05)}
+\author{Zhihan Li, 1600010653}
+\date{October 16, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 85 Exercise 18)} \textit{Proof.} We apply comparison theorem here. Choose the comparison function $\varPhi$ to be
+\begin{equation}
+\varPhi_j^m =
+\begin{cases}
+0, & j = 0, N, \\
+\frac{1}{2} \rbr{ x_j - \frac{1}{2} }^2, & 1 \le j \le N - 1,
+\end{cases}
+\end{equation}
+which satisfies $ 0 \le \varPhi \le 1 / 8 $ on $J$. (We denote $J_D$ to be nodes on $ \sbr{ 0, 1 } \times \cbr{0} \cup  $ and $ J_{ \Omega, 1 } $ to be nodes in $ \rbr{ 0, 1 } \times \rsbr{ 0, t_{\text{max}} } $ with $ J_{ \Omega, 2 } $ on $ \cbr{1} \times \rsbr{ 0, t_{\text{max}} } $.) Since
+\begin{equation}
+\abs{ L_h U_j^m } = \abs{ \frac{ U_{ j - 1 }^{ m - 1 } + U_{ j + 1 }^{ m - 1 } - 2 U_j^{ m - 1 } }{h^2} - \frac{ U_j^m - U_j^{ m - 1 } }{ 2 \tau } } \le K_1 \rbr{ h^2 + \tau }
+\end{equation}
+with some uniform $K_1$ on $ J_{ \Omega, 1 } $ and
+\begin{equation}
+\abs{ L_h U_0^m } = \abs{ \frac{ U_1^m - U_0^m }{h} - \alpha^m U_0^m } \le K_2 h
+\end{equation}
+for some uniform $K_2$ on $ J_{ \Omega, 2 } $, and for $ \mu = \tau / h^2 \le 1 / 2 $, $L_h$ satisfies the condition of maximal principle (on $ J_{ \Omega, 1 }  $ note that $ \alpha_m \ge 0 $), and
+\begin{equation}
+L_h U_j^m = 1
+\end{equation}
+on $ J_{ \Omega, 1 } $ and
+\begin{equation}
+L_h U_0^m \ge \frac{1}{ 8 h }
+\end{equation}
+on $ J_{ \Omega, 2 } $, we conclude that
+\begin{equation}
+\norm{e}_{\infty} \le \norm{e}_{ \infty, J_D } + \frac{1}{8} \max \cbr{ 8 K_2 h^2, K_1 \rbr{ h^2 + \tau } } = O \rbr{ h^2 + \tau }
+\end{equation}
+when  $ \norm{e}_{ \infty, J_D } = 0 $ as desired.
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 85 Exercise 19)} \textit{Answer.} The $\theta$-scheme is
+\begin{equation}
+\rbr{ 1 - \theta } \frac{ U_{ j + 1 }^m - 2 U_j^m + U_{ j - 1 }^m }{h^2} + \theta \frac{ U_{ j + 1 }^{ m + 1 } - 2 U_j^{ m + 1 } + U_{ j - 1 }^{ m + 1 } }{h^2} - \frac{ U_j^{ m + 1 } - U_j^m }{\tau} = 0,
+\end{equation}
+and the truncation error at $ \rbr{ j, m } $ is (after tedious expansion and noting that $ u_t = u_{ x x } $)
+\begin{equation}
+u_{ t t } \rbr{ \tau \rbr{ \theta - \frac{1}{2} } + \frac{h^2}{12} } + \rbr{ -\frac{1}{6} u_{ t t } + \frac{\theta}{2} u_{ t t t } } \tau^2 + \frac{\theta}{12} u_{ t t t } h^2 \tau + \frac{1}{360} u_{ t t t } h^4 + O
+\end{equation}
+where the last $O$ stands for $ O \rbr{ \tau^3 + h^2 \tau^2 + h^4 \tau + h^6 } $.
+
+For the first discretized boundary condition, the equation at boundary is
+\begin{equation}
+\frac{ U_1^m - U_0^m }{h} - \alpha^m U_0^m = g_0^m
+\end{equation}
+with truncation error at $ \rbr{ 0, m } $
+\begin{equation}
+\frac{h}{2} u_{ x x } + O \rbr{h^2}.
+\end{equation}
+The combined scheme is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \rbr{ 1 - \theta } \frac{ U_2^m - \rbr{ 2 - \beta^m } U_1^m }{h^2} + \theta \frac{ U_2^{ m + 1 } - \rbr{ 2 - \beta^{ m + 1 } } U_1^{ m + 1 } }{h^2} - \frac{ U_1^{ m + 1 } - U_1^m }{\tau} \\
+&= \rbr{ 1 - \theta } \beta^m \frac{g_0^m}{h} + \theta \beta^{ m + 1 } \frac{g_0^{ m + 1 }}{h},
+\end{split}
+\end{equation}
+where
+\begin{equation}
+\beta^m = \frac{1}{ 1 + \alpha^m h }
+\end{equation}
+and the error equation is
+\begin{equation}
+\rbr{ 1 - \theta } \frac{ e_2^m - \rbr{ 2 - \beta^m } e_1^m }{h^2} + \theta \frac{ e_2^{ m + 1 } - \rbr{ 2 - \beta^{ m + 1 } } e_1^{ m + 1 } }{h^2} - \frac{ e_1^{ m + 1 } - e_1^m }{\tau} = T_1^m.
+\end{equation}
+The local truncation error expanded at $ \rbr{ 0, m } $ is
+\begin{equation}
+\frac{1}{2} u_{ x x } \rbr{ \rbr{ 1 - \theta } \beta^m + \theta \beta^{ m + 1 } } + O \rbr{ \tau + h^2 } = O \rbr{1}.
+\end{equation}
+The condition of maximal principle at the boundary is $ \mu \le 1 / \rbr{ 2 - \beta^m } $. Considering the interior nodes, the final condition is still $ \mu \le 1 / 2 $.
+
+For the second discretized boundary condition, the equation at boundary is
+\begin{equation}
+\frac{ U_1^m - U_0^m }{h} - \frac{1}{2} \alpha^m \rbr{ U_1^m + U_0^m } = g_{ 1 / 2 }^m
+\end{equation}
+with truncation error at $ \rbr{ 1 / 2, m } $
+\begin{equation}
+\frac{h^2}{24} u_{ x x x } - \frac{h^2}{8} \alpha^m u_{ x x } + O \rbr{h^4}.
+\end{equation}
+The combined scheme is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \rbr{ 1 - \theta } \frac{ U_2^m - \rbr{ 2 - \xi^m } U_1^m }{h^2} + \theta \frac{ U_2^{ m + 1 } - \rbr{ 2 - \xi^{ m + 1 } } U_1^{ m + 1 } }{h^2} - \frac{ U_1^{ m + 1 } - U_1^m }{\tau} \\
+&= \rbr{ 1 - \theta } \eta^m \frac{g_0^m}{h} + \theta \eta^{ m + 1 } \frac{g_0^{ m + 1 }}{h},
+\end{split}
+\end{equation}
+where
+\begin{gather}
+\xi^m = \frac{ 2 - \alpha^m h }{ 2 + \alpha^m h }, \\
+\eta^m = \frac{2}{ 2 + \alpha^m h }
+\end{gather}
+and the error equation is
+\begin{equation}
+\rbr{ 1 - \theta } \frac{ e_2^m - \rbr{ 2 - \xi^m } e_1^m }{h^2} + \theta \frac{ e_2^{ m + 1 } - \rbr{ 2 - \xi^{ m + 1 } } e_1^{ m + 1 } }{h^2} - \frac{ e_1^{ m + 1 } - e_1^m }{\tau} = T_1^m.
+\end{equation}
+The local truncation error is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \rbr{ \frac{h}{24} u_{ x x x } \rbr{ \rbr{ 1 - \theta } \eta^m + \theta \eta^{ m + 1 } } - \frac{h}{8} u_{ x x } \rbr{ \rbr{ 1 - \theta } \eta^m \alpha^m + \theta \eta^{ m + 1 } \alpha^{ m + 1 } } }_{ 1 / 2 }^m \\
+&+ \rbr{ u_{ t t } \rbr{ \theta - \frac{1}{2} } \tau + \rbr{ -\frac{1}{6} u_{ t t } + \frac{\theta}{2} u_{ t t t } } \tau^2 }_1^m + O \rbr{ \tau^3 + h^2 } \\
+&=
+\begin{cases}
+O \rbr{ \tau + h }, & \theta \neq 1 / 2, \\
+O \rbr{ \tau^2 + h }, & \theta = 1 / 2.
+\end{cases}
+\end{split}
+\end{equation}
+The condition of maximal principle at the boundary is $ \mu \le 1 / \rbr{ 2 - \xi^m } $ and the global condition is $ \mu \le 1 / 2 $ also.
+
+For the third discretized boundary condition, the equation at boundary is
+\begin{equation}
+\frac{ U_1^m - U_{-1}^m }{ 2 h } - \alpha^m U_0^m = g_0^m
+\end{equation}
+with truncation error at $ \rbr{ 0, m } $
+\begin{equation}
+\frac{1}{6} u_{ x x x } h^2 + O \rbr{h^4}.
+\end{equation}
+The combined scheme is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \rbr{ 1 - \theta } \frac{ U_1^m - 2 \rbr{ 1 + \alpha^m h } U_0^m }{h^2} + \theta \frac{ U_1^{ m + 1 } - 2 \rbr{ 1 + \alpha^{ m + 1 } h } U_0^{ m + 1 } }{h^2} - \frac{ U_0^{ m + 1 } - U_0^m }{\tau} \\
+&= 2 \rbr{ 1 - \theta } \frac{g_0^m}{h} + 2 \theta \frac{g_0^{ m + 1 }}{h},
+\end{split}
+\end{equation}
+and the error equation is
+\begin{equation}
+\rbr{ 1 - \theta } \frac{ e_1^m - 2 \rbr{ 1 + \alpha^m h } e_0^m }{h^2} + \theta \frac{ e_1^{ m + 1 } - 2 \rbr{ 1 + \alpha^{ m + 1 } h } e_0^{ m + 1 } }{h^2} - \frac{ e_0^{ m + 1 } - e_0^m }{\tau} = T_0^m.
+\end{equation}
+The local truncation error expanded at $ \rbr{ 0, m } $ is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \frac{h}{3} u_{ x x x } + u_{ t t } \rbr{ \theta - \frac{1}{2} } \tau + \rbr{ -\frac{1}{6} u_{ t t } + \frac{\theta}{2} u_{ t t t } } \tau^2 + O \rbr{ h^2 + \tau^3 } \\
+&=
+\begin{cases}
+O \rbr{ \tau + h }, & \theta \neq 1 / 2, \\
+O \rbr{ \tau^2 + h }, & \theta = 1 / 2.
+\end{cases}
+\end{split}
+\end{equation}
+The condition of maximal principle at the boundary is $ \mu \le \beta^m / 2 \rbr{ 1 - \theta } $.
+
+
+\end{document}

@@ -6,7 +6,7 @@
 
 \title{Answers to Exercises (Week 04)}
 \author{Zhihan Li, 1600010653}
-\date{October 15, 2018}
+\date{October 16, 2018}
 
 \begin{document}
 
@@ -22,11 +22,11 @@ we deduce
 L_{\rbr{ h, \tau }} \rbr{ e - \varPhi }_j^m = L_{\rbr{ h, \tau }} U_j^m - L_{\rbr{ h, \tau }} u_j^m - L_{\rbr{ h, \tau }} \varPhi_j^m = - T_j^m + \norm{T}_{\infty} \ge 0, \\
 L_{\rbr{ h, \tau }} \rbr{ e - \varPsi }_j^m = L_{\rbr{ h, \tau }} U_j^m - L_{\rbr{ h, \tau }} u_j^m - L_{\rbr{ h, \tau }} \varPsi_j^m = - T_j^m + \norm{T}_{\infty} \ge 0.
 \end{gather}
-For a fixed $m$, we define $J_D$ to be $ \rbr{ i, 0 } $ for $ 0 \le i \le N $ and $ \rbr{ 0, l }, \rbr{ N, l } $ for $ 1 \le l \le m - 1 $. Similarly $J$ is defined to be $ \rbr{ i, l } $ for $ 1 \le i \le N - 1 $ and $ 1 \le l \le m - 1 $. When $ \mu \le 1 / 2 $, the difference operator yields equation
+For a fixed $m$, we define nodes lying on $ \sbr{ 0, 1 } \times \cbr{0} \cup \cbr{ 0, 1 } \times \rbr{ 0, t_{\text{max}} } $. Similarly $J_{\Omega}$ is defined to be nodes in $ \rbr{ 0, 1 } \times \rsbr{ 0, t_{\text{max}} } $. When $ \mu \le 1 / 2 $, the difference operator yields equation
 \begin{equation}
 U_j^{ m + 1 } = \rbr{ 1 - 2 \mu } U_j^m + \mu U_{ j - 1 }^m + \mu U_{ j + 1 }^m,
 \end{equation}
-which satisfies the condition of maximal principle, i.e., this operator is $J_D$ connected, diagonally dominant with all diagonal entries negative and all off-diagonal entries non-negative (since $ 1 - 2 \mu \ge 0 $). Hence, maximal principle applies and $ e - \varPhi $ can never attain positive strict maximum in the interior of $\Omega$. This means
+which satisfies the condition of maximal principle, i.e., this operator is $J_D$ connected, diagonally dominant with all diagonal entries negative and all off-diagonal entries non-negative (since $ 1 - 2 \mu \ge 0 $). Hence, maximal principle applies and $ e - \varPhi $ can never attain positive strict maximum in the interior of $J_{\Omega}$. This means
 \begin{equation}
 \rbr{ e - \varPhi }_j^m \le \norm{\rbr{ e - \varPhi }_+}_{ \infty, J_D } \le \max_{ 0 \le i \le N } \abs{e_i^0} + \max_{ 0 < l < m } \max \cbr{ \abs{e_0^l}, \abs{e_N^l} }
 \end{equation}
@@ -48,7 +48,7 @@ Similar argument applies for $\varPsi$ and we reach
 as desired.
 \hfill$\Box$
 
-\textbf{Problem 2.} \textit{Proof.} For a fixed $m$ we define $J_D$ and $J_{\Omega}$ as in Problem 1. The equation is
+\textbf{Problem 2.} \textit{Proof.} For a fixed $m$ we define identical $J_D$ and $J_{\Omega}$ as in Problem 1. The equation is
 \begin{equation}
 U_j^{ m + 1 } = \frac{1}{ 1 + 2 \mu } \rbr{ U_j^m + \mu U_{ j - 1 }^{ m + 1 } + \mu U_{ j + 1 }^{ m + 1 } }.
 \end{equation}
