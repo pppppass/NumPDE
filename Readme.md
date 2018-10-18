@@ -15,7 +15,7 @@ There are several sub folders in this repository:
 
 ## Environment
 
-All the numerical results are all produced in a specific environment. The hardware configuration can be found in `hardware.txt`. An Anaconda environment is set up according to `environment.yml`.
+The numerical results are all produced in a specific environment. The hardware configuration can be found in `hardware.txt`. An Anaconda environment is set up according to `environment.yml`.
 
 ## Usage
 
