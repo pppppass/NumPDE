@@ -1,0 +1,148 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Week 06)}
+\author{Zhihan Li, 1600010653}
+\date{October 23, 2018}
+
+\begin{document}
+
+\maketitle
+
+(The following two problems are talking about the same thing and I merge them together.)
+
+\textbf{Problem 1. (Page 85 Exercise 20)} \textbf{Problem 2. (Page 85 Exercise 21)} \textit{Answer.} Approximate $ u_{ x_j, t_m } $, the integral average of $u$ on $ \rbr{ x_{ j - 1 / 2 }, x_{ j + 1 / 2 } } $ by $U_j^m$. Note that $j$ are valued $ 1 / 2, 3 / 2, \cdots, \rbr{ 2 N - 1 } / 2 $. Hence, the scheme should be given as
+\begin{equation}
+U_j^{ m + 1 } - U_j^m = a \frac{\tau}{h} \rbr{ F \rbr{ x_{ j - 1 / 2 }; \rbr{ t_m, t_{ m + 1 } } } - F \rbr{ x_{ j + 1 / 2 }; \rbr{ t_m, t_{ m + 1 } } } }.
+\end{equation}
+On the boundary, we set numerical flux exactly
+\begin{gather}
+F \rbr{ x_0, \rbr{ t_m, t_{ m + 1 } } } = -G_1^m = \int_{t_m}^{t_{ m + 1 }} -g_1 \rbr{t} \sd t,\\
+F \rbr{ x_N, \rbr{ t_m, t_{ m + 1 } } } = -G_2^m = \int_{t_m}^{t_{ m + 1 }} -g_2 \rbr{t} \sd t,
+\end{gather}
+where
+\begin{gather}
+g_1 \rbr{t} = \frac{1}{\tau} u_x \rbr{ 0, t }, \\
+g_2 \rbr{t} = \frac{1}{\tau} u_x \rbr{ 1, t }.
+\end{gather}
+For the interior nodes, the numerical flux can be approximated by $\theta$-scheme
+\begin{equation}
+F \rbr{ x_{ j + 1 / 2 }; \rbr{ t_m, t_{ m + 1 } } } = -a \theta \frac{ U_{ j + 1 }^m - U_j^m }{h} - a \rbr{ 1 - \theta } \frac{ U_{ j + 1 }^{ m + 1 } - U_j^{ m + 1 } }{h}.
+\end{equation}
+The initial value can be set exactly
+\begin{equation}
+U_j^0 = \frac{1}{h} \int_{x_{ j - 1 / 2 }}^{x_{ j + 1 / 2 }} u^0 \rbr{x} \sd x.
+\end{equation}
+The conservation can be verified by
+\begin{equation}
+\begin{split}
+&\ptrel{=} H \rbr{ \sbr{ 0, 1 }; t_{ m + 1 } } \\
+&= H \rbr{ \sbr{ 0, 1 }; t_0 } + \sum_{ j = 1 / 2 }^{ \rbr{ 2 N - 1 } / 2 } h U_j^{ m + 1 } - \sum_{ j = 1 / 2 }^{ \rbr{ 2 N - 1 } / 2 } h U_j^0 \\
+&= H \rbr{ \sbr{ 0, 1 }; t_0 } + h \sum_{ l = 0 }^m \sum_{ j = 1 / 2 }^{ \rbr{ 2 N - 1 } / 2 } \rbr{ U_j^{ l + 1 } - U_j^l } \\
+&= H \rbr{ \sbr{ 0, 1 }; t_0 } + a \tau \sum_{ l = 0 }^m \sum_{ j = 1 / 2 }^{ \rbr{ 2 N - 1 } / 2 } \rbr{ F \rbr{ x_{ j - 1 / 2 }; \rbr{ t_l, t_{ l + 1 } } } - F \rbr{ x_{ j + 1 / 2 }; \rbr{ t_l, t_{ l + 1 } } } } \\
+&= H \rbr{ \sbr{ 0, 1 }; t_0 } + a \tau \rbr{ \sum_{ l = 0 }^m F \rbr{ x_0; \rbr{ t_l, t_{ l + 1 } } } - \sum_{ l = 0 }^m F \rbr{ x_N; \rbr{ t_l, t_{ l + 1 } } } } \\
+&= \int_0^1 u^0 \rbr{x} \sd x + a \tau \rbr{ -\int_0^{t_{ m + 1 }} g_1 \rbr{t} \sd t + \int_0^{t_{ m + 1 }} g_2 \rbr{t} \sd t } \\
+&= \int_0^1 u \rbr{ x, t_{ m + 1 } } \sd x \\
+&= h \rbr{ \sbr{ 0, 1 }; t_{ m + 1 } }.
+\end{split}
+\end{equation}
+
+To sum up, the overall scheme is
+\begin{equation}
+\frac{ U_j^{ m + 1 } - U_j^m }{\tau} = a \rbr{ \theta \frac{ U_{ j - 1 }^m - 2 U_j^m + U_{ j + 1 }^m }{h^2} + \rbr{ 1 - \theta } \frac{ U_{ j - 1 }^{ m + 1 } - 2 U_j^{ m + 1 } + U_{ j + 1 }^{ m + 1 } }{h^2} }
+\end{equation}
+for $ j = 3 / 2, 5 / 2, \cdots, \rbr{ 2 N - 3 } / 2 $ with
+\begin{equation}
+\frac{ U_{ 1 / 2 }^{ m + 1 } - U_{ 1 / 2 }^m }{\tau} = a \frac{1}{h} \rbr{ -G_1^m + \theta \frac{ U_{ 3 / 2 }^m - U_{ 1 / 2 }^m }{h} + \rbr{ 1 - \theta } \frac{ U_{ 3 / 2 }^{ m + 1 } - U_{ 1 / 2 }^{ m + 1 } }{h} }
+\end{equation}
+and
+\begin{equation}
+\frac{ U_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } - U_{ \rbr{ 2 N - 1 } / 2 }^m }{\tau} = a \frac{1}{h} \rbr{ -\theta \frac{ U_{ \rbr{ 2 N - 1 } / 2 }^m - U_{ \rbr{ 2 N - 3 } / 2 }^m }{h} - \rbr{ 1 - \theta } \frac{ U_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } + U_{\rbr{ 2 N - 3 } / 2 }^{ m + 1 } }{h} + G_2^m  }.
+\end{equation}
+
+(I have mistaken the index of problems in the beginning and finish this problem.)
+
+\textbf{Problem 3. (Page 85 Exercise 22)} \textit{Proof.} We have
+\begin{equation}
+\begin{cases}
+\rbr{ 1 - \mu_x \delta_x^2 / 2 } U_{ j, k, l }^{ m + 1, \ast } = \rbr{ 1 + \mu_x \delta_x^2 / 2 + \mu_y \delta_y^2 + \mu_z \delta_z^2 } U_{ j, k, l }^m, \\
+\rbr{ 1 - \mu_y \delta_y^2 / 2 } U_{ j, k, l }^{ m + 1, \ast\ast } = U_{ j, k, l }^{ m + 1, \ast } - \mu_y \delta_y^2 U_{ j, k, l }^m, \\
+\rbr{ 1 - \mu_z \delta_z^2 / 2 } U_{ j, k, l }^{ m + 1 } = U_{ j, k, l }^{ m + 1, \ast\ast } - \mu_z \delta_y^2 U_{ j, k, l }^m.
+\end{cases}
+\end{equation}
+Tedious expansion yields
+\begin{equation} \label{Eq:Exp}
+\begin{split}
+&\ptrel{=} \rbr{ 1 - \frac{1}{2} \mu_x \delta_x^2 } \rbr{ 1 - \frac{1}{2} \mu_y \delta_y^2 } \rbr{ 1 - \frac{1}{2} \mu_z \delta_z^2 } U_{ j, k, l }^{ m + 1 } \\
+&= \rbr{ 1 + \frac{1}{2} \mu_x \delta_x^2 } \rbr{ 1 + \frac{1}{2} \mu_y \delta_y^2 } \rbr{ 1 + \frac{1}{2} \mu_z \delta_z^2 } U_{ j, k, l }^m \\
+&- \frac{1}{4} \mu_x \mu_y \mu_z \delta_x^2 \delta_y^2 \delta_z^2 U_{ j, k, l }^m
+\end{split}
+\end{equation}
+without any approximation. Then it is verified that the high order terms is
+\begin{equation}
+-\frac{1}{4} \mu_x \mu_y \mu_z \delta_x^2 \delta_y^2 \delta_z^2 U_{ j, k, l }^m.
+\end{equation}
+Note that this is exactly the high order term instead of the leading term.
+
+The unconditional $L^2$ stability can be proved by the amplication factor
+\begin{equation}
+\begin{split}
+\lambda_{\alpha} &= \frac{ \rbr{ 1 - 2 \mu_x s_x^2 } \rbr{ 1 - 2 \mu_y s_y^2 } \rbr{ 1 - 2 \mu_z s_z^2 } + 16 \mu_x \mu_y \mu_z s_x^2 s_y^2 s_y^2 }{ \rbr{ 1 + 2 \mu_x s_x^2 } \rbr{ 1 + 2 \mu_y s_y^2 } \rbr{ 1 + 2 \mu_z s_z^2 } } \\
+&= \frac{ 1 - 2 \mu_x s_x^2 - 2 \mu_y s_y^2 - 2 \mu_z s_z^2 + 4 \mu_x \mu_y s_x^2 s_y^2 + 4 \mu_x \mu_z s_x^2 s_z^2 + 4 \mu_y \mu_z s_y^2 s_z^2 + 8 \mu_x \mu_y \mu_z s_x^2 s_y^2 s_z^2 }{ 1 + 2 \mu_x s_x^2 + 2 \mu_y s_y^2 + 2 \mu_z s_z^2 + 4 \mu_x \mu_y s_x^2 s_y^2 + 4 \mu_x \mu_z s_x s_z^2 + 4 \mu_y \mu_z s_y^2 s_z^2 + 8 \mu_x \mu_y \mu_z s_x^2 s_y^2 s_z^2 } \\
+&\le 1
+\end{split}
+\end{equation}
+where 
+\begin{equation}
+s_x = \sin \frac{ \alpha_x h_x }{2}
+\end{equation}
+and so as $s_y$ and $s_y$.
+
+We should use
+\begin{equation}
+\frac{1}{\tau} \rbr{ \text{LHS} - \text{RHS} }
+\end{equation}
+in \eqref{Eq:Exp} to approximate the differential operator
+\begin{equation}
+u_t - u_{ x x } - u_{ y y } - u_{ z z }.
+\end{equation}
+Since (all the values are evaluated at $ \rbr{ j, k, l } $)
+\begin{equation}
+\begin{split}
+\frac{1}{\tau} \text{LHS} &= \frac{1}{\tau} u + u_t + \frac{1}{2} u_{ t t } \tau + \frac{1}{6} u_{ t t t } \tau^2 \\
+&- \frac{1}{2} \rbr{ u_{ x x } + u_{ y y } + u_{ y y } } - \frac{1}{2} \tau \rbr{ u_{ x x t } + u_{ y y t } + u_{ z z t } } - \frac{1}{4} \tau^2 \rbr{ u_{ x x t t } + u_{ y y t t } + u_{ z z t t } } \\
+&- \frac{1}{24} \rbr{ h_x^2 u_{ x x x x } + h_y^2 u_{ y y y y } + h_z^2 u_{ z z z z } } \\
+&+ \frac{1}{4} \tau \rbr{ u_{ x x y y } + u_{ x x z z } + u_{ y y z z } } + \frac{1}{4} \tau^2 \rbr{ u_{ x x y y t } + u_{ x x z z t } + u_{ y y z z t } } \\
+&- \frac{1}{8} \tau^2 u_{ x x y y z z } \\
+&+ O \rbr{ \tau^3 + \tau \rbr{ h_x^2 + h_y^2 + h_z^2 } + \rbr{ h_x^2 + h_y^2 + h_z^2 }^2 }
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+\frac{1}{\tau} \text{RHS} &= \frac{1}{\tau} u + \frac{1}{2} \rbr{ u_{ x x } + u_{ y y } + u_{ z z } } + \frac{1}{24} \rbr{ h_x^2 u_{ x x x x } + h_y^2 u_{ y y y y } + h_z^2 u_{ z z z z } } \\
+&+ \frac{1}{4} \tau \rbr{ u_{ x x y y } + u_{ x x z z } + u_{ y y z z } } + \frac{1}{8} \tau^2 u_{ x x y y z z } - \frac{1}{4} \tau^2 u_{ x x y y z z } \\
+&+ O \rbr{ \tau \rbr{ h_x^2 + h_y^2 + h_z^2 } + \rbr{ h_x^2 + h_y^2 + h_z^2 }^2 },
+\end{split}
+\end{equation}
+we knows that the local truncation error
+\begin{equation}
+\begin{split}
+T_{ j, k, l } &= \frac{1}{\tau} \rbr{ \text{LHS} - \text{RHS} } - u_t + u_{ x x } + u_{ y y } + u_{ z z } \\
+&= \tau^2 \rbr{ \frac{1}{6} u_{ t t t } - \frac{1}{4} \rbr{ u_{ x x t t } + u_{ y y t t } + u_{ z z t t } } + \frac{1}{4} \rbr{ u_{ x x y y t } + u_{ x x z z t } + u_{ y y z z t } } } \\
+&- h_x^2 \frac{1}{12} u_{ x x x x } - h_y^2 \frac{1}{12} u_{ y y y y } - h_z^2 \frac{1}{12} u_{ z z z z } \\
+&+ O \rbr{ \tau^3 + \tau \rbr{ h_x^2 + h_y^2 + h_z^2 } + \rbr{ h_x^2 + h_y^2 + h_z^2 }^2 } \\
+&= O \rbr{ \tau^2 + h_x^2 + h_x^y + h_x^z }
+\end{split}
+\end{equation}
+by noting that
+\begin{equation}
+u_{ t t } = u_{ x x t } + u_{ y y t } + u_{ z z t }.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

@@ -1,0 +1,198 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Week 07)}
+\author{Zhihan Li, 1600010653}
+\date{October 30, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 151 Exercise 1)} \textit{Answer.} The equation for $ \rbr{ v, w } $ is
+\begin{equation}
+\msbr{ v \\ w }_t + \msbr{ & -a^2 \\ -1 & } \msbr{ v \\ w }_x = 0.
+\end{equation}
+Choose
+\begin{equation}
+\msbr{ v \\ w } = \msbr{ a & a \\ 1 & -1 } \msbr{ r \\ s },
+\end{equation}
+or
+\begin{equation}
+\msbr{ r \\ s } = \frac{1}{ 2 a } \msbr{ 1 & a \\ 1 & -a } \msbr{ v \\ w }.
+\end{equation}
+we have
+\begin{equation}
+\msbr{ r \\ s }_t + \msbr{ -a & \\ & a } \msbr{ r \\ s }_x = 0.
+\end{equation}
+The initial condition reads
+\begin{gather}
+r \rbr{ x, 0 } = \frac{1}{ 2 a } \rbr{ v^0 \rbr{x} + a u^0_x \rbr{x} }, \\
+s \rbr{ x, 0 } = \frac{1}{ 2 a } \rbr{ v^0 \rbr{x} - a u^0_x \rbr{x} }.
+\end{gather}
+The characteristics of $s$ and $t$ are respectively
+\begin{gather}
+x_1 \rbr{t} = x^0 - a t, \\
+x_2 \rbr{t} = x^0 + a t.
+\end{gather}
+The Riemann invariants of $-a$ and $a$ are
+\begin{gather}
+r = \frac{1}{ 2 a } \rbr{ v + a w } = \frac{1}{ 2 a } \rbr{ u_t + a u_x }, \\
+s = \frac{1}{ 2 a } \rbr{ v - a w } = \frac{1}{ 2 a } \rbr{ u_t - a u_x }
+\end{gather}
+respectively.
+
+\textbf{Problem 2. (Page 152 Exercise 3)} \textit{Answer.} The case $ a \rbr{x} = x - 1 / 2 $. The figure of characteristics is postponed. The characteristics are
+\begin{equation}
+x \rbr{t} = \frac{1}{2} + \rbr{ x^0 - \frac{1}{2} } \se^{t}.
+\end{equation}
+Whe $J$ is odd, the upwind scheme yields
+\begin{equation}
+\begin{cases}
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_{ j + 1 }^m - U_j^m } / h = 0, & j < J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_j^m - U_{ j - 1 }^m } / h = 0, & j > J / 2.
+\end{cases}
+\end{equation}
+When $J$ is even, the upwind scheme yields
+\begin{equation}
+\begin{cases}
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_{ j + 1 }^m - U_j^m } / h = 0, & j < J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau = 0, & j = J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_j^m - U_{ j - 1 }^m } / h = 0, & j > J / 2.
+\end{cases}
+\end{equation}
+No matter $J$ is odd or even, the stability condition from CFL condition is $ \tau / h \le 2 $.
+The local truncation error is
+\begin{equation}
+T_j^m = - \nvbr{\rbr{ \frac{1}{2} \abs{a} h \rbr{ 1 - \abs{a} \frac{\tau}{h} } u_{ x x } }}_{ j + \xi }^{ m + \eta }
+\end{equation}
+for some $ \xi \in \sbr{ -1, 1 } $ and $ \eta \in \sbr{ 0, 1 } $. (Note that when $ j < J / 2 $, $ \xi < 0 $ and vice versa.)
+When $ \tau / h \le 2 $, maximal principle applies and
+\begin{equation}
+E^m \le m \tau \max_{ m, j } \abs{T_j^m}
+\end{equation}
+(we assume there is no error from the initial value). Since $ \abs{a} \le 1 / 2 $, the combined bound of error is
+\begin{equation}
+E^m \le \frac{1}{4} m \tau h M_{ x x }.
+\end{equation}
+Given the initial value $ u \rbr{ x, 0 } = x \rbr{ 1 - x } $, an \textit{a priori} estimation of error is
+\begin{equation}
+E^m \le \frac{1}{4} m \tau h.
+\end{equation}
+Figure of the solution is postponed.
+
+The case $ a \rbr{x} = 1 / 2 - x $. The figure of characteristics is postponed. The characteristics are
+\begin{equation}
+x \rbr{t} = \frac{1}{2} + \rbr{ x^0 - \frac{1}{2} } \se^{-t}.
+\end{equation}
+The upwind scheme is
+\begin{equation}
+\begin{cases}
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_j^m - U_{ j - 1 }^m } / h = 0, & j < J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_{ j + 1 }^m - U_j^m } / h = 0, & j > J / 2.
+\end{cases}
+\end{equation}
+for odd $J$ and
+\begin{equation}
+\begin{cases}
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_j^m - U_{ j - 1 }^m } / h = 0, & j < J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau = 0, & j = J / 2; \\
+\rbr{ U_j^{ m + 1 } - U_j^m } / \tau + a_j \rbr{ U_{ j + 1 }^m - U_j^m } / h = 0, & j > J / 2.
+\end{cases}
+\end{equation}
+for even $J$. For $ \tau / h \le 2 $, the upwind scheme is stable and
+\begin{equation}
+E^m \le m \tau \max_{ m, j } \abs{T_j^m}
+\end{equation}
+can be directly given. However, the solution is not twice-differentiable along the curve $ x = \rbr{ 1 \pm \se^{-t} } / 2 $. Hence, $ T_j^m = O \rbr{1} $ (and $ O \rbr{1} $ can be reached for some $ \rbr{ j, m } $) and $ E^m = O \rbr{1} $.
+
+\textbf{Problem 3. (Page 153 Exercise 6)} \textit{Answer.} Since $ a < 0 $, we interpolate $ U_j^{ m + 1 } = U_{ j - \nu }^m $ using nodes $ \rbr{ j, m } $, $ \rbr{ j + 1, m } $ and $ \rbr{ j + 2, m } $. This gives us
+\begin{equation}
+U_j^{ m + 1 } = \frac{1}{2} \rbr{ 1 + \nu } \rbr{ 2 + \nu } U_j^m + \rbr{-\nu} \rbr{ 2 + \nu } U_{ j + 1 }^m - \frac{1}{2} \rbr{-\nu} \rbr{ 1 + \nu } U_{ j + 2 }^m.
+\end{equation}
+The amplification factor is
+\begin{equation}
+\lambda_k = \frac{1}{2} \rbr{ 1 + \nu } \rbr{ 2 + \nu }+ \rbr{-\nu} \rbr{ 2 + \nu } \se^{ \si k h } - \frac{1}{2} \rbr{-\nu} \rbr{ 1 + \nu } \se^{ 2 \si k h }
+\end{equation}
+and
+\begin{equation}
+\lambda_k = \sqrt{ \rbr{ \alpha \sin k h }^2 + \rbr{ 1 - \alpha^2 \rbr{ 1 - \cos k h } }^2 }.
+\end{equation}
+where
+\begin{equation}
+\alpha = -\nu - 1.
+\end{equation}
+Since the coefficient of $x^2$ term in
+\begin{equation}
+\rbr{ x \sin k h }^2 + \rbr{ 1 - x^2 \rbr{ 1 - \cos k h } }^2
+\end{equation}
+is
+\begin{equation}
+\sin^2 k h  - 2 \rbr{ 1 - \cos k h } = \sin^2 k h - \sin^2 \frac{ k h }{2} > 0,
+\end{equation}
+we have for $ x \in \sbr{ -1, 1 } $,
+\begin{equation}
+\rbr{ x \sin k h }^2 + \rbr{ 1 - x^2 \rbr{ 1 - \cos k h } }^2 \le \rbr{ \sin k h }^2 + \rbr{ \cos k h }^2 \le 1.
+\end{equation}
+This means $ \abs{\lambda_k} \le 1 $ if $ \nu \in \sbr{ -2, 0 } $. Since CFL condition yields that the scheme is stable only if $ \nu \in \sbr{ -2, 0 } $, the sufficent and necessary of stability is exactly $ \nu \in \sbr{ -2, 0 } $ in the sense of $L^2$.
+
+\textbf{Problem 4. (Page 153 Exercise 8)} \textit{Answer.} Consider the Riemann invariants $ \rbr{ u, v } $ for $ q + a, q - a $, i.e.,
+\begin{gather}
+\msbr{ \rho \\ w } = \msbr{ 1 & 1 \\ a & -a } \msbr{ u \\ v }, \\
+\msbr{ u \\ v } = \frac{1}{ 2 a } \msbr{ a & 1 \\ a & -1 } \msbr{ \rho \\ w }.
+\end{gather}
+The equation of $ \rbr{ u, v } $ is
+\begin{equation}
+\msbr{ u \\ v }_t + \msbr{ q + a & \\ & q - a } \msbr{ u \\ v }_x = 0.
+\end{equation}
+Noticing that linear scheme of $ \rbr{ \rho, w } $ induces identical scheme on $ \rbr{ u, v } $, we deduce that the scheme of $ \rbr{ \rho, w } $ is also an explicit one, using forward difference in time and central difference in space. It has been verified in the textbook that this scheme is unconditionally $L^2$ unstable.
+
+Since the equation is linear, we can impose identical second order correction on $ \rbr{ u, v } $. The modified scheme of $ \rbr{ u, v } $ is
+\begin{equation}
+\begin{cases}
+U_j^{ m + 1 } = \nu \rbr{ 1 + \nu } U_{ j - 1 }^m / 2 + \rbr{ 1 - \nu^2 } U_j^m - \nu \rbr{ 1 - \nu } U_{ j + 1 }^m / 2, \\
+V_j^{ m + 1 } = \mu \rbr{ 1 + \mu } V_{ j - 1 }^m / 2 + \rbr{ 1 - \mu^2 } V_j^m - \mu \rbr{ 1 - \mu } V_{ j + 1 }^m / 2
+\end{cases}
+\end{equation}
+where $ \nu = \rbr{ q + a } \tau / h $, $ \mu = \rbr{ q - a } \tau / h $. The modified scheme of $ \rbr{ \rho, w } $ is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \frac{ P_j^{ m + 1 } - P_j^m }{\tau} \\
+&+ \frac{1}{2} q \frac{ P_{ j + 1 }^m - P_{ j - 1 }^m }{h} + \frac{1}{2} \frac{ W_{ j + 1 }^m - W_{ j - 1 }^m }{h} \\
+&- \frac{1}{2} \tau \rbr{ q^2 + a^2 } \frac{ P_{ j - 1 }^m - 2 P_j^m + P_{ j + 1 }^m }{h^2} - \tau q \frac{ W_{ j - 1 }^m - 2 W_j^m + W_{ j + 1 }^m }{h^2} \\
+&= 0
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+&\ptrel{=} \frac{ W_j^{ m + 1 } - W_j^m }{\tau} \\
+&+ \frac{1}{2} a^2 \frac{ P_{ j + 1 }^m - P_{ j - 1 }^m }{h} + \frac{1}{2} q \frac{ W_{ j + 1 }^m - W_{ j - 1 }^m }{h} \\
+&- \tau q a^2 \frac{ P_{ j - 1 }^m - 2 P_j^m + P_{ j + 1 }^m }{h^2} - \frac{1}{2} \tau \rbr{ q^2 + a^2 } \frac{ W_{ j - 1 }^m - 2 W_j^m + W_{ j + 1 }^m }{h^2} \\
+&= 0.
+\end{split}
+\end{equation}
+The scheme can also be constructed from local truncation error of the original scheme, which is
+\begin{equation}
+\begin{split}
+T_j^m &= \frac{ \rho_j^{ m + 1 } - \rho_j^m }{\tau} + \frac{1}{2} q \frac{ \rho_{ j + 1 }^m - \rho_{ j - 1 }^m }{h} + \frac{1}{2} \frac{ w_{ j + 1 }^m - w_{ j - 1 }^m }{h} \\
+&= \frac{1}{2} \tau \rho_{ t t } + O \rbr{ \tau^2 + h^2 }  = \frac{1}{2} \tau \rbr{ q^2 + a^2 } \rho_{ x x } + \tau q w_{ x x } + O \rbr{ \tau^2 + h^2 }.
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+S_j^m &= \frac{ w_j^{ m + 1 } - w_j^m }{\tau} + \frac{1}{2} a^2 \frac{ \rho_{ j + 1 }^m - \rho_{ j - 1 }^m }{h} + \frac{1}{2} q \frac{ w_{ j + 1 }^m - w_{ j - 1 }^m }{h} \\
+&= \frac{1}{2} \tau w_{ t t } + O \rbr{ \tau^2 + h^2 } = \tau q a^2 \rho_{ x x } + \frac{1}{2} \tau \rbr{ q^2 + a^2 } w_{ x x } + O \rbr{ \tau^2 + h^2 }.
+\end{split}
+\end{equation}
+The stability condition can be directly derived from $ \rbr{ u, v } $. The Lax--Wendroff scheme on $ \rbr{ u, v } $ requires $ \abs{\nu}, \abs{\mu} \le 1 $ and therefore the stability condition is
+\begin{equation}
+\rbr{ \abs{q} + \abs{a} } \frac{\tau}{h} \le 1.
+\end{equation}
+
+\end{document}
