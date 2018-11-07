@@ -1,0 +1,172 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Week 08)}
+\author{Zhihan Li, 1600010653}
+\date{November 5, 2018}
+
+\begin{document}
+
+\maketitle
+
+% \textbf{Problem 1. (Page 154 Exercise 9)} \textit{Answer.} When $u$ is Lipchitz continuous,
+% \begin{gather}
+% \overline{u}_j^m - u_j^m = O \rbr{h}, \\
+% \frac{1}{2} \rbr{ \overline{u}_j^m + \overline{u}_{ j + 1 }^m } - \overline{u}_{ j + 1 / 2 }^m = O \rbr{h}, \\
+% f \rbr{\overline{u}_j^m} - f \rbr{u_j^m} = O \rbr{h}, \\
+% \frac{\tau}{2} f \rbr{u_j^m} - F \rbr{ x_j, \sbr{ t_m, t_{ m + 1 / 2 } } } = O \rbr{\tau}.
+% \end{gather}
+% The conservation law on $ \sbr{ x_j, x_{ j + 1 } } \times \sbr{ t_m, t_{ m + 1 / 2 } } $ reads
+% \begin{equation}
+% \overline{u}_{ j + 1 / 2 }^{ m + 1 / 2 } = \overline{u}_{ j + 1 / 2 }^m - \frac{1}{h} \rbr{ F \rbr{ x_{ j + 1 }, \sbr{ t_m, t_{ m + 1 / 2 } } } - F \rbr{ x_j, \sbr{ t_m, t_{ m + 1 / 2 } } } }.
+% \end{equation}
+% Compared with 
+% \begin{equation}
+% U_{ j + 1 / 2 }^{ m + 1 / 2 } = \frac{1}{2} \rbr{ \overline{u}_j^m + \overline{u}_{ j + 1 }^m } - \frac{\tau}{ 2 h } \rbr{ f \rbr{\overline{u_{ j + 1 }^m}} - f \rbr{\overline{u_j^m}} },
+% \end{equation}
+% we have
+% \begin{equation}
+% U_{ j + 1 / 2 }^{ m + 1 / 2 } = u_{ j + 1 / 2 }^{ m + 1 / 2 } + O \rbr{h} + O \rbr{h} + \frac{1}{h} \rbr{ \tau O \rbr{h} + O \rbr{\tau} } = u_{ j + 1 / 2 }^{ m + 1 / 2 } + O \rbr{ h + \frac{\tau}{h} }.
+% \end{equation}
+% Similarly,
+% \begin{equation}
+% U_j^{ m + 1 } = \overline{u}_j^m - \frac{\tau}{h} \rbr{ f \rbr{U_{ j + 1 / 2 }^{ m + 1 / 2 }}  - f \rbr{U_{ j - 1 / 2 }^{ m + 1 / 2 }} }
+% \end{equation}
+% yields
+% \begin{equation}
+% U_j^{ m + 1 } = \overline{u}_j^{ m + 1 } + \frac{1}{h} \rbr{ \tau O \rbr{ h + \frac{\tau}{h} } + O \rbr{\tau} } = \overline{u}_j^{ m + 1 } + O \rbr{ \frac{\tau}{h} + \frac{\tau^2}{h^2} }.
+% \end{equation}
+
+\textbf{Problem 1. (Page 154 Exercise 9)} \textit{Proof.} Here the numerical flux on $ x_{ j + 1 / 2 } $ and $ \sbr{ t_m, t_{ m + 1 } } $, say $ F_{ j + 1 / 2 }^{ m + 1 / 2 } $, is given by
+\begin{equation}
+F_{ j + 1 / 2 }^{ m + 1 / 2 } = \tau f \rbr{U_{ j + 1 / 2 }^{ m + 1 / 2 }}.
+\end{equation}
+According to (3.3.12), $ F_{ j + 1 / 2 }^{ m + 1 / 2 } $ is continuous as a function of $U_j^m$ and $ U_{ j + 1 }^m $. Moreover, when $f$ is Lipchitz, $F$ is then Lipchitz. When $U_j^m$ are identically equal to a given quantity $U$, we knows that
+\begin{gather}
+U_{ j + 1 / 2 }^{ m + 1 / 2 } = U, \\
+F_{ j + 1 / 2 }^{ m + 1 / 2 } = \tau f \rbr{U},
+\end{gather}
+which coincides with the real flux. This verifies that the scheme is consistent as a scheme of conservation laws.
+
+For the local truncation error, put in $ U_{ j + 1 }^m = \overline{u}_{ j + 1 }^m $. We have
+\begin{equation}
+U_{ j + 1 }^m  = u_{ j + 1 }^m + O \rbr{h^2}.
+\end{equation}
+This implies
+\begin{equation}
+f \rbr{U_{ j + 1 }^m} = \rbr{ f \rbr{u} }_{ j + 1 }^m + O \rbr{h^2}
+\end{equation}
+and
+\begin{equation}
+\frac{\tau}{2} f \rbr{U_{ j + 1 }^m} = f \rbr{ x_{ j + 1 }; \sbr{ t_m, t_{ m + 1 / 2 } } } + O \rbr{ \tau^2 + h^2 \tau }
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+\frac{\tau}{ 2 h } \rbr{ f \rbr{U_{ j + 1 }^m} - f \rbr{U_j^m} } &= \frac{1}{h} \rbr{ f \rbr{ x_{ j + 1 }; \sbr{ t_m, t_{ m + 1 / 2 } } } - f \rbr{ x_j; \sbr{ t_m, t_{ m + 1 / 2 } } } } \\
+&+ O \rbr{ \tau^2 + h^2 \tau }.
+\end{split}
+\end{equation}
+Here the order will not decrease because for any leading term $ A_j^m h^{\alpha} \tau^{\beta} $, we have
+\begin{equation}
+\frac{1}{h} \rbr{ A_{ j + 1 }^m h^{\alpha} \tau^{\beta} - A_j^m h^{\alpha} \tau^{\beta} } = \rbr{A_x}_{ j + 1 / 2 }^m h^{\alpha} \tau^{\beta} = O \rbr{ h^{\alpha} \tau^{\beta} }.
+\end{equation}
+Together with
+\begin{equation}
+\frac{1}{2} \rbr{ U_j^m + U_{ j + 1 }^m } = \overline{u}_{ j + 1 / 2 }^m + O \rbr{h^2}
+\end{equation}
+and the conversation law
+\begin{equation}
+\overline{u}_{ j + 1 / 2 }^{ m + 1 / 2 } = \overline{u}_{ j + 1 / 2 }^m - \frac{\tau}{ 2 h } \rbr{ f \rbr{U_{ j + 1 }^m} - f \rbr{U_j^m} }
+\end{equation}
+we have
+\begin{equation}
+U_{ j + 1 / 2 }^{ m + 1 / 2 } = u_{ j + 1 / 2 }^{ m + 1 / 2 } + O \rbr{ h^2 + \tau^2 }.
+\end{equation}
+Similarly, we have
+\begin{equation}
+U_j^m = \overline{u}_j^m + \tau O \rbr{ h^2 + \tau^2 }.
+\end{equation}
+As a result, the local truncation error is
+\begin{equation}
+\frac{1}{\tau} \tau \rbr{ O \rbr{ h^2 \tau + \tau^3 } } = O \rbr{ h^2 + \tau^2 }.
+\end{equation}
+(Note that we should multiply $ 1 / \tau $ here because we want to consider the approximation of differential operators.)
+
+When $ f \rbr{u} = a u $, we have
+\begin{equation}
+U_{ j + 1 / 2 }^{ m + 1 / 2 } = \rbr{ \frac{1}{2} + \frac{ a \tau }{ 2 h } } U_j^m + \rbr{ \frac{1}{2} - \frac{ a \tau }{ 2 h } } U_{ j + 1 }^m
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+U_j^{ m + 1 } &= \rbr{ 1 - \frac{ a \tau }{h} \rbr{ \frac{1}{2} + \frac{ a \tau }{ 2 h } } + \frac{ a \tau }{h} \rbr{ \frac{1}{2} - \frac{ a \tau }{ 2 h } } } U_j^m \\
+&+ -\frac{ a \tau }{h} \rbr{ \frac{1}{2} - \frac{ a \tau }{ 2 h } } U_{ j + 1 }^m \\
+&+ \frac{ a \tau }{h} \rbr{ \frac{1}{2} + \frac{ a \tau }{ 2 h } } U_{ j - 1 }^m.
+\end{split}
+\end{equation}
+Expansion yields
+\begin{equation}
+U_j^{ m + 1 } = U_j^m - \frac{ a \tau }{ 2 h } \rbr{ U_{ j + 1 }^m - U_{ j - 1 }^m } + \frac{ a^2 \tau^2 }{ 2 h^2 } \rbr{ U_{ j + 1 }^m - 2 U_j^m + U_{ j - 1 }^m }
+\end{equation}
+which coincides the Lax--Wendroff scheme.
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 154 Exercise 11)} \textit{Proof.} The Mac Cormack can be cast as the conservative scheme for numerical flux
+\begin{equation}
+F_{ j + 1 / 2 }^{ m + 1 / 2 } = \frac{\tau}{2} \rbr{ f \rbr{U_j^{ m + \ast }} + f \rbr{U_{ j + 1 }^m} }.
+\end{equation}
+Identical argument as in Problem 1 applies and this scheme is consistent when $f$ is Lipchitz.
+
+For the local truncation error, we put in $ U_j^m = \overline{u}_j^m $. Again using the technique in Problem 1,
+\begin{equation}
+f \rbr{U_j^m} = \rbr{ f \rbr{u} }_j^m + O \rbr{h^2}
+\end{equation}
+and
+\begin{equation}
+\frac{1}{h} \rbr{ f \rbr{U_{ j + 1 }^m} - f \rbr{U_j^m} } = \rbr{ f \rbr{u}_x }_{ j + 1 / 2 }^m + O \rbr{h^2}.
+\end{equation}
+This means
+\begin{equation}
+U_j^{ m + \ast } = u_j^m - \rbr{ f \rbr{u}_x }_{ j + 1 / 2 }^m \tau + O \rbr{ h^2 \tau }.
+\end{equation}
+Note that
+\begin{equation}
+U_j^m = u_j^m + O \rbr{h^2}
+\end{equation}
+As a result,
+\begin{equation}
+\begin{split}
+&\ptrel{=} \frac{\tau}{2} \rbr{ f \rbr{U_j^{ m + \ast }} + f \rbr{U_{ j + 1 }^m} } \\
+&= \frac{1}{2} \rbr{ \rbr{ f \rbr{u} }_j^m + \rbr{ f \rbr{u} }_{ j + 1 }^m } \tau - \frac{1}{2} \rbr{ f' \rbr{u} f \rbr{u}_x }_{ j + 1 / 2 }^m \tau^2 + O \rbr{h^2} \\
+&= \rbr{ f \rbr{u} }_{ j + 1 / 2 }^m \tau + \frac{1}{2} \rbr{\rbr{ f \rbr{u} }_t} \tau^2 + O \rbr{h^2} \\
+&= f \rbr{ x_{ j + 1 / 2 }, \sbr{ t_m, t_{ m + 1 } } } + O \rbr{ h^2 + \tau^2 }.
+\end{split}
+\end{equation}
+This implies
+\begin{equation}
+U_j^m = \overline{u}_j^m + O \rbr{ h^2 \tau + \tau^3 }
+\end{equation}
+and local truncation error has the order $ O \rbr{ h^2 + \tau^2 } $.
+
+When $ f \rbr{u} = a u $,
+\begin{equation}
+U_j^{ m + \ast } = U_j^m - \frac{ a \tau }{h} \rbr{ U_{ j + 1 }^m - U_j^m }
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+U_j^{ m + 1 } &= U_j^m - \frac{ a \tau }{ 2 h } \rbr{ U_{ j + 1 }^m - U_j^m } \\
+&- \frac{ a \tau }{ 2 h } \rbr{ U_j^m - U_{ j - 1 }^m } + \frac{ a^2 \tau^2 }{ 2 h^2 } \rbr{ U_{ j + 1 }^m - 2 U_j^m + U_{ j - 1 }^m } \\
+&= U_j^m - \frac{ a \tau }{ 2 h } \rbr{ U_{ j + 1 }^m - U_{ j - 1 }^m } \\
+&+ \frac{ a^2 \tau^2 }{ 2 h^2 } \rbr{ U_{ j + 1 }^m - 2 U_j^m + U_{ j - 1 }^m },
+\end{split}
+\end{equation}
+which is exactly the Lax--Wendroff scheme.
+\hfill$\Box$
+
+\end{document}
