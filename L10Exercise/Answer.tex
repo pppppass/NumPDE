@@ -1,0 +1,90 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\DeclareMathOperator\opround{\mathrm{round}}
+
+\title{Answers to Exercises (Lecture 10)}
+\author{Zhihan Li, 1600010653}
+\date{November 12, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 154 Exercises 12)} \textit{Answer.} The amplification factor is
+\begin{equation}
+\lambda_k = \frac{ 1 - \alpha^2 \rbr{ 1 - k h } + \si \alpha \sin k h }{ 1 + 4 \mu \sin^2 k h / 2 } \exp \rbr{ -\si k \rbr{ \alpha h + a \tau } },
+\end{equation}
+where
+\begin{gather}
+\mu = \frac{ c \tau }{h^2}, \\
+\alpha = \frac{ a \tau }{h} - \opround \rbr{ \frac{ a \tau }{h} } \in \sbr{ -\frac{1}{2}, \frac{1}{2} }.
+\end{gather}
+
+The decay factor of the numerical scheme is
+\begin{equation}
+\abs{\lambda_k} = \sqrt{ \frac{ 1 - 4 \alpha^2 \rbr{ 1 - \alpha^2 } \sin^4 k h / 2 }{ 1 + 4 \mu \sin^2 k h / 2 } }.
+\end{equation}
+When $ k h \ll 1 $, we have
+\begin{equation}
+\begin{split}
+\ln \abs{\lambda_k} &= \frac{1}{2} \rbr{ -4 \alpha^2 \rbr{ 1 - \alpha^2 } \frac{ k^4 h^4 }{16} + O \rbr{ k^6 h^6 } - 4 \mu \frac{ k^2 h^2 }{2} + O \rbr{ \mu^2 k^4 h^4 } } \\
+&= -c k^2 \tau + O \rbr{ \rbr{ 1 + \mu^2 } k^4 h^4 }.
+\end{split}
+\end{equation}
+The error in amplitude is $ O \rbr{ \rbr{ 1 + \mu^2 } h^4 } $. For example, when $ \tau = O \rbr{h} $, the error in amplitude is $ O \rbr{h^2} $ and $ \tau = O \rbr{ h^{ 3 / 2 } } $ leads to error $ O \rbr{h^3} $. When $ \spi - k h \ll 1 $, we have
+\begin{equation}
+\ln \abs{\lambda_k} = \frac{1}{2} \ln \frac{ 1 - 4 \alpha^2 \rbr{ 1 - \alpha^2 } }{ 1 + 4 \mu } + O \rbr{\rbr{ \spi - k h }^2} = -c k^2 \tau + O \rbr{1}.
+\end{equation}
+However, since modes of high frequency decays very fast, this $ O \rbr{1} $ error in amplitude does not matter much. To be exact, for fixed $ k h $,
+\begin{equation}
+\ln \abs{\lambda_k} \le -\frac{1}{2} \ln \rbr{ 1 + 4 \mu \sin^2 \frac{ k h }{2} }.
+\end{equation}
+For fixed $t$,
+\begin{equation}
+\frac{t}{\tau} \ln \abs{\lambda_k} \lesssim -\frac{t}{\tau} \min \cbr{ \mu, 1 } \lesssim -t \min \cbr{ \frac{1}{h^2}, \frac{1}{\tau} }
+\end{equation}
+and therefore this modes decay exponentially for fixed $t$.
+
+The phase displacement is
+\begin{equation}
+\arg \lambda_k = -a k \tau - \alpha k h + \arctan \frac{ \alpha \sin k h }{ 1 - \alpha^2 \rbr{ 1 - \cos k h } } = -a k \tau + O \rbr{ k h }.
+\end{equation}
+For $ k h \ll 1 $ (other modes decays drastically), the error in phase is $ O \rbr{h} $. A special case is $ \alpha = 0 $, in which there is no error in phase.
+
+The group speed is
+\begin{equation}
+C_k = -\frac{ \sd \lambda_k }{ \sd k } = a \tau + \alpha h - \frac{ h \alpha \rbr{ 1 - \alpha^2 } \cos k h + h \alpha^3 }{ \alpha^2 \sin^2 k h + \rbr{ 1 - \alpha^2 + \alpha^2 \cos k h }^2 } = a \tau + O \rbr{h}.
+\end{equation}
+The error in group speed is $ O \rbr{h} $. Whenever $ k h \ll 1 $, the (relative) error in group speed is identical to that of phase displacement.
+
+\textbf{Problem 2. (Page 154 Exercise 13)} \textit{Proof.} We have
+\begin{gather}
+\label{Eq:Grad}
+\alpha_0^m U_0^m + \frac{ U_1^m - U_{-1}^m }{ 2 h } = g_0^m, \\
+\label{Eq:Wave}
+\frac{ U_0^{ m + 1 } - 2 U_0^m + U_0^{ m - 1 } }{\tau^2} - a^2 \frac{ U_1^m - 2 U_0^m + U_{-1}^m }{h^2} = 0.
+\end{gather}
+This leads to
+\begin{equation}
+\frac{ U_0^{ m + 1 } - 2 U_0^m + U_0^{ m - 1 } }{\tau^2} - 2 a^2 \frac{ U_1^m - \rbr{ 1 - \alpha_0^m h } U_0^m }{h^2} = -\frac{ 2 a^2 }{h} g_0^m.
+\end{equation}
+The local truncation error of \eqref{Eq:Grad} is
+\begin{equation}
+T_0^m = \frac{1}{6} h^2 \rbr{u_{ x x x }}_0^m + O \rbr{h^4} = O \rbr{h^2}.
+\end{equation}
+and that of $\eqref{Eq:Wave}$ is
+\begin{equation}
+S_0^m = \frac{1}{12} \tau^2 \rbr{u_{ t t t t }} - a^2 \frac{1}{12} h^2 \rbr{u_{ x x x x }} + O \rbr{ h^4 + \tau^4 } = O \rbr{ h^2 + \tau^2 }.
+\end{equation}
+As a result, the truncation error of the combined scheme is
+\begin{equation}
+R_0^m = -\frac{ 2 a^2 }{h} T_0^m + S_0^m = O \rbr{ \tau^2 + h }.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

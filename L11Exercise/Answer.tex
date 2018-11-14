@@ -1,0 +1,136 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 11)}
+\author{Zhihan Li, 1600010653}
+\date{November 14, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 178 Exercise 1)} \textit{Proof.} The amplification factor of the Fourier mode $ \se^{ \si j k h } $, $\lambda_k$ satisfies
+\begin{equation}
+\lambda_k^2 = 1 - 2 \si \nu \sin k h \lambda_k + 2 \mu \rbr{ 2 \lambda_k \cos k h - \lambda_k^2 - 1 }
+\end{equation}
+or
+\begin{equation} \label{Eq:Quad}
+- 4 \mu \cos k h + 2 \si \nu \sin k h = -\rbr{ 1 + 2 \mu } \lambda_k - \rbr{ -1 + 2 \mu } \frac{1}{\lambda_k}.
+\end{equation}
+If $ \lambda_k = r \cos \theta + \si r \sin \theta $ for $ r > 1 $, we have
+\begin{equation}
+\begin{split}
+&\ptrel{=} - \rbr{ 1 + 2 \mu } \lambda_k - \rbr{ -1 + 2 \mu } \frac{1}{\lambda_k} \\
+&= \rbr{ -\rbr{ 1 + 2 \mu } r - \rbr{ -1 + 2 \mu } \frac{1}{r} } \cos \theta \\
+&+ \si \rbr{ -\rbr{ 1 + 2 \mu } r + \rbr{ -1 + 2 \mu } \frac{1}{r} } \sin \theta.
+\end{split}
+\end{equation}
+Note that \eqref{Eq:Quad} requires
+\begin{equation}
+\rbr{\frac{ \rbr{ 1 + 2 \mu } r + \rbr{ -1 + 2 \mu } / r }{ 4 \mu }}^2 \cos^2 \theta + \rbr{\frac{ \rbr{ 1 + 2 \mu } r + \rbr{ -1 + 2 \mu } / r }{ 2 \nu }}^2 \sin^2 \theta = 1.
+\end{equation}
+However, this can never be satisfied since
+\begin{gather}
+\rbr{\frac{ \rbr{ 1 + 2 \mu } r + \rbr{ -1 + 2 \mu } / r }{ 4 \mu }}^2 = \rbr{ \frac{1}{2} \rbr{ r + \frac{1}{r} } + \frac{1}{ 2 \mu } \rbr{ r - \frac{1}{r} } }^2 > 1, \\
+\rbr{\frac{ \rbr{ 1 + 2 \mu } r - \rbr{ -1 + 2 \mu } / r }{ 2 \nu }}^2 = \rbr{ \frac{1}{ 2 \nu } \rbr{ r + \frac{1}{r} } + \frac{\mu}{\nu}{ r - \frac{1}{r} } }^2 > 1
+\end{gather}
+as long as $ \nu^2 \le 1 $. This means $ \abs{\lambda_k} \le 1 $ and therefore the scheme is $L^2$ stable.
+
+Local truncation error expanded at the node $ \rbr{ j, n } $ is
+\begin{equation}
+\begin{split}
+T_j^n &= \frac{a}{3} h^2 u_{ x x x } - \frac{c}{6} h^2 u_{ x x x x } + 2 c \frac{\tau^2}{h^2} u_{ t t } + O \rbr{ \tau^2 + h^4 + \frac{\tau^4}{h^2} } \\
+&= O \rbr{ \tau^2 + h^2 + \frac{\tau^2}{h^2} }.
+\end{split}
+\end{equation}
+As a result, the consistency requires
+\begin{equation}
+\tau = o \rbr{h}
+\end{equation}
+or $ \nu \rightarrow 0 $.
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 178 Exercise 2)} \textit{Proof.} Assume
+\begin{equation}
+\norm{ \rbr{ B_1^{-1} B_0 }^m U^0 } \le K_1 \norm{U^0}
+\end{equation}
+for $ m \tau \le t_{\text{max}} $ and
+\begin{gather}
+\norm{B_1^{-1}} \le K_2 \tau, \\
+\abs{ \alpha \rbr{x} } \le M.
+\end{gather}
+As a result we have
+\begin{equation}
+\norm{ B_1^{-1} A U^0 } \le K_2 M \tau \norm{U^0}.
+\end{equation}
+Finally, for the solution of $ B_1 U^{ m + 1 } = B_0 U^m + A U^m $, 
+\begin{equation}
+\begin{split}
+\norm{U^m} &= \norm{ \rbr{ B_1^{-1} B_0 + B_1^{-1} A }^m U^0 } \\
+&\le \sum_{ i = 0 }^m \binom{m}{i} K_1^{ i + 1 } \rbr{ K_2 M \tau }^i \norm{U^0} \\
+&= K_1 \rbr{ 1 + K_1 K_2 M \tau }^m \norm{U^0} \\
+&\le K_1 \exp \rbr{ K_1 K_2 M t_{\text{max}} } \norm{U^0}
+\end{split}
+\end{equation}
+whenever $ m \tau \le t_{\text{max}} $. This means the second scheme is stable with respect to $\norm{\cdot}$.
+
+We first note that the stability of these two schemes are equivalent. This is because
+\begin{equation}
+B_1 U^{ m + 1 } = B_0 U^m = \rbr{ B_0 + A } U^m - A U^m.
+\end{equation}
+
+When $ \alpha \equiv 0 $ the condition of $L^2$ stability is $ \mu = c \tau / h^2 \le 1 / 2 $. According to the conclusion above, the scheme is stable for bounded $\alpha$ whenever $ \mu \le 1 / 2 $.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 178 Exercise 4)} \textit{Answer.} The amplification factor is
+\begin{equation}
+\lambda_k = 1 - 2 \sin^2 \frac{ k h }{2} \rbr{ \nu^2 + 2 \mu - 2 \mu \nu \sin^2 \frac{ k h }{2} } - \si \nu \sin k h \rbr{ 1 - 2 \mu \sin^2 \frac{ k h }{2} }.
+\end{equation}
+
+Putting in $ k h = \spi / 2 $, from $ \Im \lambda_k \le 1 + K \tau $ we know
+\begin{equation}
+\nu \rbr{ 1 - \mu } \ge -1 - K \tau,
+\end{equation}
+which is bounded below. If $ \varlimsup \nu = p > 0 $, we definitely have $ \varlimsup \mu = +\infty $ and this leads to contradiction. Consequently, $ \nu < 1 $ in the limiting sense. Plugging in $ k h = \spi $, from $ \Re \lambda_k \ge -1 - K \tau $ we obtain
+\begin{equation}
+K \tau + \rbr{ 2 \mu - 1 - \nu } \rbr{ \nu - 1 } \ge 0.
+\end{equation}
+Since we knows $ \varlimsup \nu = \lim \nu = 0 $, we have
+\begin{equation}
+2 \varlimsup \mu \le 1
+\end{equation}
+or $ \varlimsup \mu \le 1 / 2 $. In this case, $ \nu = \sqrt{ a^2 \mu \tau / c } = O \rbr{\sqrt{\tau}} $. As a result,
+\begin{equation}
+\abs{\lambda_k} = \abs{ 1 - 4 \mu \sin^2 \frac{ k h }{2} \rbr{ 1 - \nu \sin^2 \frac{ k h }{2} } }+ O \rbr{\nu^2} \le 1 + O \rbr{\tau},
+\end{equation}
+i.e., von Neumann stability is satisfied.
+
+Since the modes are decaying due to the diffusion term, the practical stability requires $ \abs{\lambda_k} \le 1 $. Again plugging in $ k h = \spi$ yields
+\begin{equation}
+\rbr{ 2 \mu - 1 - \nu } \rbr{ \nu - 1 } \ge 0
+\end{equation}
+and therefore
+\begin{equation}
+2 \mu - 1 \le \nu \le 1
+\end{equation}
+in the limiting sense by noticing that $ \lim \nu = 0 $. When $ \mu = 1 / 2 $, denote $ t = \sin^2 k h / 2 $, then
+\begin{equation}
+\abs{\lambda_k}^2 = 1 - \rbr{ 4 t - 4 t^2 - 4 t^2 \nu + 4 t^3 \nu } - \rbr{ 4 t^3 \nu - 12 t^3 \nu^2 + 8 t^3 \nu^3 } - \rbr{ 4 t^2 \nu^2 - 4 t^2 \nu^4 }.
+\end{equation}
+Since
+\begin{gather}
+t - t^2 - t^2 \nu + t^3 \nu = t \rbr{ 1 - t } \rbr{ 1 - t \nu } \ge 0, \\
+t^3 \nu - 3 t^3 \nu + 2 t^3 \nu^3 = t^3 \nu \rbr{ 1 - \nu } \rbr{ 1 - 2 \nu } \ge 0, \\
+t^2 \nu^2 - t^2 \nu^4 = t^2 \nu^2 \rbr{ 1 - \nu^2 } \ge 0,
+\end{gather}
+where the last two inequalities holds in the limiting sense, we deduce
+\begin{equation}
+\abs{\lambda_k} \le 1
+\end{equation}
+for small enough $ \rbr{ h, \tau } $ and therefore the practical stability is attained.
+
+\end{document}
