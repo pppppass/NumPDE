@@ -11,7 +11,7 @@ setup.cfg:
 	echo "include_dirs=${CONDA_PREFIX}/include" >> setup.cfg
 	echo "library_dirs=${CONDA_PREFIX}/lib" >> setup.cfg
 
-exts.so: setup.py setup.cfg exts/algos.c exts/wrappers.c exts/exts.h
+exts.so: setup.py setup.cfg exts/cg.c exts/wrappers.c exts/exts.h
 	python setup.py build_ext --inplace
 	FILENAMES=`ls | grep 'exts.*\.so' | grep -v 'exts.so'`;\
 	for FILE in $${FILENAMES};\
