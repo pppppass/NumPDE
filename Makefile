@@ -14,6 +14,9 @@ hardware.txt:
 environment.yml:
 	conda env export | grep -v prefix > environment.yml
 
+list.txt:
+	ls */*.bmp */*.png > list.txt
+
 .PHONY: recursive
 recursive: template
 	for DIR in $(DIRS);\

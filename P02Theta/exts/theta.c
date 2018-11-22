@@ -3,7 +3,7 @@
 int para_theta_ghost_full(int size, int len, double width, double dura, double* coef, double* sour, double* alpha, double* grad, double theta, double* sol, int ldsol, double* work)
 {
     int n = size, m = len, m_ = ldsol;
-    double h = width / n, tau = dura / len;
+    double h = width / n, tau = dura / m;
     double* a = coef, * f = sour, * alpha1 = alpha, * alpha2 = alpha+(m+1), * g1 = grad, * g2 = grad+(m+1), * u_sol = sol, * cd = work, * cl = work+(n+1), * u = work+2*(n+1), * t = work+3*(n+1);
 
     double (*a_)[m+1] = a, (*f_)[m+1] = f;
@@ -57,7 +57,7 @@ int para_theta_ghost_full(int size, int len, double width, double dura, double* 
 int para_theta_direct(int size, int len, double width, double dura, double* coef, double* sour, double* alpha, double* grad, double theta, double* sol, int ldsol, double* work)
 {
     int n = size, m = len, m_ = ldsol;
-    double h = width / n, tau = dura / len;
+    double h = width / n, tau = dura / m;
     double* a = coef, * f = sour, * alpha1 = alpha, * alpha2 = alpha+(m+1), * g1 = grad, * g2 = grad+(m+1), * u_sol = sol, * beta1 = work, * beta2 = work+(m+1), * cd = work+2*(m+1), * cl = work+2*(m+1)+(n+1), * u = work+2*(m+1)+2*(n+1), * t = work+2*(m+1)+3*(n+1);
 
     double (*a_)[m+1] = a, (*f_)[m+1] = f;
@@ -113,7 +113,7 @@ int para_theta_direct(int size, int len, double width, double dura, double* coef
 int para_theta_ghost_half(int size, int len, double width, double dura, double* coef, double* sour, double* alpha, double* grad, double theta, double* sol, int ldsol, double* work)
 {
     int n = size, m = len, m_ = ldsol;
-    double h = width / n, tau = dura / len;
+    double h = width / n, tau = dura / m;
     double* a = coef, * f = sour, * alpha1 = alpha, * alpha2 = alpha+(m+1), * g1 = grad, * g2 = grad+(m+1), * u_sol = sol, * xi1 = work, * xi2 = work+(m+1), * cd = work+2*(m+1), * cl = work+2*(m+1)+n, * u = work+2*(m+1)+2*n, * t = work+2*(m+1)+3*n;
 
     double (*a_)[m+1] = a, (*f_)[m+1] = f;

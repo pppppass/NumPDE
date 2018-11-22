@@ -1,0 +1,116 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 12)}
+\author{Zhihan Li, 1600010653}
+\date{November 20, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 180 Exercise 5)} \textit{Answer.} From
+\begin{equation}
+U_j^{ m + 1 } = \frac{1}{2} \rbr{ 1 - \nu } \rbr{ 2 - \nu } U_j^m + \nu \rbr{ 2 - \nu } U_{ j - 1 }^m - \frac{1}{2} \nu \rbr{ 1 - \nu } U_{ j - 2 }^m
+\end{equation}
+and
+\begin{equation}
+\nu = \frac{ a \tau }{h},
+\end{equation}
+we deduce
+\begin{equation}
+D_t U^{\text{s}} =  -a U^{\text{s}}_x + \frac{ a^2 \tau }{2} U^{\text{s}}_{ x x } + \frac{ -3 a^2 h \tau + 2 a h^2 }{6} U^{\text{s}}_{ x x x } + \frac{ 7 a^2 h^2 t - 6 a h^3 }{24} U^{\text{s}}_{ x x x x } + O \rbr{ h^4 + \tau^4 }
+\end{equation}
+and therefore
+\begin{equation}
+U^{\text{s}}_t = a \rbr{ -U^{\text{s}}_x + \frac{ \nu^2 - 3 \nu + 2 }{6} h^2 U^{\text{s}}_{ x x x } + \frac{ \nu^4 - 4 \nu^3 + 5 \nu^2 - 2 \nu }{8} h^3 U^{\text{s}}_{ x x x x } } + O \rbr{ h^4 + \tau^4 }.
+\end{equation}
+Leaving out the residue term, this is the fourth order modified equation for the smooth component. For Fourier modes $ \exp \rbr{ \si \rbr{ \omega t + k x } } $, we have
+\begin{equation}
+\si \omega \rbr{k} = -\si a k \rbr{ 1 + \frac{ \rbr{ \nu - 1 } \rbr{ \nu - 2 } }{6} k^2 h^2 } + a k \frac{ \nu \rbr{ \nu - 1 }^2 \rbr{ \nu - 2 } }{8} k^3 h^3.
+\end{equation} 
+The dispersion term is
+\begin{equation}
+\omega_0 \rbr{k} = -a k \rbr{ 1 + \frac{ \rbr{ \nu - 1 } \rbr{ \nu - 2 } }{6} k^2 h^2 }
+\end{equation}
+and the group speed
+\begin{equation}
+\frac{ \sd \omega_0 }{ \sd k } \rbr{k} = - a \rbr{ 1 + \frac{ \rbr{ \nu - 1 } \rbr{ \nu - 2 } }{2} k^2 h^2 }.
+\end{equation}
+It can be seen from the expression that the (relative) error in group speed is approximately three times of that in phase for $ k h \ll 1 $. Unless $ \nu = 1, 2 $, there are always error in phase, with order $ O \rbr{h^3} $ (locally, or say the relative error is $ O \rbr{h^2} $) for fixed $k$. In these cases, the error is larger for bigger $ k h $. The dissipation term is
+\begin{equation}
+\omega_1 \rbr{k} = a k \frac{ \nu \rbr{ \nu - 1 }^2 \rbr{ \nu - 2 } }{8} k^3 h^3.
+\end{equation}
+The stability condition therefore requires
+\begin{equation}
+\nu \rbr{ \nu - 1 }^2 \rbr{ \nu - 2 } \le 0
+\end{equation}
+or say $ \nu \in \sbr{ 0, 2 } $. Unless $ \nu = 0, 1, 2 $, there are also error in amplitude with order $ O \rbr{h^4} $ (locally, the accumulation of which is actually $ O \rbr{h^3} $).
+
+For the oscillatory part, we have
+\begin{equation}
+D_t U^{\text{o}}  = \rbr{ -2 \frac{ a^2 \tau }{h^2} + 4 \frac{a}{h} - \frac{2}{\tau} } + \rbr{ 2 \frac{ a^2 \tau }{h} - 3 a } U^{\text{o}} _x + \frac{ -3 a^2 \tau + 4 a h }{2} U^{\text{o}} _{ x x } + O \rbr{ h^2 + \tau^2 }
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+U^{\text{o}} _t &= \frac{1}{\tau} \ln \rbr{ -2 \nu^2 + 4 \nu - 1 } U^{\text{o}}  \\
+&+ \frac{1}{\tau} \rbr{ \frac{ 2 \nu^2 - 3 \nu }{ -2 \nu^2 + 4 \nu - 1 } h U^{\text{o}} _x + \frac{ -\nu^4 + 4 \nu^3 - 5 \nu^2 + 2 \nu }{\rbr{-2 \nu^2 + 4 \nu - 1}^2} h^2 U^{\text{o}} _{ x x } } \\
+&+ O \rbr{ h^2 + \tau^2 }.
+\end{split}
+\end{equation}
+The series converge iff $ \nu \in \rbr{ 0, 2 } $, and we confine our discussion under this condition. For Fourier modes $ \exp \rbr{ \si \rbr{ \omega t + k x  } } $, we have
+\begin{equation}
+\si \omega \rbr{k} = \frac{1}{\tau} \rbr{ \ln \rbr{ 1 - 2 \rbr{ \nu - 1 }^2 } + \si \frac{ \nu \rbr{ 2 \nu - 3 } }{ 1 - 2 \rbr{ \nu - 1 }^2 } k h + \frac{ \nu \rbr{ \nu - 1 }^2 \rbr{ \nu - 2 } }{\rbr{ 1 - 2 \rbr{ \nu - 1 }^2 }^2} k^2 h ^2 }.
+\end{equation}
+The dispersion component is
+\begin{equation}
+\omega_0 \rbr{k} = \frac{ \nu \rbr{ 2 \nu - 3 } }{ 1 - 2 \rbr{ \nu - 1 }^2 } a k.
+\end{equation}
+Since the real equation of the oscillatory part is
+\begin{equation}
+u^{\text{o}}_t = \frac{1}{\tau} \si \spi \rbr{ \nu - 1 } u^{\text{o}} - a u^{\text{o}}_x,
+\end{equation}
+the phase speed is
+\begin{equation}
+\frac{1}{\tau} \spi \rbr{ \nu - 1 } - a k,
+\end{equation}
+and therefore the error tends to infinity with speed $ O \rbr{ 1 / \tau } $ unless $ \nu = 1 $. This means there will be numerical oscillation near jumps of the initial value. The dissipation component is
+\begin{equation}
+\omega_1 \rbr{k} = \frac{1}{\tau} \rbr{ \ln \rbr{ 1 - 2 \rbr{ \nu - 1 }^2 } + \frac{ \nu \rbr{ \nu - 1 }^2 \rbr{ \nu - 2 } }{\rbr{ 1 - 2 \rbr{ \nu - 1 }^2 }^2} k^2 h ^2 },
+\end{equation}
+which is non-positive. Unless $ \nu = 1 $, there are always dissipation effect on high frequency modes, with local error order $ O \rbr{1} $.
+
+\textbf{Problem 2. (Page 180 Exercise 8)} \textit{Proof.} Denote $L_h$ to be differential operator
+\begin{equation}
+L_h U_j = \frac{1}{h^2} \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } }
+\end{equation}
+with $ 1 \le j \le N - 1 $ and we assume $ U_0 = U_N = 0 $. Since
+\begin{equation}
+\begin{split}
+\pbr{ L_h U, U } &= \frac{1}{h} \sum_{ j = 1 }^{ n - 1 } U_j \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \\
+&= \frac{1}{ 4 h } \sum_{ j = 1 }^{ n - 1 } \rbr{ U_{ j + 1 } + 2 U_j + U_{ j - 1 } } \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \\
+&- \frac{1}{ 4 h } \sum_{ j = 1 }^{ n - 1 } \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \\
+&\le \frac{1}{ 4 h } \sum_{ j = 1 }^{ n - 1 } \rbr{ 2 U_{ j + 1 }^2 + 2 U_{ j - 1 }^2 - 4 U_j^2 } \\
+&- \frac{1}{ 4 h } \sum_{ j = 1 }^{ n - 1 } \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \rbr{ U_{ j + 1 } - 2 U_j + U_{ j - 1 } } \\
+&\le -\frac{h^2}{4} \norm{ L_h U }^2.
+\end{split}
+\end{equation}
+Applying Theorem 
+
+4.4, we deduce that the scheme satisfies
+\begin{equation}
+\norm{U^{ m + 1 }}_2 \le \norm{U^m}_2
+\end{equation}
+(because $ K = K' = 0 $ here) if
+\begin{equation}
+\tau \le 2 \frac{h^2}{4} = \frac{1}{2} h^2,
+\end{equation}
+and therefore the scheme is $L^2$ stable if $ \mu \le 1 / 2 $.
+\hfill$\Box$
+
+\end{document}
