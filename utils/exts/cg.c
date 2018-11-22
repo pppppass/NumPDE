@@ -2,7 +2,7 @@
 
 int solve_cg_2(int size, sparse_matrix_t mat, double* vec, double* init, double tol, int max_it, double* work)
 {
-    int n = size, k = 0, m = max_it;
+    int n = size, m = max_it;
     double alpha, beta, rho, rho_, eps = tol;
     double* b = vec, * x = init, * r = work, * p = work+n, * w = work+2*n;
     sparse_matrix_t a = mat;
@@ -10,6 +10,8 @@ int solve_cg_2(int size, sparse_matrix_t mat, double* vec, double* init, double 
     cblas_dcopy(n, b, 1, r, 1);
     mkl_sparse_d_mv(SPARSE_OPERATION_NON_TRANSPOSE, -1.0, a, (struct matrix_descr){SPARSE_MATRIX_TYPE_GENERAL, 0, 0}, x, 1.0, r);
     rho = cblas_ddot(n, r, 1, r, 1);
+
+    int k = 0;
     while (rho > eps*eps && k < m)
     {
         k++;
@@ -36,7 +38,7 @@ int solve_cg_2(int size, sparse_matrix_t mat, double* vec, double* init, double 
 
 int solve_cg_infty(int size, sparse_matrix_t mat, double* vec, double* init, double tol, int max_it, double* work)
 {
-    int n = size, k = 0, m = max_it;
+    int n = size, m = max_it;
     double alpha, beta, rho, rho_, eps = tol, mu;
     double* b = vec, * x = init, * r = work, * p = work+n, * w = work+2*n;
     sparse_matrix_t a = mat;
@@ -45,11 +47,13 @@ int solve_cg_infty(int size, sparse_matrix_t mat, double* vec, double* init, dou
     mkl_sparse_d_mv(SPARSE_OPERATION_NON_TRANSPOSE, -1.0, a, (struct matrix_descr){SPARSE_MATRIX_TYPE_GENERAL, 0, 0}, x, 1.0, r);
     mu = fabs(r[cblas_idamax(n, r, 1)]);
     rho = cblas_ddot(n, r, 1, r, 1);
-    while (mu > eps && k < m)
-    {
-        k++;
 
-        if (k == 1)
+    int ctr = 0;
+    while (mu > eps && ctr < m)
+    {
+        ctr++;
+
+        if (ctr == 1)
             cblas_dcopy(n, r, 1, p, 1);
         else
         {
@@ -67,5 +71,5 @@ int solve_cg_infty(int size, sparse_matrix_t mat, double* vec, double* init, dou
         mu = fabs(r[cblas_idamax(n, r, 1)]);
     }
 
-    return k;
+    return ctr;
 }

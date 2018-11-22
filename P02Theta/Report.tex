@@ -1,0 +1,591 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+\usepackage{caption}
+\usepackage{pgf}
+
+\title{Report of Project 2}
+\author{Zhihan Li, 1600010653}
+\date{November 22, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem. (Page 86 Coding Exercise 1)} \textit{Answer.} We implement a general solver of $\theta$-scheme and apply it to several problems. Details and numerical results are explained in the following sections.
+
+\section{Solver}
+
+\subsection{The $\theta$-scheme}
+
+We tackle the parabolic partial differential equation
+\begin{equation}
+\begin{cases}
+u_t = a u_{ x x } + f, & 0 < x < L, t > 0; \\
+u \rbr{ x, 0 } = u^0 \rbr{x}, & 0 \le x \le L; \\
+\rbr{ -u_x + \alpha_1 u } \rbr{ 0, t } = g_1 \rbr{t}, & 0 < t \le T; \\
+\rbr{ u_x + \alpha_2 u } \rbr{ 1, t } = g_2 \rbr{t}, & 0 < t \le T,
+\end{cases}
+\end{equation}
+where $a$ and $f$ are functions defined on $ \rbr{ x, t } \in \rbr{ 0, L } \times \rsbr{ 0, T } $. This is a diffusion equation with variable coefficient, source term and Robin boundary condition.
+
+We introduce a uniform grid to solve this equation, by assuming $ x_j = h j $ and $ t^m = \tau m $, where
+\begin{gather}
+h = \frac{L}{N}, \\
+\tau = \frac{T}{M}.
+\end{gather}
+We approximate $ u_j^m = u \rbr{ x_j, t^m } $ by $U_j^m$. Denote
+\begin{equation}
+\mu = \frac{\tau}{h^2}
+\end{equation}
+to be the grid ratio \emph{regardless of the variable coefficient}.
+
+We discretize the equation as follows. For $ m \ge 0 $, and $ 0 \le j \le N $, we discretize the equation using $\theta$-scheme
+\begin{equation}
+\begin{split}
+\frac{ U_j^{ m + 1 } - U_j^m }{\tau} &= \rbr{ 1 - \theta } a_j^m \rbr{ \frac{ U_{ j + 1 }^m - 2 U_j^m + U_{ j - 1 }^m }{h^2} + f_j^m } \\
+&+ \theta a_j^{ m + 1 } \rbr{ \frac{ U_{ j + 1 }^{ m + 1 } - 2 U_j^{ m + 1 } + U_{ j - 1 }^{ m + 1 } }{h^2} + f_j^{ m + 1 } }.
+\end{split}
+\end{equation}
+Note that $U_{-1}^m$ and $ U_{ N + 1 }^m $ are so-called ``ghost nodes''. The local truncation error is of order
+\begin{equation}
+T_j^m =
+\begin{cases}
+O \rbr{ \tau^2 + h^2 }, & \theta = 1 / 2; \\
+O \rbr{ \tau + h^2 }, & \text{otherwise}.
+\end{cases}
+\end{equation}
+Note that $ O \rbr{ \tau^2 + h^4 } $ (when $ \theta = 1 / 2 - 1 / 12 \mu $ can hardly be achieved because the equation we tackle is of variable coefficient. In the interior nodes, the condition required by maximal principle is
+\begin{equation}
+\mu \rbr{ 1 - \theta } a_j^m \le \frac{1}{2}.
+\end{equation}
+This is a sufficient condition of $L^{\infty}$ stability.
+
+For the Robin boundary condition, we combine the discretization at $ j = 0, N $ and cancel the $U_{-1}^m$ and $ U_{ N + 1 }^m $ terms from
+\begin{gather}
+\label{Eq:Full1}
+\frac{ U_{-1}^m - U_1^m }{ 2 h } + \alpha_1^m U_0^m = g_1^m, \\
+\label{Eq:Full2}
+\frac{ U_{ N + 1 }^m - U_{ N - 1 }^m }{ 2 h } + \alpha_2^m U_N^m = g_2^m.
+\end{gather}
+The final effective scheme is
+\begin{gather}
+\begin{split}
+\frac{ U_0^{ m + 1 } - U_0^m }{\tau} &= 2 \rbr{ 1 - \theta } a_0^m \rbr{ \frac{ U_1^m - \rbr{ 1 + \alpha_1^m h } U_0^m }{h^2} + \frac{g_1^m}{h} } \\
+&+ 2 \theta a_0^m \rbr{ \frac{ U_1^{ m + 1 } - \rbr{ 1 + \alpha_1^{ m + 1 } h } U_0^{ m + 1 } }{h^2} + \frac{g_1^{ m + 1 }}{h} },
+\end{split}
+\\
+\begin{split}
+\frac{ U_N^{ m + 1 } - U_N^m }{\tau} &= 2 \rbr{ 1 - \theta } a_N^m \rbr{ \frac{ U_{ N - 1 }^m - \rbr{ 1 + \alpha_2^m h } U_N^m }{h^2} + \frac{g_2^m}{h} } \\
+&+ 2 \theta a_N^m \rbr{ \frac{ U_{ N - 1 }^{ m + 1 } - \rbr{ 1 + \alpha_2^{ m + 1 } h } U_N^{ m + 1 } }{h^2} + \frac{g_2^{ m + 1 }}{h} }.
+\end{split}
+\end{gather}
+The local truncation error is
+\begin{equation}
+T_0^m, T_N^m =
+\begin{cases}
+O \rbr{ \tau^2 + h }, & \theta = 1 / 2; \\
+O \rbr{ \tau + h }, & \text{otherwise}.
+\end{cases}
+\end{equation}
+A sufficient condition of $L^{\infty}$, namely the condition of maximal principle is
+\begin{equation}
+\mu \rbr{ 1 - \theta } \rbr{ 1 + \alpha_1^m h } a_0^m, \mu \rbr{ 1 - \theta } \rbr{ 1 + \alpha_2^m h } a_N^m \le \frac{1}{2}.
+\end{equation}
+
+Combining these all, a sufficient condition of $L^{\infty}$ for the whole scheme is
+\begin{equation}
+\mu \rbr{ 1 - \theta } \max \cbr{ \norm{a}_{\infty}, \norm{ \rbr{ 1 + \alpha_1^{\cdot} h } a_0^{\cdot} }_{\infty}, \norm{ \rbr{ 1 + \alpha_2^{\cdot} h } a_N^{\cdot} }_{\infty} } \le \frac{1}{2}.
+\end{equation}
+
+Local Fourier analysis yields that a necessary (and sufficient, for smooth $a$) condition of $L^2$ stability for sufficiently small $h$ is
+\begin{equation} \label{Eq:L2Stab}
+\mu \rbr{ 1 - 2 \theta } \norm{a}_{\infty} \le \frac{1}{2}.
+\end{equation}
+
+\subsection{Linear system}
+
+We arrange $U_j^m$ to a vector as
+\begin{equation}
+U_h^m = \msbr{ U_0^m & U_1^m & \cdots & U_N^m }^{\text{T}}.
+\end{equation}
+Combining the schemes at each nodes, we reach the linear system
+\begin{equation}
+A U_h^{ m + 1 } = B U_h^m + R,
+\end{equation}
+where $A$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 + 2 \theta \mu \rbr{ 1 + \alpha_1^{ m + 1 } h } a_0^{ m + 1 } & -2 \theta \mu a_0^{ m + 1 } \\ -\theta \mu a_1^{ m + 1 } & 1 + 2 \theta \mu a_1^{ m + 1 } & -\theta \mu a_1^{ m + 1 } \\ -\theta \mu a_2^{ m + 1 } & 1 + 2 \theta \mu a_2^{ m + 1 } & -\theta \mu a_2^{ m + 1 } \\ \vdots & \vdots & \vdots \\ -\theta \mu a_{ N - 1 }^{ m + 1 } & 1 + 2 \theta \mu a_{ N - 1 }^{ m + 1 } & -\theta \mu a_{ N - 1 }^{ m + 1 } \\ -2 \theta \mu a_N^{ m + 1 } & 1 + 2 \theta \mu \rbr{ 1 + \alpha_2^{ m + 1 } h } a_N^{ m + 1 } & },
+\end{equation}
+$B$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 - 2 \rbr{ 1 - \theta } \mu \rbr{ 1 + \alpha_1^m h } a_0^m & 2 \rbr{ 1 - \theta } \mu a_0^m \\ \rbr{ 1 - \theta } \mu a_1^m & 1 - 2 \rbr{ 1 - \theta } \mu a_1^m & \rbr{ 1 - \theta } \mu a_1^m \\ \rbr{ 1 - \theta } \mu a_2^m & 1 - 2 \rbr{ 1 - \theta } \mu a_2^m & \rbr{ 1 - \theta } \mu a_2^m \\ \vdots & \vdots & \vdots \\ \rbr{ 1 - \theta } \mu a_{ N - 1 }^m & 1 - 2 \rbr{ 1 - \theta } \mu a_{ N - 1 }^m & \rbr{ 1 - \theta } \mu a_{ N - 1 }^m \\ 2 \rbr{ 1 - \theta } \mu a_N^m & 1 - 2 \rbr{ 1 - \theta } \mu \rbr{ 1 + \alpha_2^m h } a_N^m & },
+\end{equation}
+and $R$ is
+\begin{equation}
+\msbr{ \rbr{ 1 - \theta } \rbr{ \tau f_0^m + 2 \mu h g_1^m a_0^m } + \theta \rbr{ \tau f_0^{ m + 1 } + 2 \mu h g_1^{ m + 1 } a_0^{ m + 1 } } \\ \rbr{ 1 - \theta } \tau f_1^m + \theta \tau f_1^{ m + 1 } \\ \rbr{ 1 - \theta } \tau f_2^m + \theta \tau f_2^{ m + 1 } \\ \vdots \\ \rbr{ 1 - \theta } \tau f_{ N - 1 }^m + \theta \tau f_{ N - 1 }^{ m + 1 } \\ \rbr{ 1 - \theta } \rbr{ \tau f_N^m + 2 \mu h g_2^m a_N^m } + \theta \rbr{ \tau f_N^{ m + 1 } + 2 \mu h g_2^{ m + 1 } a_N^{ m + 1 } } }.
+\end{equation}
+Since this is a tridiagonal equation, we use LU decomposition to solve it.
+
+\subsection{Alternative discretization of boundary condition}
+
+The discretization introduced above uses ghost nodes with full grids.
+
+\subsubsection{Direct discretization}
+
+Another possible discretization of the bounadry condition is enforcing 
+\begin{gather}
+\frac{ U_0^m - U_1^m }{h} + \alpha_1^m U_0^m = g_1^m, \\
+\frac{ U_N^m - U_{ N - 1 }^m }{h} + \alpha_2^m U_N^m = g_2^m.
+\end{gather}
+
+Denote
+\begin{gather}
+\beta_k^m = \frac{1}{ 1 + \alpha_k^m h }
+\end{gather}
+for $ k = 1, 2 $. The final effective scheme turns out to be
+\begin{gather}
+\begin{split}
+\frac{ U_1^{ m + 1 } - U_1^m }{\tau} &= \rbr{ 1 - \theta } a_1^m \rbr{ \frac{ U_2^m - \rbr{ 2 - \beta_1^m } U_1^m }{h^2} + \frac{ \beta_1^m g_1^m }{h} } \\
+&+ \theta a_0^m \rbr{ \frac{ U_2^{ m + 1 } - \rbr{ 2 - \beta_1^{ m + 1 } } U_1^{ m + 1 } }{h^2} + \frac{ \beta_1^{ m + 1 } g_1^{ m + 1 } }{h} },
+\end{split}
+\\
+\begin{split}
+\frac{ U_{ N - 1 }^{ m + 1 } - U_{ N - 1 }^m }{\tau} &= \rbr{ 1 - \theta } a_{ N - 1 }^m \rbr{ \frac{ U_{ N - 2 }^m - \rbr{ 2 - \beta_2^m } U_{ N - 1 }^m }{h^2} + \frac{ \beta_2^m g_2^m }{h} } \\
+&+ \theta a_{ N - 1 }^m \rbr{ \frac{ U_{ N - 2 }^{ m + 1 } - \rbr{ 2 - \beta_2^{ m + 1 } } U_{ N - 1 }^{ m + 1 } }{h^2} + \frac{ \beta_2^{ m + 1 } g_2^{ m + 1 } }{h} }.
+\end{split}
+\end{gather}
+The local truncation error at $U_1^m$ and $ U_{ N - 1 }^m $ is
+\begin{equation}
+T_j^m = O \rbr{1}.
+\end{equation}
+The sufficient $L^{\infty}$ stability condition turns out to be
+\begin{equation} \label{Eq:LIStab}
+\mu \rbr{ 1 - \theta } \norm{a}_{\infty} \le \frac{1}{2}.
+\end{equation}
+The necessary condition of $L^2$ stability for sufficiently small $h$ is still \eqref{Eq:L2Stab}.
+
+By arranging $U_j^m$ as
+\begin{equation}
+U_h^m = \msbr{ U_1^m & U_2^m & \cdots & U_{ N - 1 }^m }^{\text{T}},
+\end{equation}
+the corresponding linear system is
+\begin{equation}
+A U_h^{ m + 1 } = B U_h^m + R,
+\end{equation}
+where $A$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 + \theta \mu \rbr{ 2 - \beta_1^{ m + 1 } } a_1^{ m + 1 } & -\theta \mu a_1^{ m + 1 } \\ -\theta \mu a_2^{ m + 1 } & 1 + 2 \theta \mu a_2^{ m + 1 } & -\theta \mu a_2^{ m + 1 } \\ -\theta \mu a_3^{ m + 1 } & 1 + 2 \theta \mu a_3^{ m + 1 } & -\theta \mu a_3^{ m + 1 } \\ \vdots & \vdots & \vdots \\ -\theta \mu a_{ N - 2 }^{ m + 1 } & 1 + 2 \theta \mu a_{ N - 2 }^{ m + 1 } & -\theta \mu a_{ N - 2 }^{ m + 1 } \\ -\theta \mu a_{ N - 1 }^{ m + 1 } & 1 + \theta \mu \rbr{ 2 - \beta_2^{ m + 1 } } a_{ N - 1 }^{ m + 1 } & },
+\end{equation}
+$B$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 - \rbr{ 1 - \theta } \mu \rbr{ 2 - \beta_1^m } a_1^m & \rbr{ 1 - \theta } \mu a_1^m \\ \rbr{ 1 - \theta } \mu a_2^m & 1 - 2 \rbr{ 1 - \theta } \mu a_2^m & \rbr{ 1 - \theta } \mu a_2^m \\ \rbr{ 1 - \theta } \mu a_3^m & 1 - 2 \rbr{ 1 - \theta } \mu a_3^m & \rbr{ 1 - \theta } \mu a_3^m \\ \vdots & \vdots & \vdots \\ \rbr{ 1 - \theta } \mu a_{ N - 2 }^m & 1 - 2 \rbr{ 1 - \theta } \mu a_{ N - 2 }^m & \rbr{ 1 - \theta } \mu a_{ N - 2 }^m \\ \rbr{ 1 - \theta } \mu a_{ N - 1 }^m & 1 - \rbr{ 1 - \theta } \mu \rbr{ 2 - \beta_2^m } a_{ N - 1 }^m & },
+\end{equation}
+and $R$ is
+\begin{equation}
+\msbr{ \rbr{ 1 - \theta } \rbr{ \tau f_1^m + \mu \beta_1^m h g_1^m a_1^m } + \theta \rbr{ \tau f_1^{ m + 1 } + \mu \beta_1^{ m + 1 } h g_1^{ m + 1 } a_1^{ m + 1 } } \\ \rbr{ 1 - \theta } \tau f_2^m + \theta \tau f_2^{ m + 1 } \\ \rbr{ 1 - \theta } \tau f_3^m + \theta \tau f_3^{ m + 1 } \\ \vdots \\ \rbr{ 1 - \theta } \tau f_{ N - 2 }^m + \theta \tau f_{ N - 2 }^{ m + 1 } \\ \rbr{ 1 - \theta } \rbr{ \tau f_{ N - 1 }^m + \mu \beta_2^m h g_2^m a_{ N - 1 }^m } + \theta \rbr{ \tau f_{ N - 1 }^{ m + 1 } + \mu \beta_2^{ m + 1 } h g_2^{ m + 1 } a_{ N - 1 }^{ m + 1 } } }.
+\end{equation}
+
+After solving the equation, we can recover $U_0^m$ and $U_N^m$ by
+\begin{gather}
+\label{Eq:Half1}
+U_0^m = \beta_1^m U_1^m + \beta_1^m h g_1^m, \\
+\label{Eq:Half2}
+U_N^m = \beta_2^m U_{ N - 1 }^m + \beta_2^m h g_2^m.
+\end{gather}
+
+\subsection{Discretization with ghost nodes and half grids}
+
+It is also possible to modify the position of nodes and then introduce ghost nodes. We consider the nodes $ U_{ 1 / 2 }, U_{ 3 / 2 }, \cdots, U_{ \rbr{ 2 N - 1 } / 2 } $. The equation for the interior nodes $ U_{ \rbr{ 2 j + 1 } / 2 } $ for $ 3 / 2 \le \rbr{ 2 j + 1 } / 2 \le \rbr{ 2 N - 3 } / 2 $ still applies. On the boundary, we impose
+\begin{gather}
+\frac{ U_{ -1 / 2 }^m - U_{ 1 / 2 }^m }{h} + \alpha_1^m \frac{ U_{ -1 / 2 }^m + U_{ 1 / 2 }^m }{ 2 h } = g_1^m, \\
+\frac{ U_{ \rbr{ 2 N + 1 } / 2 } - U_{ \rbr{ 2 N - 1 } / 2 } }{h} + \alpha_2^m \frac{ U_{ \rbr{ 2 N + 1 } / 2 } + U_{ \rbr{ 2 N - 1 } / 2 } }{ 2 h } = g_2^m.
+\end{gather}
+Denote
+\begin{gather}
+\xi_k^m = \frac{ 2 - \alpha_k^m h }{ 2 + \alpha_k^m h }, \\
+\eta_k^m = \frac{2}{ 2 + \alpha_k^m h }
+\end{gather}
+for $ k = 1, 2 $. The final effective scheme turns out to be
+\begin{gather}
+\begin{split}
+\frac{ U_{ 1 / 2 }^{ m + 1 } - U_{ 1 / 2 }^m }{\tau} &= \rbr{ 1 - \theta } a_{ 1 / 2 }^m \rbr{ \frac{ U_{ 3 / 2 }^m - \rbr{ 2 - \xi_1^m } U_{ 1 / 2 }^m }{h^2} + \frac{ \eta_1^m g_1^m }{h} } \\
+&+ \theta a_{ 1 / 2 }^m \rbr{ \frac{ U_{ 3 / 2 }^{ m + 1 } - \rbr{ 2 - \xi_1^{ m + 1 } } U_{ 1 / 2 }^{ m + 1 } }{h^2} + \frac{ \eta_1^{ m + 1 } g_1^{ m + 1 } }{h} },
+\end{split}
+\\
+\begin{split}
+\frac{ U_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } - U_{ \rbr{ 2 N - 1 } / 2 }^m }{\tau} &= \rbr{ 1 - \theta } a_{ \rbr{ 2 N - 1 } / 2 }^m \rbr{ \frac{ U_{ \rbr{ 2 N - 3 } / 2 }^m - \rbr{ 2 - \xi_2^m } U_{ \rbr{ 2 N - 1 } / 2 }^m }{h^2} + \frac{ \eta_2^m g_2^m }{h} } \\
+&+ \theta a_{ \rbr{ 2 N - 1 } / N }^m \rbr{ \frac{ U_{ \rbr{ 2 N - 3 } / 2 }^{ m + 1 } - \rbr{ 2 - \xi_2^{ m + 1 } } U_{ \rbr{ 2 N - 1 } / N }^{ m + 1 } }{h^2} + \frac{ \eta_2^{ m + 1 } g_2^{ m + 1 } }{h} }.
+\end{split}
+\end{gather}
+The local truncation error is
+\begin{equation}
+T_j^m =
+\begin{cases}
+O \rbr{ \tau^2 + h }, & \theta = 1 / 2; \\
+O \rbr{ \tau + h }, & \text{otherwise}.
+\end{cases}
+\end{equation}
+The sufficient $L^{\infty}$ stability condition is still \eqref{Eq:LIStab} and the necessary condition for sufficiently small $h$ of $L^2$ stability is still \eqref{Eq:L2Stab}.
+
+By arranging $U_j^m$ as
+\begin{equation}
+U_h^m = \msbr{ U_{ 1 / 2 }^m & U_{ 3 / 2 }^m & \cdots & U_{ \rbr{ 2 N - 1 } / 2 }^m }^{\text{T}},
+\end{equation}
+the corresponding linear system is
+\begin{equation}
+A U_h^{ m + 1 } = B U_h^m + R,
+\end{equation}
+where $A$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 + \theta \mu \rbr{ 2 - \xi_1^{ m + 1 } } a_{ 1 / 2 }^{ m + 1 } & -\theta \mu a_{ 1 / 2 }^{ m + 1 } \\ -\theta \mu a_{ 3 / 2 }^{ m + 1 } & 1 + 2 \theta \mu a_{ 3 / 2 }^{ m + 1 } & -\theta \mu a_{ 3 / 2 }^{ m + 1 } \\ -\theta \mu a_{ 5 / 2 }^{ m + 1 } & 1 + 2 \theta \mu a_{ 5 / 2 }^{ m + 1 } & -\theta \mu a_{ 5 / 2 }^{ m + 1 } \\ \vdots & \vdots & \vdots \\ -\theta \mu a_{ \rbr{ 2 N - 3 } / 2 }^{ m + 1 } & 1 + 2 \theta \mu a_{ \rbr{ 2 N - 3 } / 2 }^{ m + 1 } & -\theta \mu a_{ \rbr{ 2 N - 3 } / 2 }^{ m + 1 } \\ -\theta \mu a_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } & 1 + \theta \mu \rbr{ 2 - \xi_2^{ m + 1 } } a_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } & },
+\end{equation}
+$B$ is a tridiagonal matrix packed as
+\begin{equation}
+\msbr{ & 1 - \rbr{ 1 - \theta } \mu \rbr{ 2 - \xi_1^m } a_{ 1 / 2 }^m & \rbr{ 1 - \theta } \mu a_{ 1 / 2 }^m \\ \rbr{ 1 - \theta } \mu a_{ 3 / 2 }^m & 1 - 2 \rbr{ 1 - \theta } \mu a_{ 3 / 2 }^m & \rbr{ 1 - \theta } \mu a_{ 3 / 2 }^m \\ \rbr{ 1 - \theta } \mu a_{ 5 / 2 }^m & 1 - 2 \rbr{ 1 - \theta } \mu a_{ 5 / 2 }^m & \rbr{ 1 - \theta } \mu a_{ 5 / 2 }^m \\ \vdots & \vdots & \vdots \\ \rbr{ 1 - \theta } \mu a_{ \rbr{ 2 N - 3 } / 2 }^m & 1 - 2 \rbr{ 1 - \theta } \mu a_{ \rbr{ 2 N - 3 } / 2 }^m & \rbr{ 1 - \theta } \mu a_{ \rbr{ 2 N - 3 } / 2 }^m \\ \rbr{ 1 - \theta } \mu a_{ \rbr{ 2 N - 1 } / 2 }^m & 1 - \rbr{ 1 - \theta } \mu \rbr{ 2 - \xi_2^m } a_{ \rbr{ 2 N - 1 } / 2 }^m & },
+\end{equation}
+and $R$ is
+\begin{equation}
+\msbr{ \rbr{ 1 - \theta } \rbr{ \tau f_{ 1 / 2 }^m + \mu \eta_1^m h g_1^m a_{ 1 / 2 }^m } + \theta \rbr{ \tau f_{ 1 / 2 }^{ m + 1 } + \mu \eta_1^{ m + 1 } h g_1^{ m + 1 } a_{ 1 / 2 }^{ m + 1 } } \\ \rbr{ 1 - \theta } \tau f_{ 3 / 2 }^m + \theta \tau f_{ 3 / 2 }^{ m + 1 } \\ \rbr{ 1 - \theta } \tau f_{ 5 / 2 }^m + \theta \tau f_{ 5 / 2 }^{ m + 1 } \\ \vdots \\ \rbr{ 1 - \theta } \tau f_{ \rbr{ 2 N - 3 } / 2 }^m + \theta \tau f_{ \rbr{ 2 N - 3 } / 2 }^{ m + 1 } \\ \rbr{ 1 - \theta } \rbr{ \tau f_{ \rbr{ 2 N - 1 } / 2 }^m + \mu \eta_2^m h g_2^m a_{ \rbr{ 2 N - 1 } / 2 }^m } + \theta \rbr{ \tau f_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } + \mu \eta_2^{ m + 1 } h g_2^{ m + 1 } a_{ \rbr{ 2 N - 1 } / 2 }^{ m + 1 } } }.
+\end{equation}
+
+\section{Model problem}
+
+\subsection{First problem}
+
+In the following sections, we mainly try to tackle the problem with
+\begin{gather}
+L = 1, \\
+a \rbr{ x, t } = \rbr{ 2 - \sin t } \cos^4 x, \\
+f \rbr{ x, t } = \frac{ 2 - \sin t  }{\sqrt{ 2 t + \cos t }^3} \sin^2 x \exp \rbr{-\frac{ \tan^2 x }{ 4 \rbr{ 2 t + \cos t } }}, \\
+u^0 \rbr{x} = \exp \rbr{-\frac{ \tan^2 x }{4}}, \\
+\alpha_1 \rbr{t} = 0, \\
+g_1 \rbr{t} = 0, \\
+\alpha_2 \rbr{t} = \frac{ \tan 1 }{ \cos^2 1 \rbr{ 2 t + \cos t } }, \\
+g_2 \rbr{t} = \frac{ \tan 1 }{ 2 \cos 1 \sqrt{ 2 t + \cos t }^3 } \exp \rbr{-\frac{ \tan^2 1 }{ 4 \rbr{ 2 t + \cos t } }}.
+\end{gather}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, t } = \frac{1}{\sqrt{ 2 t + \cos t }} \exp \rbr{-\frac{ \tan^2 x }{ 4 \rbr{ 2 t + \cos t } }}.
+\end{equation}
+
+The graph of $u$ is given in Figure \ref{Fig:Eq1Heat} and Figure \ref{Fig:Eq1Curve}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure01.pgf}
+\caption{Heat map of the first $u$}
+\label{Fig:Eq1Heat}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure02.pgf}
+\caption{Graph of the first $u$}
+\label{Fig:Eq1Curve}
+\end{figure}
+
+The sufficient condition of $L^{\infty}$ stability for large $T$ is
+\begin{equation}
+\mu \rbr{ 1 - \theta } \le \frac{1}{6}.
+\end{equation}
+as long as $ h < 1 $.
+
+The necessary condition of $L^2$ stability for sufficiently small $h$ is
+\begin{equation}
+\mu \rbr{ 1 - 2 \theta } \le \frac{1}{6}.
+\end{equation}
+
+\subsection{Second problem}
+
+We also introduce another problem for demonstration. The parameters are
+\begin{gather}
+L = 1, \\
+a \rbr{ x, t } = \frac{1}{10} \log \rbr{ t + 1 }, \\
+f \rbr{ x, t } \equiv 0, \\
+u^0 \rbr{x} = \cos \rbr{ x - 1 }, \\
+\alpha_1 \rbr{t} = \tan 1, \\
+g_1 \rbr{t} \equiv 0, \\
+\alpha_2 \rbr{t} \equiv 0, \\
+g_2 \rbr{t} \equiv 0.
+\end{gather}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, t } = \exp \rbr{-\frac{ \rbr{ t + 1 } \log \rbr{ t + 1 } - t }{10}} \cos \rbr{ x - 1 }.
+\end{equation}
+
+One interesting property of this question is $ a \rbr{ x, t } $ is strictly increasing with respect to $t$. As a result, for fixed $T$, in the region $ \sbr{ 0, 1 } \times \sbr{ 0, T } $
+\begin{equation}
+\norm{a}_{\infty} = \frac{1}{10} \log \rbr{ T + 1 }.
+\end{equation}
+
+\section{Stability when $ \theta < 1 / 2 $}
+
+As discussed in previous sections, there are $L^{\infty}$ and $L^2$ stability conditions. We proceed to experiment with the first problem and ghost nodes with full grids for the boundary condition. We set $ N = 100 $ here. We choose $\theta$ to be $0$, $ 1 / 4 $ and $ 1 / 3 $ respectively. We then vary $M$ in order to change the grid ratio $\mu$. We compare the $L^{\infty}$ and $L^2$ error between $U_h^m$ and $u_h^m$. The numerical result is given in Table \ref{Tbl:Prob1LI} and Table \ref{Tbl:Prob1L2}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\texttt{$ \theta = 0 $}} \\
+\hline
+\input{Table11.tbl}
+\multicolumn{5}{|c|}{\texttt{$ \theta = 1 / 4 $}} \\
+\hline
+\input{Table12.tbl}
+\multicolumn{5}{|c|}{\texttt{$ \theta = 1 / 3 $}} \\
+\hline
+\input{Table13.tbl}
+\end{tabular}
+\caption{Error $\norm{ U_h^m - u_h^m }_{\infty}$ for different $\theta$ and $t$}
+\label{Tbl:Prob1LI}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\texttt{$ \theta = 0 $}} \\
+\hline
+\input{Table21.tbl}
+\multicolumn{5}{|c|}{\texttt{$ \theta = 1 / 4 $}} \\
+\hline
+\input{Table22.tbl}
+\multicolumn{5}{|c|}{\texttt{$ \theta = 1 / 3 $}} \\
+\hline
+\input{Table23.tbl}
+\end{tabular}
+\caption{Error $\norm{ U_h^m - u_h^m }_2$ for different $\theta$ and $t$}
+\label{Tbl:Prob1L2}
+\end{table}
+
+The necessary $L^2$ stability condition for $ \theta = 0, 1 / 4, 1 / 3 $ are respectively $ \mu = 1 / 6, 1 / 3, 1 / 2 $. It can be seen that the necessary $L^2$ stability condition indeed constrains the stability. However, when $\mu$ is significantly larger than the threshold, the numerical solution indeed blow up. However, when $\mu$ is only slighly greater than the threshold, the numerical solution does not blow up. The reason may be that the necessary condition is ``asymptotical'', namely it only holds for sufficiently small $h$. However, $ h = 1 / 100 $ may not be sufficiently small.
+
+Additionally, comparison between $L^{\infty}$ and $L^2$ error yields no noticeable difference. This is because the initial value is smooth, and therefore $L^{\infty}$ stability can be carried out by von Neumann analysis. There is also no significant difference whether the sufficient $L^{\infty}$ stability condition is satisfied by observing the last two columns for $ \theta = 1 / 4 $, $ 1 / 3 $.
+
+To verify the effect of $L^2$ stability condition, we devise another interesting experiment. We solve the second problem for $ T = 2 $ with $ N = 100 $ and $ \theta = 1 $. For $ p \in \rsbr{ 0, 2 } $, we conduct one run with
+\begin{equation}
+\mu = \frac{5}{ \log \rbr{ p + 1 } }.
+\end{equation}
+Noticing that in $ \sbr{ 0, 1 } \times \sbr{ 0, t } $,
+\begin{equation}
+\norm{a}_{ \infty, t } = \frac{1}{10} \log \rbr{ t + 1 },
+\end{equation}
+we deduce that the run violates the $L^2$ stability condition for $ t \ge p $. As a result, the $L^2$ error between $U_h^m$ and $u_h^m$ will blow up for $ t \approx p $. The final result is plotted in Figure \ref{Fig:Blow}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure03.pgf}
+\caption{Error $ \norm{ U_h^m - u_h^m }_2 $ for different $p$}
+\label{Fig:Blow}
+\end{figure}
+
+Although the time of blowing up differs slightly from what we expect, the solutions indeed blow up consecutively and verifies the (necessity of) $L^2$ stability condition.
+
+\section{Convergence order}
+
+We then proceed to examine the convergence order of different schemes.
+
+We first set $ N = 100 $, $ T = 1000 $ and test the first problem. We vary $M$ and therefore change the grid ratio $\mu$. The $L^{\infty}$ error and $L^2$ error are shown in Figure \ref{Fig:ConvI} and Figure \ref{Fig:Conv2}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure17.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_{\infty} $ for different $M$}
+\label{Fig:ConvI}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure04.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_2 $ for different $M$}
+\label{Fig:Conv2}
+\end{figure}
+
+From these figures, we can find that for small $M$, $ \theta = 1 / 2 $ converges in order $ O \rbr{\tau^2} $ and $ \theta = 2 / 3, 3 / 4, 1 $ converge in order $ O \rbr{\tau} $. In this case, numerical solution of $ \theta = 0, 1 / 4, 1 / 3 $ blow up. For larger $M$, errors tend to a constant. This means the error is related to $h$ and it dominates the error term for small $\tau$.
+% Note: FALSE ARGUMENT
+% One should notice that the constant does not decay as fast  analytical solution (comparing Table \ref{Tbl:Decay}). This because there are errors in the discretization of the boundary, which does not decay so fast. (One may compare the report of project 3, in which the error decays as fast as the analytical solution.)
+As a result, the tipping point between slope $-2$ and $0$ become smaller and smaller. For $ t = 1000 $, $h$ has already dominates the error for $ M = 10^3 $. There are no significant between $L^{\infty}$ and $L^2$ error.
+
+We then investigate the convergence with respect to different grid ratio. We take $ T = 10 $ here and investigate several quantities for different $\theta$, $h$ and $\mu$. We keep $ \tau / h $ or $ \tau / h^2 $ as a constant and then vary $N$ or $h$ to observe convergence in different refinement path. The errors are shown in Figure \ref{Fig:OrderI} and Figure \ref{Fig:Order2}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure051.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_{\infty} $ for different $N$ with different $\mu$}
+\label{Fig:OrderI}
+\end{figure}
+
+\begin{figure}[htbp]
+\ContinuedFloat
+\centering
+\scalebox{0.75}{\input{Figure052.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_{\infty} $ for different $N$ with different $\mu$ (cont.)}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure061.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_2 $ for different $N$ with different $\mu$}
+\label{Fig:Order2}
+\end{figure}
+
+\begin{figure}[htbp]
+\ContinuedFloat
+\centering
+\scalebox{0.75}{\input{Figure062.pgf}}
+\caption{Error $ \norm{ U_h^m - U_h^m }_2 $ for different $N$ with different $\mu$ (cont.)}
+\end{figure}
+
+For $ \theta = 0, 1 / 4, 1 / 3 $, only refinement path with $ \tau / h^2 $ fixed does not lead to numerical blow-up. Once the scheme is convergent, the exact value of the constant does not matter much. As a result, for practical use, one should always set the largest possible $\mu$. The error $ O \rbr{h^2} $ on the refinement path means the error of the scheme is of $ O \rbr{ \tau + h^2 } $ as expected. For $ \theta = 1 / 2 $, $ O \rbr{h^2} $ error on the refinement path implies the error of the scheme is $ O \rbr{ \tau^2 + h^2 } $. Again the grid ratio does not matter much. Back to Figure \ref{Fig:ConvI} and Figure \ref{Fig:Conv2}, there some special $ \tau / h $ which may lead to significantly smaller errors. This accounts for the slightly better behavior of $ \tau / h = 8 $. In practical usage, one should draw figures first to find such value. For $ \theta = 2 / 3, 3 / 4, 1 $, the convergence rate of fixed $ \tau / h $ is $ O \rbr{h} $ and that of $ \tau / h^2 $ is $ O \rbr{h^2} $. This indicates the overall error is $ O \rbr{ \tau + h^2 } $. Although these schemes are more stable, they still suffer from low order of convergence. On the refinement path with $ \tau / h^2 $ fixed, its value does not influence much. However, on $ \tau / h $, bigger value means larger error. This is because for large $M$, the $ O \rbr{\tau} $ term dominates. There are no significant difference between $L^{\infty}$ error and $L^2$ error here.
+
+We also plot figures of wall time and estimated time complexity in Figure \ref{Fig:Wall} and Figure \ref{Fig:Comp}. The complexity estimated is $ N M $, since for each time step only tridiagonal matrices of size $ O \rbr{N} $ get involved. For fixed $ \tau / h^2 $ the time taken is of $ O \rbr{N^3} $ and for fixed $ \tau / h $ it is $ O \rbr{N^2} $. One may observe that these two figures roughly coincides, which verifies our estimation of time complexity.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure071.pgf}}
+\caption{Wall time elapsed for different $N$ with different $\mu$}
+\label{Fig:Wall}
+\end{figure}
+
+\begin{figure}[htbp]
+\ContinuedFloat
+\centering
+\scalebox{0.75}{\input{Figure072.pgf}}
+\caption{Wall time elapsed for different $N$ with different $\mu$ (cont.)}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure081.pgf}}
+\caption{Estimated time complexity for different $N$ with different $\mu$}
+\label{Fig:Comp}
+\end{figure}
+
+\begin{figure}[htbp]
+\ContinuedFloat
+\centering
+\scalebox{0.75}{\input{Figure082.pgf}}
+\caption{Estimated time complexity for different $N$ with different $\mu$ (cont.)}
+\end{figure}
+
+We proceed to investigate the influence of maximal principle, or say the sufficient $L^{\infty}$ stability condition. Since
+\begin{equation}
+\frac{1}{ 2 \norm{a}_{\infty} } = \frac{1}{6},
+\end{equation}
+the refinement path of $ \tau / h^2 = 2 $ does not satisfy the condition while $ \tau / h = 1 / 8 $ satisfies the condition for $ \theta = 1 / 2, 2 / 3, 3 / 4 $. However, there are no significant distinction between this two refinement path in terms of $L^{\infty}$ or $L^2$ error.
+
+We also plot figures of the numerical solution to the firest problem. We constrain $ N = 100 $ and $ T = 2 $ here. We use $ \theta = 1 / 2 $, namely the Crank--Nicolson scheme. In Figure \ref{Fig:Sol1}, we set $ M = 200 $. In Figure \ref{Fig:Sol2} we set $ M = 160000 $. The grid ratio $ \mu = 100 $ and $ \mu = 1 / 8 $ respectively.
+
+\begin{figure}[htbp]
+{
+\centering
+
+\input{Figure09.pgf}
+
+\input{Figure10.pgf}
+
+\caption{Numerical solution of $ N = 100 $, $ M = 200 $ and $ T = 2 $}
+\label{Fig:Sol1}
+}
+{
+\footnotesize Top: numerical solution $U_h^m$; bottom: error $ U_h^m - u_h^m $.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+
+\input{Figure11.pgf}
+
+\input{Figure12.pgf}
+
+\caption{Numerical solution of $ N = 100 $, $ M = 160000 $ and $ T = 2 $}
+\label{Fig:Sol2}
+}
+{
+\footnotesize Top: numerical solution $U_h^m$; bottom: error $ U_h^m - u_h^m $.
+}
+\end{figure}
+
+Visually, there are no significant difference between these two solution, even considering the figure of error $ U_h^m - u_h^m $. In this case, maximal principle does not matter much. The initial condition $u^0$ being smooth may account for this phenomenon.
+
+\section{Effect of discretization of boundary condition}
+
+We then test the influence of boundary discretization. We take $ N = 100 $, $ T = 1000 $ and $ \theta = 1 / 2 $ to test the first problem. We vary $M$ and discretizations of boundary condition. The numerical result is shown in Figure \ref{Fig:BoundConvI} and Figure \ref{Fig:BoundConv2}.
+
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure16.pgf}}
+\caption{Error $ \norm{ U_h^m - u_h^m }_{\infty} $ of different $M$ and discretizations of boundary condition}
+\label{Fig:BoundConvI}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.75}{\input{Figure13.pgf}}
+\caption{Error $ \norm{ U_h^m - u_h^m }_2 $ of different $M$ and discretizations of boundary condition}
+\label{Fig:BoundConv2}
+\end{figure}
+
+From this figure, we observe the three discretizations all lead to convergence in $ O \rbr{\tau^2} $ when $M$ is small. When $M$ becomes larger, the error of $h$ dominates. The limiting error of direct discretization is significantly larger than discretizations using ghost nodes. It can be seen that the method using half grid has smaller error than that using full grid. This is because the approximation \eqref{Eq:Half1}, \eqref{Eq:Half2} is more precise than \eqref{Eq:Full1}, \eqref{Eq:Full2}.
+
+We then verify the order of convergence with respect to different grid ratio towards the first problem. We set $ T = 10 $ and then vary $N$ to observe the $L^{\infty}$ error and $L^2$ error. Plots are given in Figure \ref{Fig:BConvI} and Figure \ref{Fig:BConv2}.
+
+\begin{figure}
+\centering
+\scalebox{0.75}{\input{Figure14.pgf}}
+\caption{Error $ \norm{ U_h^m - u_h^m }_{\infty} $ for different discretizations of boundary condition}
+\label{Fig:BConvI}
+\end{figure}
+
+\begin{figure}
+\centering
+\scalebox{0.75}{\input{Figure15.pgf}}
+\caption{Error $ \norm{ U_h^m - u_h^m }_2 $ for different discretizations of boundary condition}
+\label{Fig:BConv2}
+\end{figure}
+
+From these figures, we can observe that ghost nodes methods lead to $ O \rbr{ \tau^2 + h^2 } $ for $ \theta = 1 / 2 $ or $ O \rbr{ \tau + h^2 } $ for $ \theta = 0, 1 $, while direct discretization results in $ O \rbr{ \tau^2 + h } $ convergence for $ \theta = 1 / 2 $ or $ O \rbr{ \tau + h } $ for $ \theta = 0, 1 $. Since the computational cost is identical, it is better to use ghost nodes methods for practical purposes. We need to point out that half grid methods are more accurate in some cases, but the values at the boundary cannot be given directly. Some interpolation methods must be utilized to get $U_0^m$ and $U_N^m$ when we use ghost nodes method with half grid.
+
+We finally compare the numerical results visually. The figures are drawn as Figure \ref{Fig:Sol1}, Figure \ref{Fig:Bound1} and Figure \ref{Fig:Bound2}.
+
+\begin{figure}[htbp]
+{
+\centering
+
+\input{Figure18.pgf}
+
+\input{Figure19.pgf}
+
+\caption{Numerical solution of $ N = 100 $, $ M = 200 $ and $ T = 2 $ using direct discretization}
+\label{Fig:Bound1}
+}
+{
+\footnotesize Top: numerical solution $U_h^m$; bottom: error $ U_h^m - u_h^m $.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+
+\input{Figure20.pgf}
+
+\input{Figure21.pgf}
+
+\caption{Numerical solution of $ N = 100 $, $ M = 160000 $ and $ T = 2 $ using ghost nodes with half grid}
+\label{Fig:Bound2}
+}
+{
+\footnotesize Top: numerical solution $U_h^m$; bottom: error $ U_h^m - u_h^m $.
+}
+\end{figure}
+
+It can be seen that different error patterns are shown.
+
+\end{document}

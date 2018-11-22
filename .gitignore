@@ -4,6 +4,7 @@
 build/
 *.bak
 *.run
+__pycache__/
 
 # Generated files
 *.aux
@@ -20,6 +21,7 @@ build/
 *.npy
 *.dat
 *.dir
+*.png
 
 # External files
 
