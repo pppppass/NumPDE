@@ -1,0 +1,105 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 14)}
+\author{Zhihan Li, 1600010653}
+\date{November 27, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 204 Exercise 7)} \textit{Answer.} For $ v \in H^1_{ 0 0 } \sbr{ 0, 1 } $ (only valued $0$ at $0$), we have
+\begin{equation}
+\begin{split}
+\int_0^1 f v &= -\int_0^1 u'' v + \int_0^1 u v \\
+&= \int_0^1 u' v' + \int_0^1 u v - \nvbr{ u' v }_0^1 \\
+&= \int_0^1 u' v' + \int_0^1 u v + \nvbr{ u v }_1 - g \nvbr{v}_1.
+\end{split}
+\end{equation}
+As a result, the weak solution is defined as $ u \in H^1_{ 0 0 } \sbr{ 0, 1 } $ such that for all $ v \in H^1_{ 0 0 } \sbr{ 0, 1 } $,
+\begin{equation}
+\int_0^1 u' v' + \int_0^1 u v + \nvbr{ u v }_1 = \int_0^1 f v + g \nvbr{v}_1.
+\end{equation}
+Because in the one-dimensional case $ H^1 \sbr{ 0, 1 } \hookrightarrow C^0 \sbr{ 0, 1 } $, the evaluation functional $\nvbr{\cdot}_1$ is continuous in $ H^1 \sbr{ 0, 1 } $. This means
+\begin{gather}
+a \rbr{ u, v } = \int_0^1 u' v' + \int_0^1 u v + \nvbr{ u v }_1, \\
+f \rbr{v} = \int_0^1 f v + g \nvbr{v}_1
+\end{gather}
+are both continuous as functionals on $ H^1_{ 0 0 } \sbr{ 0, 1 } $. We note that
+\begin{equation}
+a \rbr{ u, u } \ge \norm{u}_{ 1, 2, \sbr{ 0, 1 } }^2.
+\end{equation}
+Hence, the Lax--Milgram theorem applies, and there is one unique $ u \in H^1_{ 0 0 } \sbr{ 0, 1 } $ such that
+\begin{equation}
+a \rbr{ u, v } = f \rbr{v}
+\end{equation}
+for all $ v \in H^1_{ 0 0 } \sbr{ 0, 1 } $. This is exactly the existence and uniqueness of weak solution.
+
+\textbf{Problem 2. (Page 205 Exercise 8)} \textit{Answer.} For $ u \in H^1 \rbr{\Omega} $, we have
+\begin{equation}
+\begin{split}
+\int_{\Omega} f v &= -\int_{\Omega} \Delta u v \\
+&= \int_{\Omega} \nabla u \cdot \nabla v - \int_{ \pd \Omega } \nabla u \cdot \mathbf{n} v \\
+&= \int_{\Omega} \nabla u \cdot \nabla v + \int_{ \pd \Omega } b u v - \int_{ \pd \Omega } g v.
+\end{split}
+\end{equation}
+As a result, the weak solution is defined as $ u \in H^1 \rbr{\Omega} $ such that for all $ v \in H^1 \rbr{\Omega} $,
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v + \int_{ \pd \Omega } b u v = \int_{\Omega} f v + \int_{ \pd \Omega } g v.
+\end{equation}
+Since $ H^1 \rbr{\Omega} \hookrightarrow L^2 \rbr{ \pd \Omega } $,
+\begin{gather}
+a \rbr{ u, v } = \int_{\Omega} \nabla u \cdot \nabla v + \int_{ \pd \Omega } b u v, \\
+f \rbr{v} = \int_{\Omega} f v + \int_{ \pd \Omega } g v.
+\end{gather}
+is continuous. We note that
+\begin{equation}
+\sqrt{ a \rbr{ u, u } } \ge \sqrt{\frac{\delta}{2}} \norm{u}_{ 0, 2, \pd \Omega } + \frac{1}{\sqrt{2}} \abs{u}_{ 1, 2, \Omega } \gtrsim \norm{u}_{ 1, 2, \Omega },
+\end{equation}
+where the second inequality follows from previous exercise. Hence, the Lax--Milgram applies and there is one unique $ u \in H^1 \rbr{\Omega} $ such that
+\begin{equation}
+a \rbr{ u, v } = f \rbr{v}
+\end{equation}
+for all $ v \in H^1 \rbr{\Omega} $. This is exactly the existence and uniqueness of weak solution.
+
+\textbf{Problem 3. (Page 205 Exercise 12 (3))} \textit{Answer.} For $ v \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $ (say $ v \rbr{0} = v' \rbr{0} = 0 $), we have
+\begin{equation}
+\begin{split}
+\int_0^1 f v &= \int_0^1 u'''' v \\
+& \int_0^1 u'' v'' + \nvbr{ u''' v }_0^1 - \nvbr{ u'' v' }_0^1 \\
+& \int_0^1 u'' v'' + g_1 \nvbr{v}_1 - g_0 \nvbr{v'}_1.
+\end{split}
+\end{equation}
+So the weak solution is defined as $ u \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $, such that for all $ v \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $,
+\begin{equation}
+\int_0^1 u'' v'' = \int_0^1 f v - g_1 \nvbr{v}_1 + g_0 \nvbr{v'}_1.
+\end{equation}
+Because in the one-dimensional case $ H^2 \sbr{ 0, 1 } \hookrightarrow C^1 \sbr{ 0, 1 } $, we have $\nvbr{\cdot}_1$ and $\nvbr{\cdot'}_1$ continuous. As a result,
+\begin{gather}
+a \rbr{ u, v } = \int_0^1 u'' v'', \\
+f \rbr{v} = \int_0^1 f v - g_1 \nvbr{v}_1 + g_0 \nvbr{v'}_1
+\end{gather}
+are continuous. Since
+\begin{equation}
+\int_0^1 \rbr{u'}^2 = \int_0^1 \rbr{ \int_0^x u'' }^2 \le \int_0^1 \rbr{ \int_0^x \rbr{u''}^2 \int_0^x 1 } \le \int_0^1 \rbr{u''}^2
+\end{equation}
+and similarly
+\begin{equation}
+\int_0^1 u^2 \le \int_0^1 \rbr{u'}^2
+\end{equation}
+for $ u \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $,
+\begin{equation}
+a \rbr{ u, u } = \int_0^1 \rbr{u''}^2 \ge \frac{1}{3} \norm{u}_{ 2, 2, \sbr{ 0, 1 } }^3.
+\end{equation}
+Hence, the Lax--Milgram theorem applies and there is one unique $ u \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $ such that
+\begin{equation}
+a \rbr{ u, v } = f \rbr{v}
+\end{equation}
+for all $ v \in H^2_{ 0 0 0 } \sbr{ 0, 1 } $. This is exactly the existence and uniqueness of weak solution.
+
+\end{document}

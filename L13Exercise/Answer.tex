@@ -1,0 +1,69 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 13)}
+\author{Zhihan Li, 1600010653}
+\date{November 27, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 204 Exercise 2)} \textit{Answer.} For $ v \in C^1 \rbr{\overline{\Omega}} $, we have
+\begin{equation}
+\frac{ J \rbr{ u + \alpha v } - J \rbr{u} }{\alpha }= \int_{\Omega} \nabla u \cdot \nabla v - \int_{\Omega} f v - \int_{ \pd \Omega } g v + \alpha \int_{\Omega} \abs{ \nabla v }^2.
+\end{equation}
+When $ \alpha \rightarrow 0 $, the right hand side converges to
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v - \int_{\Omega} f v - \int_{ \pd \Omega } g v
+\end{equation}
+and therefore this is the G\^ateaux differential along $v$. Since $ \nabla u $ is continuous on $\overline{\Omega}$, it is uniformly continuous and therefore absolutely continuous. This means
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v = \int_{ \pd \Omega } \nabla u \cdot \mathbf{n} v - \int_{\Omega} \Delta u v
+\end{equation}
+and therefore
+\begin{equation}
+L_u \rbr{v} = -\int_{\Omega} \rbr{ f + \Delta u } v + \int_{ \pd \Omega } \rbr{ \nabla u \cdot \mathbf{n} - g } v
+\end{equation}
+satisfies
+\begin{equation}
+\abs{ J \rbr{ u + v } - J \rbr{u} - L_u \rbr{v} } = \int_{\Omega} \abs{ \nabla v }^2.
+\end{equation}
+Since the right hand side is controlled by the $C^1$ norm, the Fr\'echet differential of $J$ at $u$ is $L_u$.
+
+\textbf{Problem 2. (Page 204 Exercise 3)} \textit{Proof.} Since for any $ \phi \in C_0^{\infty} \rbr{\Omega} $ we have
+\begin{equation}
+\begin{split}
+\int_{\Omega} v_i \phi &= \int_{\Omega_1} \pdl{i} u \phi + \int_{\Omega_2} \pdl{i} u \phi \\
+&= \int_{ \pd \Omega_1 } u \phi \mathbf{e}_i \cdot \mathbf{n} - \int_{\Omega_1} u \pdl{i} \phi + \int_{ \pd \Omega_2 } u \phi \mathbf{e}_i \cdot \mathbf{n} - \int_{\Omega_2} u \pdl{i} \phi \\
+&= \int_S \sbr{ u \phi } \mathbf{e}_i \cdot \mathbf{n} - \int_{\Omega} u \pdl{i} \phi \\
+&= -\int_{\Omega} u \pdl{i} \phi,
+\end{split}
+\end{equation}
+therefore $v_i$ is the distributional derivative.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 204 Exercise 6)} \textit{Proof.} Since $ H^1 \rbr{\Omega} \hookrightarrow L^2 \rbr{ \pd \Omega } $, we conclude
+\begin{equation}
+\norm{u}_{ 0, 2, \pd \Omega_0 } \le \norm{u}_{ 0, 2, \pd \Omega } \lesssim \norm{u}_{ 1, 2, \Omega }.
+\end{equation}
+Combined with
+\begin{equation}
+\abs{u}_{ 1, 2, \Omega } \le \norm{u}_{ 1, 2, \Omega },
+\end{equation}
+the right inequality is proved. For the left part, we prove by contradiction. Assume $ u_k \in H^1 \rbr{\Omega} $ satisfies $ \norm{u}_{ 1, 2, \Omega } = 1 $ while $ \norm{u_k}_{ 0, 2, \pd \Omega_0 } + \abs{u_k}_{ 1, 2, \Omega } \rightarrow 0 $. Since $ H^1 \rbr{\Omega} \stackrel{\text{c}}{\hookrightarrow} L^2 \rbr{\Omega} $, we may extract a sequence $ u_k \rightarrow u $ in $ L^2 \rbr{\Omega} $. Since $ \abs{u_k}_{ 1, 2, \Omega } \rightarrow 0 $, $u_k$ is a Cauchy sequence in $ H^1 \rbr{\Omega} $ and therefore $ u_k \rightarrow u $ in $ H^1 \rbr{\Omega} $. By $ \abs{u_k}_{ 1, 2, \Omega } \rightarrow 0 $, $ \abs{u}_{ 1, 2, \Omega } = 0 $ and therefore $ u = C $ for some constant $C$. Since $ \norm{u_k}_{ 1, 2, \Omega } = 1 $, $ \norm{u}_{ 1, 2, \Omega } = 1 $ and $ \norm{u}_{ 0, 2, \Omega } = 1 $. This implies $ C \neq 0 $. The embedding theorem again yields
+\begin{equation}
+\norm{ u - u_k }_{ 0, 2, \pd \Omega_0 } \le \norm{ u - u_k }_{ 0, 2, \pd \Omega } \lesssim \norm{ u - u_k }_{ 1, 2, \Omega } \rightarrow 0.
+\end{equation}
+However
+\begin{equation}
+\norm{ u - u_k }_{ 0, 2, \pd \Omega_0 } \ge \norm{u}_{ 0, 2, \pd \Omega_0 } - \norm{u_k}_{ 0, 2, \pd \Omega_0 } \rightarrow C m \rbr{ \pd \Omega_0 }
+\end{equation}
+leads to a contradiction.
+\hfill$\Box$
+
+\end{document}
