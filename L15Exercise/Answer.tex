@@ -1,0 +1,74 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 15)}
+\author{Zhihan Li, 1600010653}
+\date{December 4, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 231 Exercise 5)} \textit{Answer.} We have
+\begin{equation}
+\begin{split}
+K^e &= \int_{T_e} \nabla \lambda^e \rbr{\mathbf{x}} A \rbr{ \nabla \lambda^{e} \rbr{\mathbf{x}} }^{\text{T}} \sd \mathbf{x} \\
+&= \int_{T_s} \nabla \lambda^s \rbr{\mathbf{x}} A_e^{-1} A \rbr{ \nabla \lambda^{e} \rbr{\mathbf{x}} A_e^{-1} }^{\text{T}} \det A_e \sd \mathbf{x} \\
+&= \frac{1}{ 2 \det A_e } \msbr{ x_2^2 - x_2^3 & x_1^3 - x_1^2 \\ x_2^3 - x_2^1 & x_1^1 - x_1^3 \\ x_2^1 - x_2^2 & x_1^2 - x_1^1 } \msbr{ a_{ 1 1 } & a_{ 1 2 } \\ a_{ 2 1 } & a_{ 2 2 } } \msbr{ x_2^2 - x_2^3 & x_2^3 - x_2^1 & x_2^1 - x_2^2 \\ x_1^3 - x_1^2 & x_1^1 - x_1^3 & x_1^2 - x_1^1 }.
+\end{split}
+\end{equation}
+
+\textbf{Problem 2. (Page 231 Exercise 6)} \textit{Answer.} Choose the funtion space $ V_{\text{test}} = \cbr{ v \in H^1 \rbr{\Omega} : \nvbr{v}_{ \pd \Omega_0 } = 0 } $. For $ v \in V_{\text{test}} $,
+\begin{equation}
+\begin{split}
+\int_{\Omega} f v &= -\int_{\Omega} \Delta u v \\
+&= -\int_{ \pd \Omega } \nabla u \cdot \mathbf{n} v + \int_{\Omega} \nabla u \cdot \nabla v \\
+&= \sum_{ i \neq 0 } \int_{ \pd \Omega_i } \rbr{ \frac{b}{a} u - \frac{1}{a} g } v + \int_{\Omega} \nabla u \cdot \nabla v \\
+&= \sum_{ i \neq 0, 1 } \int_{ \pd \Omega_i } \frac{b}{a} u v + \int_{\Omega} \nabla u \cdot \nabla v - \sum_{ i \neq 0 } \int_{ \pd \Omega_i } \frac{1}{a} g v.
+\end{split}
+\end{equation}
+As a result, the variation problem is
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v + \sum_{ i \neq 0, 1 } \int_{ \pd \Omega_i } \frac{b}{a} u v  = \int_{\Omega} f v + \sum_{ i \neq 0 } \int_{ \pd \Omega_i } \frac{1}{a} g v.
+\end{equation}
+Let $V_h$ be the space of piece-wise linear functions. The trial function space is
+\begin{equation}
+V_{ h, \text{trail} } = \cbr{ u \in V_h : u \rbr{A} = \frac{ g \rbr{A} }{ b \rbr{A} }, \forall A \in \pd \Omega_0 }
+\end{equation}
+and the test function space is
+\begin{equation}
+V_{ h, \text{test} } = \cbr{ v \in V_h : v \rbr{A} = 0, \forall A \in \pd \Omega_0 }.
+\end{equation}
+
+\textbf{Problem 3. (Page 231 Exercise 7)} \textit{Proof.} The variation problem is
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v + \int_{ \pd \Omega } b u v = \int_{\Omega} f v + \int_{ \pd \Omega } g v.
+\end{equation}
+Arrange the value at $A_i$ to be the $i$-th entry. On $V_h$, the equation with $i$-th row is
+\begin{equation}
+\sum_e 1_{ A_i \in e } \rbr{ K_e u_e }_i + b 1_{ A_i \in \pd \Omega } u_i  = 0.
+\end{equation}
+By taking $K_e$ as a matrix defined on $V_h$ here with a little abuse of notation the equation is
+\begin{equation}
+\sum_e K_e u + B_{ \pd \Omega } u = 0,
+\end{equation}
+where $ B_{ \pd \Omega } $ is the diagonal matrix with $ b \rbr{A_i} $ for $ i \in \pd \Omega $ and $0$ otherwise. We note that both $K_e$ and $ B_{ \pd \Omega } $ are symmetric, we only need to prove
+\begin{equation}
+\sum_e u^{\text{T}} K_e u + u^{\text{T}} B_{ \pd \Omega } u = 0
+\end{equation}
+implies $ u = 0 $. Noting that $ b > 0 $ is positive, the positive semi-definiteness yields
+\begin{equation}
+u^{\text{T}} K_e u = 0
+\end{equation}
+and
+\begin{equation}
+u^{\text{T}} B_{ \pd \Omega } u = 0,
+\end{equation}
+while the first equation yields $u_i$ coincides for all $ A_i \in e $ with fixed $e$, and the second equation yields $ u_i = 0 $ for $ A_i \in \pd \Omega $ since $ b \rbr{A_i} > 0 $. Combining these and connectedness, we reach $ u = 0 $ as desired.
+\hfill$\Box$
+
+\end{document}

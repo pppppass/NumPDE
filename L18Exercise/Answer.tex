@@ -1,0 +1,77 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 18)}
+\author{Zhihan Li, 1600010653}
+\date{December 18, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 262 Exercise 5)} \textit{Answer.} As shown in previous exercises, the abstract error estimation is
+\begin{equation}
+\norm{ u - u_h } \le \norm{ u - u_{\rbr{h}} } + \norm{ u_{\rbr{h}} - u_h } \le \norm{ u - u_{\rbr{h}} } + C \inf_{ v_h \in V_h } \norm{ u_{\rbr{h}} - v_h },
+\end{equation}
+where $V_h$ is the discretized space (value at some points on the boundary is set according to the inhomogenous Dirichlet boundary condition), $u_{\rbr{h}}$ is the solution with boundary condition modified from the continuous one to the discrete, interpolated one. We assume that Lagrange $C^0$ finite element is applied here. We further assume we construct polynomials of degree $k$ on each element. Since the domain $\Omega$ is a polygon, and the term $ u - u_{\rbr{h}} $ corresponds to a harmonic function with Dirichlet boundary condition
+\begin{equation}
+\norm{ u - u_{\rbr{h}} }_{ L^{\infty} \rbr{ \pd \Omega } } \le C_1 h^{ k + 1 }
+\end{equation}
+according to interpolation theory. We deduce from maximal principle that
+\begin{equation}
+\norm{ u - u_{\rbr{h}} }_{ 0, \Omega } \le C_2 h^{ k + 1 }.
+\end{equation}
+(The $H^1$ error is harder to derive, and I am uncertain about that. Hopefully it is of order $ O \rbr{h^k} $.) The $ \norm{ u - u_{\rbr{h}} } $ part is standard. According to techniques introduced in the class, by assuming $ u \in H^{ k + 1 } \rbr{\Omega} $, we have
+\begin{equation}
+\norm{ u_{\rbr{h}} - u_h }_{ 1, \Omega } \le C_3 h^k \abs{u}_{ k + 1, \Omega }
+\end{equation}
+and
+\begin{equation}
+\norm{ u_{\rbr{h}} - u_h }_{ 0, \Omega } \le C_4 h^{ k + 1 } \abs{u}_{ k + 1, \Omega }
+\end{equation}
+given the coefficient is sufficiently smooth. By combining these, we have
+\begin{equation}
+\norm{ u - u_h }_{ 0, \Omega } \le C_5 h^{ k + 1 } \abs{u}_{ k + 1, \Omega }.
+\end{equation}
+
+\textbf{Problem 2. (Page 262 Exercise 6)} \textit{Proof.} Since the finite element space is of $C^0$ and piece-wise smooth, we directly have
+\begin{equation}
+P_k \rbr{\hat{K}} \subseteq \hat{P} \subseteq H^1 \rbr{\hat{K}}.
+\end{equation}
+Because $ n \le 3 $, we have $ H^2 \rbr{\hat{K}} \hookrightarrow C^0 \rbr{\hat{K}} $.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 262 Exercise 8)} \textit{Proof.} Since $ n \le 3 $, we have $ W^{ 2, 2 } \rbr{\hat{K}} \hookrightarrow C^0 \rbr{\hat{K}} $, $ W^{ 2, 2 } \rbr{\hat{K}} \hookrightarrow W^{ 0, \infty } \rbr{\hat{K}} $, $ P_1 \rbr{\hat{K}} \subseteq \hat{P} \subseteq W^{ 0, \infty } \rbr{\hat{K}} $. Applying Theorem 7.6, we have
+\begin{equation}
+\norm{ v - \Pi_K v }_{ 0, \infty, K } \le C_1 \rbr{ m \rbr{K} }^{ -1 / 2 } h_K^2 \abs{v}_{ 2, 2, K },
+\end{equation}
+where $C$ depends on $\hat{K}$, $\hat{P}$ and $\hat{\Sigma}$. There exists $C_2$ depending on the least angle $\theta$ of all $K$ such that
+\begin{equation}
+m \rbr{K} \ge C_2 h_K^n 
+\end{equation}
+and there exists $C_3$ depending on $\gamma$ such that
+\begin{equation}
+C_3 h \le h_K \le C_4 h.
+\end{equation}
+This means there exists $C_5$ depending on $\theta$ and $\gamma$ such that
+\begin{equation}
+\norm{ v - \Pi_K v }_{ 0, \infty, K } \le C_5 h^{ 2 - n / 2 } \abs{v}_{ 2, 2, K }.
+\end{equation}
+Summing up yields
+\begin{equation}
+\begin{split}
+&\ptrel{=} \norm{ v - \Pi v }_{ 0, \infty, \Omega } \le \sqrt{ \sum_K \norm{ v - \Pi_K v }_{ 0, \infty, K }^2 } \\
+&\le C_5 h^{ 2 - n / 2 } \sqrt{ \sum_K \abs{v}_{ 2, 2, K }^2 } = C_5 h^{ 2 - n / 2 } \abs{v}_{ 2, 2, \Omega }.
+\end{split}
+\end{equation}
+Applying the C\'ea lemma, there exists $C_6$, which depends on only $\gamma$ and $\theta$, such that
+\begin{equation}
+\norm{ u - u_h }_{ 0, \infty, \Omega } \le C_6 h^{ 2 - n / 2 } \abs{u}_{ 2, 2, \Omega }.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

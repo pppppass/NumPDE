@@ -1,0 +1,88 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+\usepackage{tikz-cd}
+
+\title{Answers to Exercises (Lecture 17)}
+\author{Zhihan Li, 1600010653}
+\date{December 11, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 261 Exercise 1)} \textit{Answer.} For the homogenous Dirichlet problem, the space of $v$ and $u$ are both $ V = H^1_0 \rbr{\Omega} $, and directly applying C\'ea's lemma yields
+\begin{equation}
+\norm{ u - u_h } \le C \inf_{ v_h \in V_h } \norm{ u - v_h }
+\end{equation}
+where $C$ is a constant independent of $h$. For the non-homogenous Dirichlet problem, we choose $ u^0 \in H^1 \rbr{\Omega} $ which agrees with the original boundary condition. The finite element equation is
+\begin{equation}
+\int \nabla u_h^{\ast} \cdot \nabla v_h = \int f v_h - \int \nabla u_h^0 \cdot \nabla v_h
+\end{equation}
+for $ v_h \in V_h $ and the space of $u_h^{\ast}$ is still $V_h$, where $V_h$ is the discretization of $ V = H^1_0 \rbr{\Omega} $. The numerical solution is recovered by $ u_h = u_h^{\ast} + u_h^0 $. Here $u_h^0$ is interpolation of $u^0$, which imposes the discretized non-homogenous Dirichlet boundary condition. Let the solution of the non-homogenous Dirichlet problem with boundary $ \nvbr{u_h^0}_{ \pd \Omega } $ be $u_{\rbr{h}}$, together with $ u_{\rbr{h}}^0 = u_h^0 $, $ u_{\rbr{h}}^{\ast} = u_{\rbr{h}} - u_{\rbr{h}}^0 $. We than observe
+\begin{equation}
+\int \nabla u_{\rbr{h}}^{\ast} \cdot \nabla v = \int f v - \int \nabla u_{\rbr{h}}^0 \cdot \nabla v
+\end{equation}
+for $ v \in V $ and $ u_{\rbr{h}}^{\ast} \in V $. This means
+\begin{equation}
+\norm{ u_{\rbr{h}} - u_h } = \norm{ u_{\rbr{h}}^{\ast} - u_h^{\ast} } \le C \inf_{ v_h \in V_h } \norm{ u_{\rbr{h}} - v_h }
+\end{equation}
+by C\'ea's lemma. As a result,
+\begin{equation}
+\norm{ u - u_h } \le \norm{ u - u_{\rbr{h}} } + \norm{ u_{\rbr{h}} - u_h } \le \norm{ u - u_{\rbr{h}} } + C \inf_{ v_h \in V_h } \norm{ u_{\rbr{h}} - v_h }.
+\end{equation}
+We note that $ \norm{ u - u_{\rbr{h}} } $ heavily relies on the well-posedness of the original equation since we modify the boundary condition from $ \nvbr{u^0}_{ \pd \Omega } $ to $ \nvbr{u_h^0}_{ \pd \Omega } $ through some interpolation. Always $ \norm{ \nvbr{u^0}_{ \pd \Omega } - \nvbr{u_h^0}_{ \pd \Omega } } $ can be bounded through interpolation techniques and $ \norm{ u_{\rbr{h}} - u_h } $ is then bounded by well-posedness.
+
+\textbf{Problem 2. (Page 261 Exercise 3)} \textit{Proof.} $\hat{\Pi}$ and $ I - \hat{\Pi} $ are linear by definition. Since
+\begin{equation}
+\norm{ \hat{\Pi} f }_{\infty} = \max \cbr{ \abs{ f \rbr{0} }, \abs{ f \rbr{1} } } \le \max_{ t \in \sbr{ 0, 1 } } \norm{ f \rbr{x} } = \norm{f}_{\infty},
+\end{equation}
+we deduce $ \hat{\Pi} : C \sbr{ 0, 1 } \rightarrow P_1 \sbr{ 0, 1 } $ is bounded. Therefore $ I - \hat{\Pi} $ is bounded. Since $ H^1 \sbr{ 0, 1 } \hookrightarrow C \sbr{ 0, 1 } $ and $ L^{\infty} \sbr{ 0, 1 } \hookrightarrow L^2 \sbr{ 0, 1 } $, we deduce $ I - \hat{\Pi} : H^1 \sbr{ 0, 1 } \rightarrow L^2 \sbr{ 0, 1 } $ is bounded.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 261 Exercise 4)} \textit{Proof.} We define $ F : \sbr{ 0, 1 } \rightarrow = \sbr{ x_i, x_{ i + 1 } }, \hat{x} \mapsto x_i + \rbr{ x_{ i + 1 } - x_i } x $. We then define $ \hat{u} = F^{\text{t}} u = u \circ F \in H^2 \sbr{ 0, 1 } $ to be the function on standard element $ \sbr{ 0, 1 } $ and $\hat{\Pi}$ the interpolation function on standard element such that
+\begin{equation}
+\begin{tikzcd}
+H^2 \sbr{ x_i, x_{ i + 1 } } \arrow[r, "\Pi"] \arrow[d, "F^{\text{t}}"'] & P_1 \sbr{ x_i, x_{ i + 1 } } \arrow[d, "F^{\text{t}}"] \\
+H^2 \sbr{ 0, 1 } \arrow[r, "\hat{\Pi}"'] & P_1 \sbr{ 0, 1 }
+\end{tikzcd}
+\end{equation}
+commutes. Since $\hat{\Pi}$ is $ P_1 \sbr{ 0, 1 } $ invariant,
+\begin{equation}
+\norm{ \hat{u} - \hat{\Pi} \hat{u} }_{ 0, \sbr{ 0, 1 } } \le \inf_{ \hat{w} \in P_1 \sbr{ 0, 1 } } \norm{ \rbr{ I - \hat{\Pi} } \rbr{ \hat{u} + \hat{w} } } \le \norm{ I - \hat{\Pi} } \inf_{ \hat{w} \in P_1 \sbr{ 0, 1 } } \norm{ \hat{u} + \hat{w} }_{ 2, \sbr{ 0, 1 } }
+\end{equation}
+where
+\begin{equation}
+\norm{ I - \hat{\Pi} } = \norm{ I - \hat{\Pi} }_{ H^2 \sbr{ 0, 1 } \rightarrow L^2 \sbr{ 0, 1 } }.
+\end{equation}
+Since $ H^2 \sbr{ 0, 1 } \hookrightarrow C^1 \sbr{ 0, 1 } $, we choose $ \hat{p} \in P_1 \sbr{ 0, 1 } $ such that $ \hat{w} \rbr{0} = \hat{u} \rbr{0} $, $ \hat{p}' \rbr{0} = \hat{u}' \rbr{0} $, and therefore $ \hat{q} = \hat{u} - \hat{p} $ satisfies
+\begin{equation}
+\int_0^1 \hat{q}^2 = \int_0^1 \rbr{ \int_0^x \hat{q}' }^2 \le \int_0^1 \rbr{ \int_0^x \rbr{\hat{q}'}^2 \int_0^x 1 } \le \int_0^1 \rbr{\hat{q}'}^2
+\end{equation}
+and similarly
+\begin{equation}
+\int_0^1 \rbr{\hat{q}'}^2 \le \int_0^1 \rbr{\hat{q}''}^2.
+\end{equation}
+This implies
+\begin{equation}
+\inf_{ \hat{w} \in P_1 \sbr{ 0, 1 } } \norm{ \hat{u} + \hat{w} }_{ 2, \sbr{ 0, 1 } } \le \norm{\hat{q}}_{ 2, \sbr{ 0, 1 } } \le \sqrt{3} \abs{\hat{q}}_{ 2, \sbr{ 0, 1 } } = \sqrt{3} \abs{\hat{u}}_{ 2, \sbr{ 0, 1 } }.
+\end{equation}
+By combining
+\begin{equation}
+\abs{\hat{u}}_{ 2, \sbr{ 0, 1 } } = h^{ 3 / 2 } \abs{u}_{ 2, \sbr{ x_i, x_{ i + 1 } } }
+\end{equation}
+and
+\begin{equation}
+\norm{ u - \Pi u }_{ 0, \sbr{ 0, 1 } } = h^{ 1 / 2 } \norm{ \hat{u} - \hat{\Pi} \hat{u} }_{ 0, \sbr{ x_i, x_{ i + 1 } } },
+\end{equation}
+we reach
+\begin{equation}
+\norm{ u - \Pi u }_{ 0, \sbr{ x_i, x_{ i  + 1 } } } \le \sqrt{3} \norm{ I - \hat{\Pi} } \abs{u}_{ 2, \sbr{ x_i, x_{ i + 1 } } } h^2
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\end{document}

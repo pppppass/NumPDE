@@ -1,0 +1,77 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 16)}
+\author{Zhihan Li, 1600010653}
+\date{December 11, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 232 Exercise 12)} \textit{Answer.} Denote the nodes to be $ x_0 = 0, x_1, x_2, \cdots, x_{ n - 1 }, x_n = 1 $. One basis of piece-wise linear $C^0$ function space consists of
+\begin{equation}
+\phi_k \rbr{x} =
+\begin{cases}
+\rbr{ x - x_{ k - 1 } } / \rbr{ x_k - x_{ k - 1 } }, & x \in \sbr{ x_{ k - 1 }, x_k }; \\
+\rbr{ x_{ k + 1 } - x } / \rbr{ x_{ k + 1 } - x_k }, & x \in \sbr{ x_k, x_{ k + 1 } }; \\
+0, & \text{otherwise}
+\end{cases}
+\end{equation}
+for $ k = 0, 1, \cdots, n $.
+One basis of piece-wise quadratic $C^0$ function space consists of $\phi_k$ for $ k = 0, 1, \cdots, n $ and
+\begin{equation}
+\psi_{ k + 1 / 2 } \rbr{x} =
+\begin{cases}
+4 \rbr{ x_{ k + 1 } - x } \rbr{ x - x_k } / \rbr{ x_{ k + 1 } - x_k }^2, & x \in \sbr{ x_k, x_{ k + 1 } }; \\
+0, & \text{otherwise}.
+\end{cases}
+\end{equation}
+for $ k = 0, 1, \cdots, n - 1 $. The figures are postponed to the end.
+
+\textbf{Problem 2. (Page 232 Exercise 16)} \textit{Proof.} Since the degree of freedom of $Q_3$ is 16, and 16 values are evaluated, we only have to prove that any $ p \in Q_3 $ vanishing all degrees of freedom is identically zero. This can be done by noticing we can decompose $p$ into
+\begin{equation}
+\begin{split}
+p \rbr{ x, y } &= p_1 \rbr{y} x \rbr{ x - 1 }^2 + p_2 \rbr{y} \rbr{ x + \frac{1}{2} } \rbr{ x - 1 }^2 \\
+&+ p_3 \rbr{y} \rbr{ x - 1 } x^2 + p_4 \rbr{y} \rbr{ x - \frac{3}{2} } x^2,
+\end{split}
+\end{equation}
+where we assume the rectangle is $ \sbr{ 0, 1 } \times \sbr{ 0, 1 } $. Since
+\begin{equation}
+p \rbr{ 0, 0 } = \pdl{y} p \rbr{ 0, 0 } = \pdl{y} p \rbr{ 0, 1 } = p \rbr{ 0, 1 } = 0,
+\end{equation}
+\begin{equation}
+p_1 \rbr{0} = p_1' \rbr{0} = p_1' \rbr{1} = p_1 \rbr{1} = 0
+\end{equation}
+and therefore $ p_1 = 0 $. Similarly we have $ p_4 = 0 $. Since
+\begin{equation}
+\pdl{x} p \rbr{ 0, 0 } = \pdl{ x y } p \rbr{ 0, 0 } = \pdl{ x y } p \rbr{ 0, 1 } = \pdl{x} p \rbr{ 0, 1 },
+\end{equation}
+\begin{equation}
+p_2 \rbr{0} = p_2' \rbr{0} = p_2' \rbr{1} = p_2 \rbr{1} = 0
+\end{equation}
+and $ p_2 = 0 $. Similarly we have $ p_3 = 0 $. Combining all these, we have $ p = 0 $.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 232 Exercise 17)} \textit{Proof.} We need to verify that the function on shared boundaries is has first-order continuity. We assume the rectangles are $ R_- = \sbr{ -1, 0 } \times \sbr{ 0, 1 } $ (with function $p_-$) and $ R_+ = \sbr{ 0, 1 } \times \sbr{ 0, 1 } $ (with function $p_+$) and proceed to check the boundary $ \pd R_{\cap} = \cbr{0} \times \sbr{ 0, 1 } $. Since
+\begin{gather}
+p_- \rbr{ 0, 0 } = p_+ \rbr{ 0, 0 }, \\
+\pdl{y} p_- \rbr{ 0, 0 } = \pdl{y} p_+ \rbr{ 0, 0 }, \\
+\pdl{y} p_- \rbr{ 0, 1 } = \pdl{y} p_+ \rbr{ 0, 1 }, \\
+p_- \rbr{ 0, 1 } = p_+ \rbr{ 0, 1 },
+\end{gather}
+we deduce $ p_- = p_+ $ restricted on $ \pd R_{\cap} $ since they are polynomials of $y$. Again we have
+\begin{gather}
+\pdl{x} p_- \rbr{ 0, 0 } = \pdl{x} p_+ \rbr{ 0, 0 }, \\
+\pdl{ x y } p_- \rbr{ 0, 0 } = \pdl{ x y } p_+ \rbr{ 0, 0 }, \\
+\pdl{ x y } p_- \rbr{ 0, 1 } = \pdl{ x y } p_+ \rbr{ 0, 1 }, \\
+\pdl{x} p_- \rbr{ 0, 1 } = \pdl{x} p_+ \rbr{ 0, 1 },
+\end{gather}
+and again $ \pdl{x} p_- = \pdl{x} p_+ $. This proves the first-order continuity.
+\hfill$\Box$
+
+\end{document}
