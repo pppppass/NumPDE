@@ -1,4 +1,4 @@
-PGJOBJS = Figure01.pgf Figure02.pgf Figure03.pgf Figure04.pgf Figure05.pgf Figure06.pgf Figure07.pgf Figure08.pgf Figure09.pgf Figure10.pgf Figure11.pgf Figure12.pgf Figure13.pgf Figure14.pgf Figure15.pgf Figure16.pgf Figure17.pgf Figure18.pgf Figure19.pgf Figure20.pgf Figure21.pgf Figure22.pgf Figure23.pgf Figure24.pgf
+PGFOBJS = Figure01.pgf Figure02.pgf Figure03.pgf Figure04.pgf Figure05.pgf Figure06.pgf Figure07.pgf Figure08.pgf Figure09.pgf Figure10.pgf Figure11.pgf Figure12.pgf Figure13.pgf Figure14.pgf Figure15.pgf Figure16.pgf Figure17.pgf Figure18.pgf Figure19.pgf Figure20.pgf Figure21.pgf Figure22.pgf Figure23.pgf Figure24.pgf
 TBLOBJS = Table1.tbl Table2.tbl Table3.tbl
 RUNOBJS = Problem0.run Problem2Part1.run Problem2Part2.run Problem2Part3.run Problem2Part4.run Problem2Part5.run Problem2Part6.run
 
