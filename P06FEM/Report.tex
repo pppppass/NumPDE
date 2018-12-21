@@ -1,0 +1,361 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage{siunitx}
+\usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+\usepackage{esint}
+
+\title{Report of Project 6}
+\author{Zhihan Li, 1600010653}
+\date{December 21, 2018}
+
+\begin{document}
+
+\maketitle
+\textbf{Problem. (Page 233 Coding Exercise 2)} \textit{Answer.} We implement solvers with triangle elements and rectangle elements and test the solver with two equations. The details and numerical results are summarized in the following sections.
+
+\section{Models}
+
+We tackle the Poisson equation with mixed boundary conditions in this project. The equation reads
+\begin{equation}
+\begin{cases}
+-\Delta u = f, & \rbr{ x, y } \in \Omega = \rbr{ 0, 1 } \times \rbr{ 0, 1 }; \\
+u = g_1 & \rbr{ x, y } \in \pdl{\text{W}} \Omega = \cbr{0} \times \sbr{ 0, 1 }; \\
+-u_y + \beta_1 u = g_2, & \rbr{ x, y } \in \pdl{\text{S}} \Omega = \sbr{ 0, 1 } \times \cbr{0}; \\
+u_x + \beta_2 u = g_3, & \rbr{ x, y } \in \pdl{\text{E}} \Omega = \cbr{1} \times \sbr{ 0, 1 }; \\
+u_y + \beta_3 u = g_4 & \rbr{ x, y } \in \pdl{\text{N}} \Omega = \sbr{ 0, 1 } \times \cbr{1}.
+\end{cases}
+\end{equation}
+We reuse models from Project 1. The first equation is
+\begin{gather}
+f \rbr{ x, y } = 2 \spi^2 \sin \spi x \cos \spi y, \\
+g_1 \rbr{y} = 0, \\
+\beta_1 = 0, \\
+g_2 \rbr{x} = 0, \\
+\beta_2 = 1, \\
+g_3 \rbr{y} = -\spi \cos \spi y, \\
+\beta_3 = 2, \\
+g_4 \rbr{x} = -2 \sin \spi x.
+\end{gather}
+The analytical solution is
+\begin{equation}
+u \rbr{ x, y } = \sin \spi x \cos \spi y.
+\end{equation}
+The second equation is
+\begin{gather}
+f \rbr{ x, y } = 0, \\
+g_1 \rbr{y} = \frac{1}{2} \log \rbr{ 1 + y^2 } + \arctan y, \\
+\beta_1 = 2, \\
+g_2 \rbr{x} = 2 \log \rbr{ x + 1 } - \frac{1}{ 1 + x }, \\
+\beta_2 = 0, \\
+g_3 \rbr{x} = \frac{ 2 - y }{ 4 + y^2 }, \\
+\beta_3 = 1, \\
+g_4 \rbr{x} = \frac{1}{2} \rbr{ \rbr{ x + 1 }^2 + 1 } + \frac{\spi}{2} - \arctan \rbr{ x + 1 } + \frac{ x + 2 }{ \rbr{ x + 1 }^2 + 1 }.
+\end{gather}
+
+\section{Solvers}
+
+\subsection{Variation problem}
+
+From the problem, we can see that the boundary condition on $ \pdl{\text{W}} \Omega $ is coercive boundary condition, while others are free boundary conditions. Take $ V = \cbr{ v \in H^1 \rbr{\Omega}, \nvbr{v}_{ \pdl{\text{W}} \Omega } = 0 } $. For $ v \in V $, we have
+\begin{equation}
+\begin{split}
+\int_{\Omega} f v &= -\int_{\Omega} \Delta u v \\
+&= \int_{\Omega} \nabla u \cdot \nabla v - \int_{ \pd \Omega } \pdl{\mathbf{n}} u v \\
+&= \int_{\Omega} \nabla u \cdot \nabla v - \int_{ \pdl{\text{S}} \Omega } \rbr{-u_y} v - \int_{ \pdl{\text{E}} \Omega } u_x v - \int_{ \pdl{\text{N}} \Omega } u_y v \\
+&= \int_{\Omega} \nabla u \cdot \nabla v + \beta_1 \int_{ \pdl{\text{S}} \Omega } u v + \beta_2 \int_{ \pdl{\text{E}} \Omega } u v + \beta_3 \int_{ \pdl{\text{N}} \Omega } u v \\
+&- \int_{ \pdl{\text{S}} \Omega } g_2 v - \int_{ \pdl{\text{E}} \Omega } g_3 v - \int_{ \pdl{\text{N}} \Omega } g_4 v.
+\end{split}
+\end{equation}
+As a result, the variation problem is to find $ u \in U = \cbr{ u \in H^1 \rbr{\Omega}, \nvbr{u}_{ \pdl{\text{W}} \Omega } = g_1 } $, such that for any $ v \in V $,
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v + \beta_1 \int_{ \pdl{\text{S}} \Omega } u v + \beta_2 \int_{ \pdl{\text{E}} \Omega } u v + \beta_3 \int_{ \pdl{\text{N}} \Omega } u v = \int_{\Omega} f v + \int_{ \pdl{\text{S}} \Omega } g_2 v + \int_{ \pdl{\text{E}} \Omega } g_3 v + \int_{ \pdl{\text{N}} \Omega } g_4 v.
+\end{equation}
+
+\subsection{Triangle element}
+
+\subsubsection{Finite element space}
+
+We first adopt a triangle Lagrange element space to solve these equation. To be exact, we denote
+\begin{equation}
+h = \frac{1}{N}
+\end{equation}
+and
+\begin{gather}
+x_i = i h, \\
+y_j = j h,
+\end{gather}
+and we consider triangles
+\begin{equation}
+\rbr{ x_i, y_j }, \rbr{ x_{ i + 1 }, y_j }, \rbr{ x_{ i + 1 }, y_{ j + 1 } }
+\end{equation}
+and
+\begin{equation}
+\rbr{ x_{ i + 1 }, y_{ j + 1 } }, \rbr{ x_i, y_{ j + 1 } }, \rbr{ x_i, y_j }
+\end{equation}
+with $ 0 \le i, j \le N - 1 $ as elements in $\mathcal{T}$. The test space is discretized as
+\begin{equation}
+V_h = \cbr{ v_h \in C^0 \rbr{\Omega} : \nvbr{v_h}_K \in P_1 \rbr{K}, \forall K; v_h \rbr{P} = 0, \forall P \in \pdl{\text{W}} \Omega }
+\end{equation}
+and trial space
+\begin{equation}
+U_h = \cbr{ u_h \in C^0 \rbr{\Omega} : \nvbr{u_h}_K \in P_1 \rbr{K}, \forall K; u_h \rbr{P} = g_1 \rbr{P}, \forall P \in \pdl{\text{W}} \Omega }.
+\end{equation}
+Here $P_K$ is directly $ P_1 \rbr{K} $, and the degrees of freedom $\Sigma_K$ are evaluation functionals at three vertices of $K$. As a results, the degrees of freedom of the whole finite element space are evaluation functionals at nodes $ \rbr{ x_i, y_j } $ for $ 1 \le i \le N $, $ 0 \le j \le N $.
+
+\subsubsection{Linear system}
+
+We first construct the stiffness matrix $A$, which is actually summation of $A^K$ and $A^E$, namely the stiffness matrix on each element $K$, which serves for
+\begin{equation}
+\int_{\Omega} \nabla u \cdot \nabla v,
+\end{equation}
+and that on the boundary $E$, which corresponds to
+\begin{equation}
+\int_{ \pdl{\cdot} \Omega } u v.
+\end{equation}
+For $K$ with vertices $ P_1, P_2, P_3 $, direct integration of
+\begin{equation}
+A^K_{ P_i, P_j } = \int_K \nabla \lambda_{P_i}^K \cdot \nabla \lambda_{P_j}^K
+\end{equation}
+yields (arranged by $ P_1, P_2, P_3 $)
+\begin{equation}
+A^K = \msbr{ 1 / 2 & 0 & -1 / 2 \\ 0 & 1 / 2 & -1 / 2 \\ -1 / 2 & -1 / 2 & 1 }.
+\end{equation}
+On edges $E$ on $ \pd \Omega $ with vertices $ P_1, P_2 $, we have
+\begin{equation}
+A^E_{ P_i, P_j } = \int_E \lambda_{P_i}^E \lambda_{P_j}^E
+\end{equation}
+and (arranged by $ P_1, P_2 $)
+\begin{equation}
+A^E = h \msbr{ 1 / 3 & 1 / 6 \\ 1 / 6 & 1 / 3 }.
+\end{equation}
+Combining these all, we have
+\begin{equation}
+A = \sum_K A^K + \beta_1 \sum_{ E \subseteq \pdl{\text{S}} \Omega } A^E + \beta_2 \sum_{ E \subseteq \pdl{\text{E}} \Omega } A^E + \beta_3 \sum_{ E \subseteq \pdl{\text{N}} \Omega } A^E.
+\end{equation}
+
+Construction of the right hand side is more subtle. The first components of the right hand side is the terms
+\begin{equation}
+\int_{\Omega} f v.
+\end{equation}
+We deploy Simpson's quadrature on each element $K$, which consists of $ P_1, P_2, P_3 $, by defining
+\begin{equation}
+\rbr{\int_K}_h f = \frac{1}{3} \rbr{ f \rbr{\frac{ P_1 + P_2 }{2}} + f \rbr{\frac{ P_2 + P_3 }{2}} + f \rbr{\frac{ P_3 + P_1 }{2}} } m \rbr{K}.
+\end{equation}
+The corresponding right side vector is (arranged by $ P_1, P_2, P_3 $)
+\begin{equation}
+R^K = \msbr{ 1 / 6 & 0 & 1 / 6 \\ 1 / 6 & 1 / 6 & 0 \\ 0 & 1 / 6 & 1 / 6 } \msbr{ f \rbr{ \rbr{ P_1 + P_2 } / 2 } \\ f \rbr{ \rbr{ P_2 + P_3 } / 2 } \\ f \rbr{ \rbr{ P_3 + P_1 } / 2 } } h^2.
+\end{equation}
+One need to notice that the integral operator
+\begin{equation}
+I^K_h : f \mapsto \rbr{\int_K}_h f
+\end{equation}
+is a third-order polynomial-invariant operator. Moreover,
+\begin{equation}
+I^K_h f = I^K_h \Pi_{ P_3 \rbr{K} } f = I^K \Pi_{ P_3 \rbr{K} } f.
+\end{equation}
+where
+\begin{equation}
+I^K : f \mapsto \int_K f,
+\end{equation}
+we have
+\begin{equation}
+\abs{ I^K_h f - I^K f } = \abs{ I^K \rbr{ \Pi_{ P_3 \rbr{K} } - I } f } \le \norm{ \rbr{ \Pi_{ P_3 \rbr{K} } - I } f }_{ 0, 1 } \le C_1 h^4 \abs{f}_{ 4, 1 }
+\end{equation}
+for sufficiently small $f$. The second component of the right hand side is the terms
+\begin{equation}
+\int_{ \pd{\cdot} \Omega } g_{\cdot} v.
+\end{equation}
+For an edge $E$ on $ \pd \Omega $ with vertices $P_1$ and $P_2$, we have (arranged by $ P_1, P_2 $)
+\begin{equation}
+R^E = \msbr{ 1 / 6 & 1 / 3 & 0 \\ 0 & 1 / 3 & 1 / 6 } \msbr{ g_{\cdot} \rbr{P_1} \\ g_{\cdot} \rbr{ \rbr{ P_1 + P_2 } / 2 } \\ g_{\cdot} \rbr{P_2} } h.
+\end{equation}
+The quadrature is again of order $ O \rbr{h^4} $. The third component follows from $ u_h \rbr{P} = g_1 \rbr{P} $ for $ P \in \pdl{\text{W}} \Omega $ and $A$. Since the values at $ \pdl{\text{W}} \Omega $ is fixed, there is no need to solve for them. If we decompose the space to be $ \pdl{\text{W}} \Omega $ and $ \rbr{ \pdl{\text{W}} \Omega }^{\complement} $, we should add
+\begin{equation}
+-A_{ \rbr{ \pdl{\text{W}} \Omega }^{\complement} \pdl{\text{W}} \Omega } \rbr{u_h}_{ \pdl{\text{W}} \Omega } = -A_{ \rbr{ \pdl{\text{W}} \Omega }^{\complement} \pdl{\text{W}} \Omega } \rbr{g_1}_{ \pdl{\text{W}} \Omega }
+\end{equation}
+to the right hand side according to block notation. In conclusion, the linear system is
+\begin{equation}
+R = \sum_K R^K + \sum_{ E \subseteq \pdl{\text{S}} \Omega } R^E + \sum_{ E \subseteq \pdl{\text{E}} \Omega } R^E + \sum_{ E \subseteq \pdl{\text{N}} \Omega } R^E - A_{ \rbr{ \pdl{\text{W}} \Omega }^{\complement} \pdl{\text{W}} \Omega } \rbr{g_1}_{ \pdl{\text{W}} \Omega }.
+\end{equation}
+
+We solve the equation of
+\begin{equation}
+A u_h = R
+\end{equation}
+by conjugate gradient method since $A$ is already a symmetric positive definite matrix.
+
+\subsection{Rectangle element}
+
+\subsubsection{Finite element space}
+
+We then deploy rectangle Lagrange element space to solve these equation. We consider rectangle
+\begin{equation}
+\rbr{ x_i, y_j }, \rbr{ x_{ i + 1 }, y_j }, \rbr{ x_{ i + 1 }, y_{ j + 1 } }, \rbr{ x_i, y_{ j + 1 } }
+\end{equation}
+with $ 0 \le i, j \le N - 1 $ as elements in $\mathcal{T}$. The test space is again discretized as
+\begin{equation}
+V_h = \cbr{ v_h \in C^0 \rbr{\Omega} : \nvbr{v_h}_K \in Q_1 \rbr{K}, \forall K; v_h \rbr{P} = 0, \forall P \in \pdl{\text{W}} \Omega }
+\end{equation}
+and trial space
+\begin{equation}
+U_h = \cbr{ u_h \in C^0 \rbr{\Omega} : \nvbr{u_h}_K \in Q_1 \rbr{K}, \forall K; u_h \rbr{P} = g_1 \rbr{P}, \forall P \in \pdl{\text{W}} \Omega }.
+\end{equation}
+The degrees of freedom of the whole finite element space are again evaluation functionals at nodes $ \rbr{ x_i, y_j } $ for $ 1 \le i \le N $, $ 0 \le j \le N $.
+
+\subsubsection{Linear system}
+
+We construct the stiffness matrix $A$ here, which is actually summation of $A^K$ and $A^E$, namely the stiffness matrix on each element $K$ and on the boundary $E$. For $K$ with vertices $ P_1, P_2, P_3, P_4 $ (counter-clock-wise), direct integration of
+\begin{equation}
+A^K_{ P_i, P_j } = \int_K \nabla \lambda_{P_i}^K \cdot \nabla \lambda_{P_j}^K
+\end{equation}
+yields (arranged by $ P_1, P_2, P_3, P_4 $)
+\begin{equation}
+A^K = \msbr{ 1 / 3 & -1 / 6 & -1 / 3 & -1 / 6 \\ -1 / 6 & 1 / 3 & -1 / 6 & -1 / 3 \\ 1 / 3 & -1 / 6 & 1 / 3 & -1 / 6 \\ -1 / 6 & -1 / 3 & -1 / 6 & 1 / 3 }.
+\end{equation}
+The stiffness matrix on the edges are identical to that of triangle elements. Combining these all, we have
+\begin{equation}
+A = \sum_K A^K + \beta_1 \sum_{ E \subseteq \pdl{\text{S}} \Omega } A^E + \beta_2 \sum_{ E \subseteq \pdl{\text{E}} \Omega } A^E + \beta_3 \sum_{ E \subseteq \pdl{\text{N}} \Omega } A^E.
+\end{equation}
+
+Construction of the right hand side is again subtle. We deploy Simpson's quadrature for $R^K$ on $K$, which consists of $ P_1, P_2, P_3, P_4 $ counter-clock-wise, by
+\begin{equation}
+R^K = \msbr{ 1 / 36 & 1 / 18 & 0 & 1 / 18 & 1 / 9 & 0 & 0 & 0 & 0 \\ 0 & 1 / 18 & 1 / 36 & 0 & 1 / 9 & 1 / 18 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 / 9 & 1 / 18 & 0 & 1 / 18 & 1 / 36 \\ 0 & 0 & 0 & 1 / 18 & 1 / 9 & 0 & 1 / 36 & 1 / 18 & 0 } \msbr{ f \rbr{P_1} \\ f \rbr{ \rbr{ P_1 + P_2 } / 2 } \\ f \rbr{P_2} \\ f \rbr{ \rbr{ P_1 + P_4 } / 2 } \\ f \rbr{ \rbr{ P_1 + P_2 + P_3 + P_4 } / 4 } \\ f \rbr{ P_2 + P_3 } / 2 \\ f \rbr{P_4} \\ f \rbr{ \rbr{ P_3 + P_4 } / 2 } \\ f \rbr{P_3} } h^2.
+\end{equation}
+The quadrature is again of order $ O \rbr{h^4} $. The other two components at the right hand side are identical to the triangle element case. In conclusion, the linear system is
+\begin{equation}
+R = \sum_K R^K + \sum_{ E \subseteq \pdl{\text{S}} \Omega } R^E + \sum_{ E \subseteq \pdl{\text{E}} \Omega } R^E + \sum_{ E \subseteq \pdl{\text{N}} \Omega } R^E - A_{ \rbr{ \pdl{\text{W}} \Omega }^{\complement} \pdl{\text{W}} \Omega } \rbr{g_1}_{ \pdl{\text{W}} \Omega }.
+\end{equation}
+
+\section{Numerical experiment}
+
+\subsection{First equation}
+
+We solve the equation and plot the solution, the errors at the node, and the errors of the whole function in Figure \ref{Fig:Tri1} and \ref{Fig:Rect1}. The $L^{\infty}$ tolerance of conjugate gradient method is 1.0e-11. It should be noticed that the ``checkerboard'' effect reflects the reality, since $u_h$ is piece-wise linear, while $u$ is smooth, and therefore the maximal points of error is expected to locate at interior of elements instead of at vertices. One may also observe that the error heat map of triangle elements is not symmetric: the triangulation we use is not symmetric after all.
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.7}{\input{Figure1.pgf}}
+\caption{Heat map of solutions using triangle element for the first equation}
+\label{Fig:Tri1}
+}
+{
+\footnotesize Top left: $u_h$ with $ N = 256 $; top right: $ u_h - u $ at nodes with $ N = 256 $; bottom left: $ u_h - u $ at $\Omega$ with $ N = 256 $; bottom right: $ u_h - u $ at $\Omega$ with $ N = 16 $.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.7}{\input{Figure2.pgf}}
+\caption{Heat map of solutions using triangle element for the first equation}
+\label{Fig:Rect1}
+}
+{
+\footnotesize Top left: $u_h$ with $ N = 256 $; top right: $ u_h - u $ at nodes with $ N = 256 $; bottom left: $ u_h - u $ at $\Omega$ with $ N = 256 $; bottom right: $ u_h - u $ at $\Omega$ with $ N = 16 $.
+}
+\end{figure}
+
+We also graph the error curve with respect to different $N$ in Figure \ref{Fig:Err1}. Here $L^2$ error and $H^1$ (semi-norm) error are calculated by Simpson's quadrature. Numerical results are summarized in Table \ref{Tbl:SumTri1} and \ref{Tbl:SumRect1}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure3.pgf}
+\caption{Error for the first equation with respect to $N$}
+\label{Fig:Err1}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$N$ & $L^{\infty}$ error & $L^2$ error & $H^1$ error & Time (\Si{s}) & \#Iterations \\
+\hline
+\input{Table1.tbl}
+\end{tabular}
+\caption{Numerical results using triangle elements for the first equation}
+\label{Tbl:SumTri1}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$N$ & $L^{\infty}$ error & $L^2$ error & $H^1$ error & Time (\Si{s}) & \#Iterations \\
+\hline
+\input{Table2.tbl}
+\end{tabular}
+\caption{Numerical results using rectangle elements for the first equation}
+\label{Tbl:SumRect1}
+\end{table}
+
+It can be directly verify the second-order convergence of $L^{\infty}$ and $L^2$ norm, as well as the first-order convergence under $H^1$ semi-norm. We discover that the rectangle elements commits smaller error, and is slightly faster since the number of iterations is smaller. However, we use na\"ive conjugate gradient method here, and the speed can be increased using some other modern methods.
+
+\subsection{Second equation}
+
+We solve the equation and plot the solution, the errors at the node, and the errors of the whole function in Figure \ref{Fig:Tri2} and \ref{Fig:Rect2}.
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.7}{\input{Figure4.pgf}}
+\caption{Heat map of solutions using triangle element for the second equation}
+\label{Fig:Tri2}
+}
+{
+\footnotesize Top left: $u_h$ with $ N = 256 $; top right: $ u_h - u $ at nodes with $ N = 256 $; bottom left: $ u_h - u $ at $\Omega$ with $ N = 256 $; bottom right: $ u_h - u $ at $\Omega$ with $ N = 16 $.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.7}{\input{Figure5.pgf}}
+\caption{Heat map of solutions using triangle element for the second equation}
+\label{Fig:Rect2}
+}
+{
+\footnotesize Top left: $u_h$ with $ N = 256 $; top right: $ u_h - u $ at nodes with $ N = 256 $; bottom left: $ u_h - u $ at $\Omega$ with $ N = 256 $; bottom right: $ u_h - u $ at $\Omega$ with $ N = 16 $.
+}
+\end{figure}
+
+We also graph the error curve with respect to different $N$ in Figure \ref{Fig:Err2}. Here $L^2$ error and $H^1$ (semi-norm) error are calculated by Simpson's quadrature. Numerical results are summarized in Table \ref{Tbl:SumTri2} and \ref{Tbl:SumRect2}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure6.pgf}
+\caption{Error for the second equation with respect to $N$}
+\label{Fig:Err2}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$N$ & $L^{\infty}$ error & $L^2$ error & $H^1$ error & Time (\Si{s}) & \#Iterations \\
+\hline
+\input{Table3.tbl}
+\end{tabular}
+\caption{Numerical results using triangle elements for the second equation}
+\label{Tbl:SumTri2}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$N$ & $L^{\infty}$ error & $L^2$ error & $H^1$ error & Time (\Si{s}) & \#Iterations \\
+\hline
+\input{Table4.tbl}
+\end{tabular}
+\caption{Numerical results using rectangle elements for the second equation}
+\label{Tbl:SumRect2}
+\end{table}
+
+It can be directly verify the second-order convergence of $L^{\infty}$ and $L^2$ norm, as well as the first-order convergence under $H^1$ semi-norm. We discover that the rectangle elements are again more accurate and faster.
+
+\end{document}

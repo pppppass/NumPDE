@@ -1,0 +1,318 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+\usepackage{esint}
+
+\title{Report of Project 5}
+\author{Zhihan Li, 1600010653}
+\date{December 21, 2018}
+
+\begin{document}
+
+\maketitle
+\textbf{Problem. (Page 155 Coding Exercise 2)} \textit{Answer.} We implement a generic solver to the model wave equation with mixed boundary condition, and then test this solver against four distinct set of conditions. The details and numerical results are summarized in the following sections.
+
+\section{Solver}
+
+We tackle the model wave equation in this project The equation is
+\begin{equation}
+\begin{cases}
+u_{ t t } \rbr{ x, t } = a^2 \rbr{ x, t } u_{ x x } \rbr{ x, t }, & \rbr{ x, t } \in \rbr{ 0, 1 } \times \rsbr{ 0, D }; \\
+u \rbr{ x, 0 } = u^0 \rbr{x}, & x \in \sbr{ 0, 1 }; \\
+u_t \rbr{ x, 0 } = v^0 \rbr{x}, & x \in \rbr{ 0, 1 }; \\
+\alpha_1 \rbr{t} u \rbr{ 0, t } - \beta_1 \rbr{t} u_x \rbr{ 0, t } = g_1 \rbr{t}, & t \in \rsbr{ 0, D }; \\
+\alpha_2 \rbr{t} u \rbr{ 1, t } + \beta_2 \rbr{t} u_x \rbr{ 1, t } = g_2 \rbr{t}, & t \in \rsbr{ 0, D }. \\
+\end{cases}
+\end{equation}
+If the boundary at $ x = 0 $ or $1$ is Dirichlet boundary, we set the corresponding $ \alpha_i \rbr{t} \equiv 1 $ and $ \beta_i \rbr{t} \equiv 0 $. Otherwise, we set $ \beta_i \rbr{t} \equiv 1 $. Physical assumption requires $ \alpha_i \rbr{t} \ge 0 $ in this case.
+
+\subsection{Discretization}
+
+We introduce a uniform grid to solve this equation. Denote
+\begin{gather}
+h = \frac{1}{N}, \\
+\tau = \frac{D}{M}
+\end{gather}
+with
+\begin{gather}
+x_i = i h, \\
+t^m = m \tau.
+\end{gather}
+We adopt the explicit scheme to solve this equation. To be exact, we impose
+\begin{equation} \label{Eq:Wave}
+\frac{ U_j^{ m + 1 } - 2 U_j^m + U_j^{ m - 1 } }{\tau^2} = a_j^m \frac{ U_{ j - 1 }^m - 2 U_j^m + U_{ j + 1 }^m }{h^2}
+\end{equation}
+for $ 0 \le j \le N $ and $ 0 \le m \le M $. As a result, for $ 1 \le j \le N - 1 $, $ 1 \le m \le M $, the iterative scheme is exactly
+\begin{equation}
+U_j^{ m + 1 } = \nu^2 \rbr{a_j^m}^2 \rbr{ U_{ j - 1 }^m + U_{ j + 1 }^m } + 2 \rbr{ 1 - \nu^2 \rbr{a_j^m}^2 } U_j^m - U_j^{ m - 1 },
+\end{equation}
+where
+\begin{equation}
+\nu = \frac{\tau}{h}.
+\end{equation}
+The local truncation error is of order $ O \rbr{ \tau^2 + h^2 } $. The initial condition of $u_t$ is approximated by
+\begin{equation}
+\frac{ U_j^1 - U_j^{-1} }{ 2 \tau } = v^0_j,
+\end{equation}
+with local truncation error $ O \rbr{\tau^2} $. This leads to
+\begin{gather}
+U_j^0 = u^0_j, \\
+U_j^1 = \frac{1}{2} \nu^2 \rbr{a_j^0}^2 \rbr{ u^0_{ j - 1 } + u^0_{ j + 1 } } + \rbr{ 1 - \nu^2 \rbr{a_j^0}^2 } u^0_j + \tau v^0_j.
+\end{gather}
+for $ 1 \le j \le N - 1 $.
+The Dirichlet boundary condition is realized by directly imposing
+\begin{gather}
+U_0^{ m + 1 } = g_1^{ m + 1 }, \\
+U_N^{ m + 1 } = g_2^{ m + 1 }.
+\end{gather}
+Otherwise if Neumann or Robin boundary condition is forced, we impose
+\begin{gather}
+\alpha_1^m U_0^m + \frac{ U_{-1}^m - U_1^m }{ 2 h } = g_1^m, \\
+\alpha_2^m U_N^m + \frac{ U_{ N + 1 }^m - U_{ N - 1 }^m }{ 2 h } = g_2^m,
+\end{gather}
+with local truncation error $ O \rbr{h^2} $. Combined with \eqref{Eq:Wave}, this leads to
+\begin{gather}
+U_0^{ m + 1 } = 2 \nu^2 \rbr{a_0^m}^2 U_1^m + 2 \rbr{ 1 - \nu^2 \rbr{ 1 + \alpha_1^m h } \rbr{a_0^m}^2 } U_0^m - U_0^{ m - 1 } + 2 h \nu^2 \rbr{a_0^m}^2 g_1^m, \\
+U_N^{ m + 1 } = 2 \nu^2 \rbr{a_N^m}^2 U_{ N - 1 }^m + 2 \rbr{ 1 - \nu^2 \rbr{ 1 + \alpha_2^m h } \rbr{a_N^m}^2 } U_N^m - U_N^{ m - 1 } + 2 h \nu^2 \rbr{a_N^m}^2 g_2^m.
+\end{gather}
+Similarly, the Neumann or Robin boundaries at $ t = t^1 $ can be handled as
+\begin{gather}
+\begin{split}
+U_0^1 &= \nu^2 \rbr{a_0^0}^2 u^0_1 + \rbr{ 1 - \nu^2 \rbr{ 1 + \alpha_1^0 h } \rbr{a_0^0}^2 } u^0_0 + \tau v^0_0 + h \nu^2 \rbr{a_0^0}^2 g_1^0, \\
+U_N^1 &= \nu^2 \rbr{a_N^0}^2 u^0_{ N - 1 } + \rbr{ 1 - \nu^2 \rbr{ 1 + \alpha_2^0 h } \rbr{a_N^0}^2 } u^0_N + \tau v^0_N + h \nu^2 \rbr{a_N^0}^2 g_2^0.
+\end{split}
+\end{gather}
+
+\subsection{Analysis}
+
+If $a$ is a variable, then local Fourier analysis yields the $L^2$ stability necessary condition
+\begin{equation}
+\nu \norm{a}_{\infty} \le 1.
+\end{equation}
+When $a$ is a constant, the sufficient and necessary condition of $L^2$ stability is
+\begin{equation}
+a \nu \le 1, 
+\end{equation}
+which is exactly the CFL condition. For the interior nodes, by putting in the Fourier modes $ U_j^m = \lambda_k^m \exp \rbr{ \si k j h } $, we deduce that the amplification factor $\lambda_k$ solves
+\begin{equation}
+\lambda_k^2 - 2 \rbr{ 1 - 2 a^2 \nu^2 \sin^2 \frac{ k h }{2} } \lambda_k + 1 = 0.
+\end{equation}
+When $ a \nu \le 1 $,
+\begin{equation}
+a^2 \nu^2 \sin^2 \frac{ k h }{2} \le 1
+\end{equation}
+and the equation has a pair of conjugate complex roots. This means $ \abs{\lambda_k} = 1 $, and there is no decay for these Fourier modes. By
+\begin{equation}
+\begin{split}
+\arg \lambda_k &= \pm \arctan \frac{ 2 a \nu \sin \rbr{ k h / 2 } \sqrt{ 1 - a^2 \nu^2 \sin^2 \rbr{ k h / 2 } } }{ 1 - 2 a^2 \nu^2 \sin^2 \rbr{ k h / 2 } } \\
+&= \pm a k \tau \rbr{ 1 - \frac{1}{24} \rbr{ 1 - a^2 \nu^2 } k^2 h^2 + O \rbr{ k^4 h^4 } },
+\end{split}
+\end{equation}
+we deduce that the error in phase is of order $ O \rbr{ k^2 h^2 } $ due to phase lag unless $ \nu = 1 $.
+
+\section{Models}
+
+\subsection{Boundary condition}
+
+For all four sets of conditions, we all set $ a \rbr{ x, t } \equiv 1 $, $ \alpha_1 \rbr{t} \equiv 0 $, $ \beta_1 \rbr{t} \equiv 1 $, $ \alpha_2 \rbr{t} \equiv 1 $ and $ \beta_2 \rbr{t} \equiv 0 $. This means $ x = 0 $ is a free boundary and reflects the waves, while $ x = 1 $ is a fixed boundary which both reflects and inverts the waves.
+
+The rationale to choose such boundary condition is that it covers the two most popular physical settings of boundaries. Moreover, the analytical solution can also be given. By making reflective extensions, we deduce that the solution is of the form
+\begin{equation} \label{Eq:Split}
+u \rbr{ x, t } = \phi \rbr{ x - t } - \phi \rbr{ -x - t },
+\end{equation}
+where $\phi$ is a function of period $2$.
+
+\subsection{Initial condition}
+
+We proceed to simplify the model for brevity by assume $ v^0 \rbr{x} = \rbr{u^0}' \rbr{x} $. This leads to more intuitive analytical solution: a wave packet in $ \sbr{ 0, 1 } $ starts travelling to the right in the beginning. It gets inverted at $ x = 1 $ and travels to the left then. It gets reflected at $ x = 0 $ afterwards. Mathematically, the solution is determined by \eqref{Eq:Split} with
+\begin{equation}
+\phi \rbr{x} =
+\begin{cases}
+u^0 \rbr{x}, & x \in \sbr{ 0, 1 }; \\
+0, & x \in \sbr{ 1, 2 }
+\end{cases}
+\end{equation}
+and period $2$. The solution itself is periodic with respect to $t$ with period $2$.
+
+The first set we choose is
+\begin{equation}
+u^0 \rbr{x} = \frac{1}{27} \rbr{ 1 - \cos \rbr{ 2 \spi x } }^2.
+\end{equation}
+Here $\phi$, together with the solution $u$ is of $C^3$ continuity. Graph of the solution is plotted in Figure \ref{Fig:Ana1}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure07.pgf}
+\caption{Analytical solution of the first set of condition}
+\label{Fig:Ana1}
+\end{figure}
+
+The second wet we choose is
+\begin{equation}
+u^0 \rbr{x} = \frac{2}{27} \rbr{ 1 - \cos \rbr{ 2 \spi x } }.
+\end{equation}
+The continuity is $C^1$. Graph of the solution is plotted in Figure \ref{Fig:Ana2}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure05.pgf}
+\caption{Analytical solution of the second set of condition}
+\label{Fig:Ana2}
+\end{figure}
+
+The third set we choose is
+\begin{equation}
+u^0 \rbr{x} = x^2 \rbr{ 1 - x }.
+\end{equation}
+One should notice that even if $u^0$ is itself $C^{\infty}$ in the interior and satisfies all the boundary condition, the final solution is $C^0$. Graph of the solution is plotted in Figure \ref{Fig:Ana3}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure01.pgf}
+\caption{Analytical solution of the third set of condition}
+\label{Fig:Ana3}
+\end{figure}
+
+The fourth set we choose is
+\begin{equation}
+u^0 \rbr{x} =
+\begin{cases}
+0, & x \in \sbr{ 0, 1 / 3 }; \\
+4 \rbr{ 3 x - 1 } / 27, & x \in \sbr{ 1 / 3, 2 / 3 }; \\
+4 \rbr{ 3 - 3 x } / 27, & x \in \sbr{ 2 / 3, 1 }.
+\end{cases}
+\end{equation}
+Here $u^0$ itself is $C^0$ and the final solution is $C^0$. Graph of the solution is plotted in Figure \ref{Fig:Ana4}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure03.pgf}
+\caption{Analytical solution of the fourth set of condition}
+\label{Fig:Ana4}
+\end{figure}
+
+\section{Numerical experiment}
+
+We test the solver with different sets of boundary conditions.
+
+\subsection{First set of boundary condition}
+
+We first run the solver with $ N = 100 $, $ \nu = 1 / 2 $ and plot the numerical result in Figure \ref{Fig:Num1}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure08.pgf}
+\caption{Numerical solution of the first set of condition}
+\label{Fig:Num1}
+\end{figure}
+
+Compared with Figure \ref{Fig:Ana1}, there is no visible distinction.
+
+We then test different $N$ and $\nu$ in Figure \ref{Fig:Comp1}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure12.pgf}}
+\caption{Error in $L^2$ for different $N$ in the first set of condition}
+\label{Fig:Comp1}
+\end{figure}
+
+From this figure, we obtain straight second-order convergence. Generally, at $ t = 0.1 $ the error is positively correlate to $\nu$ while for $ t = 0.9, 1.0, 1.9 $ they are negatively correlated. This is because at $ t = 0.1 $ the error mainly stems from the discretization of initial condition $v^0$, while for larger $t$ the error in phase lags plays an important role, which is smaller for greater $\nu$. At $ t = 2.0 $ and $ t = 4.0 $, the error of $ \nu = 1 $ reaches about the numerical precision, which is caused by the special structure of equation.
+
+\subsection{Second set of boundary condition}
+
+We then run the solver with $ N = 100 $, $ \nu = 1 / 2 $ and plot the numerical result in Figure \ref{Fig:Num2}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure06.pgf}
+\caption{Numerical solution of the second set of condition}
+\label{Fig:Num2}
+\end{figure}
+
+Compared with Figure \ref{Fig:Ana2}, there is again no visible distinction.
+
+We then test different $N$ and $\nu$ in Figure \ref{Fig:Comp2}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure11.pgf}}
+\caption{Error in $L^2$ for different $N$ in the second set of condition}
+\label{Fig:Comp2}
+\end{figure}
+
+There is no major difference compared with Figure \ref{Fig:Comp1}. However, the convergence order of $ \nu = 1 $ is still $2$ (this should be expected since there is neither decay nor phase lag, and $ O \rbr{h^2} = O \rbr{\tau^2} $ error from initial conditions), while for other $\nu$ the convergence order is slightly smaller than $2$. This may be related to the phase lag the Fourier series of $\phi$ decays as $ O \rbr{n^{-3}} $ since it is is $C^1$. A heuristic derivation is that the error can be approximately bounded by
+\begin{equation}
+\sum_{ n = 1 }^{\infty} \abs{a_n} \min \cbr{ \frac{1}{24} t \rbr{ 1 - \nu^2 } k^3 h^2, 1 },
+\end{equation}
+while
+\begin{equation}
+k h = \frac{ 2 \spi n }{N}
+\end{equation}
+and therefore $ k = 2 \spi n $. This means the $\min$ part is balanced at some point, if $ k^3 h^2 = O \rbr{1} $, or
+\begin{equation}
+n \sim O \rbr{N^{ 2 / 3 }}.
+\end{equation}
+Denote the point as $ C \rbr{N} $ and we have $ C \rbr{N} \sim O \rbr{N^{ 2 / 3 }} $. As a result, the error can be bounded by
+\begin{equation}
+\frac{\spi^3}{ 3 N^2 } t \rbr{ 1 - \nu^2 } \sum_{ n = 1 }^{ C \rbr{N} } 1 + \sum_{ n = C \rbr{N} + 1 }^{\infty} \frac{1}{n^3} = O \rbr{N^{ -4 / 3 }}.
+\end{equation}
+However, the slope seems to be $ -5 / 3 $ and this cannot be explained easily. This may be caused by the rough estimation.
+
+\subsection{Third set of boundary condition}
+
+We then run the solver with $ N = 100 $, $ \nu = 1 / 2 $ and plot the numerical result in Figure \ref{Fig:Num3}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure02.pgf}
+\caption{Numerical solution of the third set of condition}
+\label{Fig:Num3}
+\end{figure}
+
+Compared with Figure \ref{Fig:Ana3}, one may see that the sharp points has been smoothed, and there are oscillations. This is caused by the phase lag, namely dispersion.
+
+We then test different $N$ and $\nu$ in Figure \ref{Fig:Comp3}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure09.pgf}}
+\caption{Error in $L^2$ for different $N$ in the third set of condition}
+\label{Fig:Comp3}
+\end{figure}
+
+From this figure, we can see that $ \nu = 1 $ enjoys second-order convergence while other $\nu$s are of first-order convergence. This is because of the phase lag, where the $ O \rbr{ k^2 h^2 } $ relative error gets accumulated and finally leads to $ O \rbr{h} $ error. A heuristic derivation follows. the error term is bounded by
+\begin{equation}
+\sqrt{ \sum_{ n = 1 }^{\infty} a_n^2 \min \cbr{ \frac{1}{24} t \rbr{ 1 - \nu^2 } k^3 h^2, 1 }^2 },
+\end{equation}
+and together with $ \sum_{ n = 1 }^{\infty} a_n^2 $ is fixed we deduce that its order is $ O \rbr{h} $.
+
+\subsection{Fourth set of boundary condition}
+
+We then run the solver with $ N = 100 $, $ \nu = 1 / 2 $ and plot the numerical result in Figure \ref{Fig:Num4}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure04.pgf}
+\caption{Numerical solution of the fourth set of condition}
+\label{Fig:Num4}
+\end{figure}
+
+Compared with Figure \ref{Fig:Ana4}, one may again see that the numerical solution suffers from phase lag severely.
+
+We then test different $N$ and $\nu$ in Figure \ref{Fig:Comp4}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure10.pgf}}
+\caption{Error in $L^2$ for different $N$ in the fourth set of condition}
+\label{Fig:Comp4}
+\end{figure}
+
+From this figure, we can see that all $\nu$ leads to $ O \rbr{h} $ convergence. This is because the initial condition is not treated correctly: it is itself non-differentiable, and hence $ O \rbr{h} $ error gets into play in the beginning from $u^0$ and $v^0$. This is the difference from the third set of condition: the initial condition in the third set is smooth and hence errors only stem from dispersion (and possibly boundary condition).
+
+\end{document}

@@ -1,0 +1,250 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+\usepackage{esint}
+
+\title{Report of Project 4}
+\author{Zhihan Li, 1600010653}
+\date{December 21, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem. (Page 155 Coding Exercise 1)} \textit{Answer.} We construct two examples and implement four solvers to Burgers' equation. Details and numerical results are explained in the following sections.
+
+\section{Models}
+
+We aim at finding the weak solution to Burgers' equation
+\begin{equation}
+u_t + \rbr{ \frac{1}{2} u^2 }_x = 0,
+\end{equation}
+which is a hyperbolic conservation law. We construct two profiles for experiment.
+
+\subsection{Riemann problem}
+
+The first one corresponds the Riemann problem:
+\begin{equation}
+u \rbr{ x, 0 } = u^0 \rbr{x} =
+\begin{cases}
+1, & x < 0; \\
+0, & x > 0.
+\end{cases}
+\end{equation}
+There is a shock wave at $ x = 0 $ in the beginning, and the Rankine--Hugoniot condition yields the travelling speed of such shock wave is
+\begin{equation}
+v_{\text{shock}} = \frac{1}{2}.
+\end{equation}
+As a result, weak solution to this profile is
+\begin{equation}
+u \rbr{ x, t } =
+\begin{cases}
+1, & x < t / 2; \\
+0, & x > 0.
+\end{cases}
+\end{equation}
+
+\subsection{Sine profile}
+
+Another widely used profile stems from the sine function. The initial condition is
+\begin{equation}
+u \rbr{ x, 0 } = u^0 \rbr{x} =
+\begin{cases}
+1, & x \le -\spi / 2; \\
+\rbr{ 1 - \sin x } / 2, & -\spi / 2 \le x \le \spi / 2; \\
+0, & x \ge \spi / 2.
+\end{cases}
+\end{equation}
+When $ t < 2 $, the solution is smoothed and can be found using characteristics. To be exact, we deduce $ u \rbr{ x, t } = 1 $ for $ x \le -\spi / 2 + t $ and $ u \rbr{ x, t } = 0 $ for $ x \ge \spi / 2 $. For $ x \in \sbr{ -\spi / 2 + t, \spi / 2 } $, we need to solve the nonlinear equation
+\begin{equation}
+x_0 + u_0 \rbr{x_0} t = x
+\end{equation}
+and find the value of $u$ by
+\begin{equation}
+u \rbr{ x, t } = u^0 \rbr{x_0}.
+\end{equation}
+We apply Newton's method to solve the equation. When $ 2 \le t < \spi $, there is a shock wave formed at $ x = t / 2 $ by steepening of waves. Here $ x = t / 2 $ is determined by both symmetry and Rankine-Hugoniot condition. Values of $u$ at $ \srbr{ -\spi / 2 + t, t / 2 } $ and $ \rsbr{ t / 2, \spi / 2 } $ can still be found by Newton's method. When $ t \ge \spi $, the solution turns out to be.
+\begin{equation}
+u \rbr{ x, t } =
+\begin{cases}
+1, & x < t / 2; \\
+0, & x > 0.
+\end{cases}
+\end{equation}
+
+\section{Solvers}
+
+We implement four solvers towards Burgers' equation. Mainly the solvers is classified into finite volume method. To be exact, we decompose the finite region $ \sbr{ L, R } $ to $N$ segments, and approximate $u$ by $U$ according to
+\begin{equation}
+U_{ i + 1 / 2 }^m = \fint_{x_i}^{x_{ i + 1 }} u \rbr{ \cdot, t_m },
+\end{equation}
+where
+\begin{gather}
+x_i = L + i h, \\
+t^m = m \tau \\
+\end{gather}
+and
+\begin{gather}
+h = \frac{ R - L }{N}, \\
+\tau = \frac{D}{M}.
+\end{gather}
+
+We always implicitly assume $ U_{ -1 / 2 } = U_{ 1 / 2 } $, $ U_{ N - 1 / 2 } = U_{ N + 1 / 2 } $. In real computation, this is equivalent to $ U_{ -1 / 2 } = 1 $ and $ U_{ N + 1 / 2 } = 0 $ for the two profiles given.
+
+\subsection{Non-conservative upwind discretization}
+
+One easy discretization directly perform upwinding towards $ u_t + u u_x = 0 $, without respecting the conservation law structure. The scheme is then
+\begin{equation}
+U_{ j + 1 / 2 }^{ m + 1 } =
+\begin{cases}
+U_{ j + 1 / 2 }^m - \nu U_{ j + 1 / 2 }^m \rbr{ U_{ j + 1 / 2 }^m - U_{ j - 1 / 2 }^m }, & U_{ j + 1 / 2 }^m \ge 0; \\
+U_{ j + 1 / 2 }^m - \nu U_{ j + 1 / 2 }^m \rbr{ U_{ j + 3 / 2 }^m - U_{ j + 1 / 2 }^m }, & U_{ j + 1 / 2 }^m \le 0,
+\end{cases}
+\end{equation}
+where
+\begin{equation}
+\nu = \frac{\tau}{h}.
+\end{equation}
+The $L^{\infty}$ stability condition is given by
+\begin{equation}
+\nu \norm{u}_{\infty} \le 1.
+\end{equation}
+
+\subsection{Conservative upwind discretization}
+
+Another discretization utilize the flux $ f \rbr{u} = u^2 / 2 $ and therefore respect the conservation law. The scheme is
+\begin{equation}
+U_{ j + 1 / 2 }^{ m + 1 } = U_{ j + 1 / 2 }^m - \nu \rbr{ F_{ j + 1 }^{ m + 1 / 2 } - F_j^{ m + 1 / 2 } },
+\end{equation}
+where speed for upwind is
+\begin{equation}
+a_j^m = \frac{ f \rbr{U_{ j + 1 / 2 }^m} - f \rbr{U_{ j - 1 / 2 }^m} }{ U_{ j + 1 / 2 }^m - U_{ j - 1 / 2 }^m }
+\end{equation}
+and numerical flux is handled by
+\begin{equation}
+F_j^{ m + 1 / 2 } =
+\begin{cases}
+f \rbr{U_{ j - 1 / 2 }^m}, & a_j^m \ge 0; \\
+f \rbr{U_{ j + 1 / 2 }^m}, & a_j^m \le 0.
+\end{cases}
+\end{equation}
+(Note that $a_j^m$ is set to be $0$ when $ U_{ j - 1 / 2 }^m = U_{ j + 1 / 2 }^m $ in the textbook, but actually it does not matter much once the $L^{\infty}$ stability condition is satisfied. What we need to do is to expand it as
+\begin{equation}
+a_j^m = \frac{1}{2} \rbr{ U_{ j - 1 / 2 }^m + U_{ j + 1 / 2 }^m }
+\end{equation}
+to increase the numerical stability since $ f \rbr{u} = u^2 / 2 $.) The $L^{\infty}$ stability is again
+\begin{equation}
+\nu \norm{u}_{\infty} \le 1.
+\end{equation}
+When $f$ is differentiable, this is a consistent scheme for conservation law.
+
+\subsection{Richtmyer scheme}
+
+A second-order scheme is the Richtmyer scheme, which calculate
+\begin{equation}
+U_j^{ m + 1 / 2 } = \frac{1}{2} \rbr{ U_{ j - 1 / 2 }^m + U_{ j + 1 / 2 }^m } - \frac{1}{2} \nu \rbr{ f \rbr{U_{ j + 1 / 2 }^m} - f \rbr{U_{ j - 1 / 2 }^m} }
+\end{equation}
+first, and then calculate
+\begin{equation}
+U_{ j + 1 / 2 }^{ m + 1 } = U_{ j + 1 / 2 }^m - \nu \rbr{ f \rbr{U_{ j + 1 }^{ m + 1 / 2 }} - f \rbr{U_j^{ m + 1 / 2 }} }.
+\end{equation}
+When $u^m$ is sufficiently smooth, we can prove that the local truncation error is of order $ O \rbr{ \tau^2 + h^2 } $. When $f$ is Lipchitz (which is clearly satisfied in Burgers' equation), this is a consistent scheme for conservation law.
+
+\subsection{Lax--Wendroff scheme}
+
+We can also construct Lax--Wendroff scheme for conservation laws. This scheme is given by
+\begin{equation}
+\begin{split}
+U_{ j + 1 / 2 }^{ m + 1 } &= U_{ j + 1 / 2 }^m \\
+&- \frac{1}{2} \nu \rbr{ f \rbr{U_{ j + 3 / 2 }^m} - f \rbr{U_{ j - 1 / 2 }^m} } \\
+&+ \frac{1}{2} \nu^2 \rbr{ a_{ j + 1 }^m \rbr{ f \rbr{U_{ j + 3 / 2 }^m} - f \rbr{U_{ j + 1 / 2 }^m} } - a_j^m \rbr{ f \rbr{U_{ j + 1 / 2 }^m} - f \rbr{U_{ j - 1 / 2 }^m} } }.
+\end{split}
+\end{equation}
+When $u^m$ is sufficiently smooth, we can prove that the local truncation error is of order $ O \rbr{ \tau^2 + h^2 } $. When $f'$ is bounded, this is a consistent scheme for conservation law.
+
+\section{Numerical result}
+
+\subsection{Riemann problem}
+
+We first consider the Riemann problem. We take $ \nu = 0.1 $, and $ L = -2 $, $ R = 2 $. The graphs are shown in Figure \ref{Fig:Rie1}, \ref{Fig:Rie2}, \ref{Fig:Rie3} and \ref{Fig:Rie4}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure1.pgf}}
+\caption{Numerical result of the Riemann problem with $ h = 0.1 $}
+\label{Fig:Rie1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure2.pgf}}
+\caption{Numerical result of the Riemann problem with $ h = 0.01 $}
+\label{Fig:Rie2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure3.pgf}}
+\caption{Numerical result of the Riemann problem with $ h = 0.001 $}
+\label{Fig:Rie3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure4.pgf}}
+\caption{Numerical result of the Riemann problem with $ h = 0.0001 $}
+\label{Fig:Rie4}
+\end{figure}
+
+It can be seen that the non-conservative upwind discretization converges to the wrong solution. To be exact, the shock wave does not move, which contradicts the Rankine-Hugoniot condition for weak solutions. The other three conservative methods converges to the weak solution. However, the first-order method (conservative upwind) suffers slightly from dissipation (say in $ h = 0.1 $ the jumps are smoothed), but for smaller $h$ this phenomenon is less sensible. The second-order methods (Richtmyer and Lax--Wendroff) suffers from oscillation (dispersion), while Richtmyer scheme is a bit worse. When $h$ becomes smaller, the oscillation is still at present, with amplitude converging to a constant (about 0.5 for Richtmyer and 0.3 for Lax--Wendroff).
+
+\subsection{Sine profile}
+
+We then test the sine profile. We again take $ \nu = 0.1 $, and $ L = -3 $, $ R = 3 $. The graphs are shown in Figure \ref{Fig:Sine1}, \ref{Fig:Sine2}, \ref{Fig:Sine3}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure5.pgf}}
+\caption{Numerical result of the sine profile with $ h = 0.1 $}
+\label{Fig:Sine1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure6.pgf}}
+\caption{Numerical result of the sine profile with $ h = 0.01 $}
+\label{Fig:Sine2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{Figure7.pgf}}
+\caption{Numerical result of the sine profile with $ h = 0.001 $}
+\label{Fig:Sine3}
+\end{figure}
+
+It can be seen that when $ t = 1.0 $, at which no shock wave has been formed, all four methods converges well. First-order methods converges slightly slower than second-order methods, as indicated by the figure of $ h = 0.1 $ and $ t = 1.0 $. However, after $ t \ge 2.0 $, non-conservative methods again falls into the wrong solution (wrongly slow, finally stopped after $ t \ge 4.0 $) and second-order methods again suffers from oscillation. It can be seen that the amplitude of oscillation is again about 0.5 for Richtmyer and 0.3 for Lax--Wendroff.
+
+We then fix $ h = 0.001 $, $ L = -5 $, $ R = 5 $ and plot the errors. The $L^2$ error is plotted in Figure \ref{Fig:L2} and $L^\infty$ in Figure \ref{Fig:LInf}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure8.pgf}
+\caption{Growth of error in $L^2$ of the sine profile}
+\label{Fig:L2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure9.pgf}
+\caption{Growth of error in $L^{\infty}$ of the sine profile}
+\label{Fig:LInf}
+\end{figure}
+
+It can be seen that when $ t < 2 $, Lax--Wendroff scheme and Richtmyer scheme outperforms the first-order methods. However, the errors both increase dramatically at $ t = 2 $. After that, the conservative upwind discretization outperforms all second-order methods both in the $L^2$ and $L^\infty$ sense. This indicates that low-order methods are good at handling shock waves, while high-order methods recover the smooth solutions well. Conservation property is necessary to converge to the correct weak solution.
+
+\end{document}

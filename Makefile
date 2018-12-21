@@ -1,7 +1,7 @@
 DIRS = $(shell ls -d */ | grep -v ptmpls)
 
 .PHONY: all
-all: hardware.txt environment.yml recursive
+all: hardware.txt list.txt environment.yml recursive
 
 hardware.txt:
 	echo 'lscpu:' > hardware.txt

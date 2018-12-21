@@ -1,5 +1,5 @@
 .PHONY: all
-all: exts.so
+all:
 
 setup.cfg:
 	if ![[ -v CONDA_PREFIX ]];\
@@ -18,3 +18,6 @@ exts.so: setup.py setup.cfg exts/cg.c exts/wrappers.c exts/exts.h
 	do\
 		mv $${FILE} exts.so;\
 	done
+
+.PHONY: run
+run: exts.so
