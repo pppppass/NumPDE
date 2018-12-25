@@ -1,0 +1,31 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+\usepackage{tikz-cd}
+
+\title{Answers to Exercises (Lecture 21)}
+\author{Zhihan Li, 1600010653}
+\date{December 25, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem. (Page 284 Exercise 4).} \textit{Proof.} Adopt the constant $C$ from Page 284 Exercise 3. We have therefore
+\begin{equation}
+\begin{split}
+R \rbr{u_h} \rbr{ w - \Pi_h w } &= \sum_i \int_{I_i} \rbr{ f - u_h } \rbr{ w - \Pi_h w } \\
+&\le \sum_i \norm{ f - u_h }_{ 0, I_i } \norm{ w - \Pi_h w }_{ 0, I_i } \\
+&\le C \sum_i \norm{ f - u_h }_{ 0, I_i } h_i \abs{w}_{ 1, I_i } \\
+&\le C \sqrt{ \sum_i \abs{w}_{ 1, I_i }^2 \sum_i h_i^2 \norm{ f - u_h }_{ 0, I_i }^2 } \\
+&\le C \norm{w}_{ 1, I_i } \sqrt{ \sum_i h_i^2 \norm{ f - u_h }_{ 0, I_i }^2 } \\
+&\le \sqrt{2} C \norm{w}_{ 1, I_i } \sqrt{ \sum_i h_i^2 \rbr{ \norm{ f_{I_i} - u_h }_{ 0, I_i }^2 + \norm{ f - f_{I_i} }_{ 0, I_i }^2 } }
+\end{split}
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\end{document}

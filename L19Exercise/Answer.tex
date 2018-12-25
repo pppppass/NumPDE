@@ -1,0 +1,95 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 19)}
+\author{Zhihan Li, 1600010653}
+\date{December 25, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 262 Exercise 9).} \textit{Proof.}  For $ \hat{w} \in P_k \rbr{\hat{K}} $ and the source term $ \hat{g} \in H^k \rbr{\hat{K}} $, since $ H^k \rbr{\hat{K}} \hookrightarrow C \rbr{\hat{K}} $, we have
+\begin{equation}
+\abs{ \int \hat{g} \hat{w}_h - \int_h \hat{g} \hat{w}_h } \le \norm{ \hat{g} \hat{w}_h }_{ 0, \infty } \le \norm{\hat{g}}_{ 0, \infty } \norm{\hat{w}_h}_{ 0, \infty } \le C_1 \norm{\hat{g}}_k \norm{\hat{w}_h}_1,
+\end{equation}
+where
+\begin{equation}
+\norm{\hat{w}_h}_{ 0, \infty } \le C_2 \norm{\hat{w}_h}_1
+\end{equation}
+follows from the equivalence of norms in the finite dimensional space $ P_k \rbr{\hat{K}} $. Since for $\hat{w} \in P_k \rbr{\hat{K}} $ the operator
+\begin{equation}
+\int \cdot \hat{w}_h - \int_h \cdot \hat{w}_h
+\end{equation}
+vanishes on $ P_{ k - 1 } \rbr{\hat{K}} $ and we have the estimation
+\begin{equation}
+\norm{ \int \cdot \hat{w}_h - \int_h \cdot \hat{w}_h }_k^{\ast} \le C_1 \norm{\hat{w}_h}_1,
+\end{equation}
+we have by Bramble--Hilbert lemma that
+\begin{equation}
+\abs{ \int \hat{g} \hat{w}_h - \int_h \hat{g} \hat{w}_h } \le C_2 \abs{g}_k \norm{\hat{w}_h}_1.
+\end{equation}
+By scaling technique (on a quasi-uniform grid) we have
+\begin{equation}
+\abs{ f \rbr{w_h} - f_h \rbr{w_h} }_K \le C_3 h^k \abs{f}_{ k, K } \norm{w_h}_{ 1, K }
+\end{equation}
+and summing up yields
+\begin{equation}
+\abs{ f \rbr{w_h} - f_h \rbr{w_h} } \le C_3 h^k \abs{f}_{ k, \Omega } \norm{w_h}_{ 1, \Omega }.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 263 Exercise 10).} \textit{Proof.} For $ v \in V $, we have\begin{equation}
+\norm{ u - u_h }_h \le \norm{ u_h - v }_h + \norm{ u - v }_h.
+\end{equation}
+The uniform ellipticity yields
+\begin{equation}
+\norm{ u - v }_h^2 \le C_1 a_h \rbr{ u - v, u - v },
+\end{equation}
+and we have
+\begin{equation}
+\norm{ u - v }^2 \le C_2 a \rbr{ u - v, u - v } = C_2 a_h \rbr{ u - v, u - v } \le C_2 C_3 \norm{ u - v }_h^2.
+\end{equation}
+We note that
+\begin{equation}
+\begin{split}
+a_h \rbr{ u - v, u - v } &= a_h \rbr{ u_h - v, u - v } + a_h \rbr{ u - u_h, u - v } \\
+&= a_h \rbr{ u_h - v, u - v } + a \rbr{ u, u- v } - a_h \rbr{ u_h, u - v } \\
+&= a_h \rbr{ u_h - v, u - v } + f \rbr{ u - v } - a_h \rbr{ u_h, u - v } \\
+&\le C_3 \norm{ u_h - v }_h \norm{ u - v }_h + \norm{ u - v } \norm{ a_h \rbr{ u_h, \cdot } - f }^{\ast} \\
+&\le C_3 \norm{ u_h - v }_h \norm{ u - v }_h + \sqrt{ C_2 C_3 } \norm{ u - v }_h \norm{ a_h \rbr{ u_h, \cdot } - f }^{\ast}.
+\end{split}
+\end{equation}
+Therefore
+\begin{equation}
+\begin{split}
+\norm{ u - u_h } &\le \rbr{ 1 + C_1 C_3 } \norm{ u_h - v }_h + C_1 \sqrt{ C_2 C_3 } \norm{ a_h \rbr{ u_h, \cdot } - f }^{\ast} \\
+&\le \rbr{ 1 + C_1 C_2 } \inf_{ v \in V } \norm{ u_h - v }_h + C_1 \sqrt{ C_2 C_3 } \norm{ a_h \rbr{ u_h, \cdot } - f }^{\ast}.
+\end{split}
+\end{equation}
+as desired since $v$ is arbitrary.
+
+Again for $ v \in V $ we have
+\begin{equation}
+\begin{split}
+\abs{ a_h \rbr{ u_h, v } - f \rbr{v} } &= \abs{ a_h \rbr{ u_h, v } - a_h \rbr{ u, v } } \\
+&= \abs{ a_h \rbr{ u - u_h, v } } \\
+&\le C_3 \norm{ u - u_h }_h \norm{v}_h \\
+&\le C_3 \sqrt{ C_1 C_4 } \norm{ u - u_h }_h \norm{v}
+\end{split}
+\end{equation}
+and therefore
+\begin{equation}
+\norm{ a_h \rbr{ u_h, \cdot } - f }^{\ast} \le C_3 \sqrt{ C_1 C_4 } \norm{ u - u_h }_h.
+\end{equation}
+Here $C_4$ is the constant stems from
+\begin{equation}
+\norm{ u - v }_h^2 \le C_1 a_h \rbr{ u - v, u - v } \le C_1 a \rbr{ u - v, u - v } \le C_1 C_4 \norm{ u - v }^2.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

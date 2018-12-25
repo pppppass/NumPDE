@@ -1,0 +1,91 @@
+
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+\usepackage{tikz-cd}
+
+\title{Answers to Exercises (Lecture 20)}
+\author{Zhihan Li, 1600010653}
+\date{December 25, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1. (Page 283 Exercise 1).} \textit{Proof.} The variational problem yields
+\begin{equation}
+R \rbr{u} = 0.
+\end{equation}
+This means $ R \rbr{u} = R \rbr{ u - u_h } $
+and hence by the Cauchy--Schwarz inequality
+\begin{equation}
+\abs{ R \rbr{ u - u_h } \rbr{w} } \le \abs{ u - u_h }_1 \abs{w}_1 + \norm{ u - u_h }_0 \norm{w}_0 + \abs{\nvbr{\rbr{ u - u_h }}_1} \abs{\nvbr{w}_1}
+\end{equation}
+and we have proved in previous exercises in $V$ (we note that $ u - u_h \in V $ also)
+\begin{equation}
+\abs{\nvbr{v}_1} \le \norm{v}_0 \le \abs{v}_1
+\end{equation}
+and this yields
+\begin{equation}
+\abs{ R \rbr{ u - u_h } \rbr{w} } \le 2 \norm{ u - u_h }_1 \norm{ u - u_h }_1
+\end{equation}
+and
+\begin{equation}
+\norm{ R \rbr{ u - u_h } } \le 2 \norm{ u - u_h }_1.
+\end{equation}
+Again we have
+\begin{equation}
+\norm{ R \rbr{ u - u_h } \rbr{ u - u_h } } = \abs{ u - u_h }_1^2 + \norm{ u - u_h }_0^2 + \nvbr{\rbr{ u - u_h }_1}^2 \ge \norm{ u - u_h }_1^2,
+\end{equation}
+we deduce
+\begin{equation}
+\norm{ R \rbr{ u - u_h } } \ge \norm{ u - u_h }_1.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 2. (Page 284 Exercise 2).} \textit{Proof.} It suffices to prove for $ v_h \in V_h $,
+\begin{equation}
+R \rbr{u_h} \rbr{v_h} = 0.
+\end{equation}
+This directly follows from the variational problem. By setting $ \Pi_h w = v_h $ we can prove the original inequality.
+
+Consider $ R \rbr{u_h} \rbr{v} $ where $ v = w - \Pi_h w $. The terms $ g w \rbr{1} $, $ u_h \rbr{1} w \rbr{1} $ drop. The term
+\begin{equation}
+\int_0^1 u_h' w'
+\end{equation}
+also drops because on each interval $ \sbr{ x_i, x_{ i + 1 } } $ we have
+\begin{equation}
+\int_{x_i}^{x_{ i + 1 }} u_h' w' = \nvbr{u_h'}_{\sbr{ x_i, x_{ i + 1 }}} \nvbr{w}_{x_i}^{x_{ i + 1 }} = 0.
+\end{equation}
+As a result,
+\begin{equation}
+R \rbr{u_h} \rbr{w} = \int_0^1 \rbr{ f - u_h } w
+\end{equation}
+and
+\begin{equation}
+\abs{ R \rbr{u_h} \rbr{w} } \le \norm{ f - u_h }_0 \norm{w}_0
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 3. (Page 284 Exercise 3).} \textit{Proof.} Consider the standard interpolation operator $\hat{\Pi}$ on $ \sbr{ 0, 1 } $. Define $ F_i : \sbr{ 0, 1 } \rightarrow I_i = \sbr{ x_{ i - 1 }, x_i }, t \mapsto x_{ i - 1 } + t \rbr{ x_i - x_{ i - 1 } } $, and we observe that
+\begin{equation}
+\begin{tikzcd}
+H^1 \sbr{ x_{ i - 1 }, x_i } \arrow[r, "\nvbr{\Pi_h}_{I_i}"] \arrow[d, "F_i^{\text{t}}"'] & P_1 \sbr{ x_{ i - 1 }, x_i } \arrow[d, "F_i^{\text{t}}"] \\
+H^1 \sbr{ 0, 1 } \arrow[r, "\hat{\Pi}"'] & P_1 \sbr{ 0, 1 }
+\end{tikzcd}
+\end{equation}
+commutes. Since $ I - \hat{\Pi} $ is a $P_0$-invariant operator, we have for $ \hat{w} \in H \rbr{ 0, 1 } $
+\begin{equation}
+\norm{ \hat{w} - \hat{\Pi} \hat{w} }_0 \le C \abs{\hat{w}}_1.
+\end{equation}
+This implies
+\begin{equation}
+\norm{ w - \Pi_h w }_{ 0, I_i } \le C h_i \abs{w}_{ 1, I_i }
+\end{equation}
+by scaling.
+\hfill$\Box$
+
+\end{document}
